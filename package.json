@@ -54,7 +54,7 @@
     "@iobroker/adapter-dev": "^1.2.0",
     "@iobroker/testing": "^4.1.0",
     "@mui/icons-material": "^5.14.16",
-    "@mui/material": "^5.14.16",
+    "@mui/material": "^5.14.17",
     "@mui/styles": "^5.14.16",
     "@tsconfig/node16": "^1.0.3",
     "@types/chai": "^4.3.9",
