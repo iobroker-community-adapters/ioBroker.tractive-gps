@@ -57,7 +57,7 @@
     "@mui/material": "^5.14.17",
     "@mui/styles": "^5.14.18",
     "@tsconfig/node16": "^1.0.3",
-    "@types/chai": "^4.3.10",
+    "@types/chai": "^4.3.11",
     "@types/chai-as-promised": "^7.1.7",
     "@types/cron": "^2.0.0",
     "@types/leaflet": "^1.9.8",
