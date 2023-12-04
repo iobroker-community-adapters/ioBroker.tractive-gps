@@ -56,7 +56,7 @@
     "@mui/icons-material": "^5.14.19",
     "@mui/material": "^5.14.19",
     "@mui/styles": "^5.14.18",
-    "@tsconfig/node16": "^1.0.3",
+    "@tsconfig/node16": "^16.1.1",
     "@types/chai": "^4.3.11",
     "@types/chai-as-promised": "^7.1.8",
     "@types/cron": "^2.0.0",
