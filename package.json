@@ -53,7 +53,7 @@
     "@emotion/styled": "^11.11.0",
     "@iobroker/adapter-dev": "^1.2.0",
     "@iobroker/testing": "^4.1.0",
-    "@mui/icons-material": "^5.14.19",
+    "@mui/icons-material": "^5.15.0",
     "@mui/material": "^5.15.0",
     "@mui/styles": "^5.15.0",
     "@tsconfig/node16": "^1.0.3",
