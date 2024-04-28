@@ -39,7 +39,7 @@
     "@iobroker/adapter-core": "^3.1.4",
     "axios": "^1.6.7",
     "cron": "^3.1.6",
-    "dayjs": "^1.11.10",
+    "dayjs": "^1.11.11",
     "react-leaflet": "3.2.5",
     "source-map-support": "^0.5.21",
     "geo-position.ts": "^1.4.1"
