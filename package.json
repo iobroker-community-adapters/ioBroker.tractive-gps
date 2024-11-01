@@ -39,7 +39,7 @@
   "dependencies": {
     "@iobroker/adapter-core": "^3.1.6",
     "axios": "^1.7.7",
-    "cron": "^3.1.7",
+    "cron": "^3.1.8",
     "dayjs": "^1.11.13",
     "source-map-support": "^0.5.21",
     "geo-position.ts": "^1.4.1"
