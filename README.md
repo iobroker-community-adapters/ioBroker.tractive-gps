@@ -83,6 +83,10 @@ Or you can use the tab **files** to upload the file. (see image below)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+
+### **WORK IN PROGRESS**
+* (Scrounger) bug fix, temperature_state (#113)
+
 ### 2.1.0 (2024-11-12)
 * (mcm1957) Adapter requires node 20 now.
 * (mcm1957) Adapter requires js-controller 5.0.19 and admin 6.17.14 now.
