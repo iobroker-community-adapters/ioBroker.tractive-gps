@@ -69,7 +69,7 @@
     "eslint-plugin-prettier": "^5.5.1",
     "eslint-plugin-react": "^7.37.5",
     "mocha": "^10.8.2",
-    "prettier": "^3.5.3",
+    "prettier": "^3.6.2",
     "source-map-support": "^0.5.21",
     "rimraf": "^6.0.1",
     "sinon": "^19.0.2",
