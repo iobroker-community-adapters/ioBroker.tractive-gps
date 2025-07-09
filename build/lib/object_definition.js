@@ -373,6 +373,16 @@ exports.stateAttrb = {
         read: true,
         write: false,
     },
+    temperature_state: {
+        name: 'Temperature',
+        desc: 'Temperature',
+        type: 'number',
+        role: 'value.temperature',
+        def: null,
+        read: true,
+        write: false,
+        unit: '°C'
+    },
     pos_uncertainty: {
         name: 'Position Uncertainty',
         desc: 'Position Uncertainty in meters',
