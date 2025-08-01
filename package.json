@@ -96,21 +96,47 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "npm run prebuild:ts && npm run build:ts && npm run prebuild:react && npm run build:react",
+    "prebuild": "rimraf build admin/build",
+    "build": "build-adapter all",
+    "watch": "build-adapter all --watch",
     "prebuild:ts": "rimraf build",
-    "build:ts": "tsc --project src/tsconfig.build.json",
-    "watch:ts": "tsc --project src/tsconfig.build.json --watch",
-    "prebuild:react": "rimraf admin/static && rimraf src-admin/build && cd src-admin && npm i -f",
-    "build:react": "cd src-admin && npm run build",
+    "build:ts": "build-adapter ts",
+    "watch:ts": "build-adapter ts --watch",
+    "prebuild:react": "rimraf admin/build",
+    "build:react": "build-adapter react",
+    "watch:react": "build-adapter react --watch",
     "test:ts": "mocha --config test/mocharc.custom.json src/**/*.test.ts",
     "test:package": "mocha test/package --exit",
     "test:integration": "mocha test/integration --exit",
     "test": "npm run test:ts && npm run test:package",
-    "check": "tsc --noEmit -p src/tsconfig.json && cd src-admin && npm i -f && cd .. && tsc --noEmit -p src-admin/tsconfig.json",
-    "lint": "cd src && eslint --ext .ts,.tsx ./ && cd ../src-admin && eslint --ext .ts,.tsx ./",
+    "check": "tsc --noEmit && tsc --noEmit -p admin/tsconfig.json",
+    "lint": "eslint --ext .js,.ts,.tsx src/ admin/src/",
+    "lint:fix": "eslint --fix --ext .js,.ts,.tsx src/ admin/src/",
+    "format": "prettier --write \"src/**/*.{js,ts,tsx}\" \"admin/src/**/*.{js,ts,tsx}\"",
+    "format:check": "prettier --check \"src/**/*.{js,ts,tsx}\" \"admin/src/**/*.{js,ts,tsx}\"",
     "translate": "translate-adapter",
     "release": "release-script",
-    "npm": "npm i -f && cd src-admin && npm i -f"
+    "npm": "npm i"
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.ts"
+    ],
+    "exclude": [
+      "src/**/*.test.ts"
+    ],
+    "extension": [
+      ".ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ],
+    "reporter": [
+      "text-summary",
+      "html"
+    ],
+    "sourceMap": true,
+    "instrument": true
   },
   "bugs": {
     "url": "https://github.com/iobroker-community-adapters/ioBroker.tractive-gps/issues"
