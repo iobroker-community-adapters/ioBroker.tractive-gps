@@ -57,6 +57,7 @@ export interface DeviceHwReport {
 	report_id: string;
 	power_saving_zone_id: string | null;
 	hw_status: null | unknown;
+	temperature_state: null | number;
 }
 
 export interface Positions {
