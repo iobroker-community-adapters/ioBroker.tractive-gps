@@ -37,7 +37,7 @@
     "node": ">= 20"
   },
   "dependencies": {
-    "@iobroker/adapter-core": "^3.2.3",
+    "@iobroker/adapter-core": "^3.3.2",
     "axios": "^1.7.9",
     "cron": "^3.2.1",
     "dayjs": "^1.11.18",
