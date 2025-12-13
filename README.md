@@ -110,7 +110,7 @@ Or you can use the tab **files** to upload the file. (see image below)
 ## License
 MIT License
 
-Copyright (c) 2023-2024 ioBroker Community Developers <iobroker-community-adapters@gmx.de>  
+Copyright (c) 2023-2025 ioBroker Community Developers <iobroker-community-adapters@gmx.de>  
 Copyright (c) 2023 xXBJXx <issi.dev.iobroker@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
