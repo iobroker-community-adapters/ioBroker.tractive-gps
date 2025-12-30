@@ -2,19 +2,10 @@
   "name": "iobroker.tractive-gps",
   "version": "2.1.0",
   "description": "This adapter allows you to connect to the Tractive GPS service and retrieve the location of your pets.",
-  "author": {
-    "name": "xXBJXx",
-    "email": "issi.dev.iobroker@gmail.com"
-  },
+  "author": "xXBJXx <issi.dev.iobroker@gmail.com>",
   "contributors": [
-    {
-      "name": "xXBJXx",
-      "email": "issi.dev.iobroker@gmail.com"
-    },
-    {
-      "name": "iobroker-community-adapters",
-      "email": "mcm57@gmx.at"
-    }
+    "xXBJXx <issi.dev.iobroker@gmail.com>",
+    "iobroker-community-adapters <mcm57@gmx.at>"
   ],
   "homepage": "https://github.com/iobroker-community-adapters/ioBroker.tractive-gps",
   "license": "MIT",
