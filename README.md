@@ -83,6 +83,11 @@ Or you can use the tab **files** to upload the file. (see image below)
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+
+### **WORK IN PROGRESS**
+- (copilot) Adapter requires js-controller >= 6.0.11 now
+- (copilot) Adapter requires admin >= 7.6.17 now
+
 ### 2.1.0 (2024-11-12)
 * (mcm1957) Adapter requires node 20 now.
 * (mcm1957) Adapter requires js-controller 5.0.19 and admin 6.17.14 now.
@@ -110,6 +115,8 @@ Or you can use the tab **files** to upload the file. (see image below)
 ## License
 MIT License
 
+
+Copyright (c) 2026 iobroker-community-adapters <iobroker-community-adapters@gmx.de>  
 Copyright (c) 2023-2024 ioBroker Community Developers <iobroker-community-adapters@gmx.de>  
 Copyright (c) 2023 xXBJXx <issi.dev.iobroker@gmail.com>
 
