@@ -113,6 +113,8 @@ Or you can use the tab **files** to upload the file. (see image below)
 * (Scrounger) Bugfix for excessive number of warnings has been added
 * (Scrounger) Distance calculation between ioBroker and tracker has been added
 
+[Older changelogs can be found there](CHANGELOG_OLD.md)
+
 ## License
 MIT License
 
