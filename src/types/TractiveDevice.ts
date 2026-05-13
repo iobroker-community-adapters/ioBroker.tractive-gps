@@ -50,6 +50,7 @@ export interface Tracker {
 export interface DeviceHwReport {
 	time: number;
 	battery_level: number;
+	temperature_state: null | unknown;
 	clip_mounted_state: null | unknown;
 	_id: string;
 	_type: string;

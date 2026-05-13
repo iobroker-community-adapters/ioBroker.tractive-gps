@@ -47,6 +47,15 @@ export const stateAttrb: StateAttr = {
 		read: true,
 		write: false,
 	},
+	temperature_state: {
+		name: 'Temperature State',
+		desc: 'Temperature State of the device',
+		type: 'string',
+		role: 'value',
+		def: null,
+		read: true,
+		write: false,
+	},	
 	clip_mounted_state: {
 		name: 'Clip Mounted State',
 		desc: 'Clip Mounted State of the device',
