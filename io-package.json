@@ -173,8 +173,7 @@
         "uk": "Tractive GPS",
         "zh-cn": "Tractive GPS"
       },
-      "link": "",
-      "fa-icon": "info"
+      "link": ""
     },
     "eraseOnUpload": true,
     "dependencies": [
