@@ -182,10 +182,11 @@ Information for contributors is available in [Developer documentation](docs/DEVE
 ### **WORK IN PROGRESS**
 
 - (xXBJXx) BREAKING: rewritten for Node.js 22, js-controller 7.2.2, and Admin 8.
-- (xXBJXx) Replaced stored authorization data with in-memory authentication, automatic token renewal, request validation, retry handling, and account-wide rate limiting (#16, #115, #213).
+- (xXBJXx) Configured Sentry through ioBroker's adapter integration (#4).
+- (xXBJXx) Replaced stored authorization data with in-memory authentication, automatic token renewal, request validation, retry handling, and account-wide rate limiting (#16, #115, #213, #231).
 - (xXBJXx) Added the `pets.*`, `trackers.*`, and health object structures.
 - (xXBJXx) Fixed pet names and added all available pet profile states with corrected height and weight units.
-- (xXBJXx) Fixed missing state definitions for API fields that were not known in advance (#81, #113).
+- (xXBJXx) Fixed missing state definitions for API fields that were not known in advance (#81, #113, #305; supersedes #114 and #175).
 - (xXBJXx) Added the sanitized `api.data.*` state tree and `info.currentApi` snapshot.
 - (xXBJXx) Added live tracking, LED, and buzzer commands for supported trackers.
 - (xXBJXx) Rebuilt the adapter configuration for Admin 8 and removed the invalid jsonConfig configuration (#176).
@@ -199,8 +200,9 @@ Information for contributors is available in [Developer documentation](docs/DEVE
 - (xXBJXx) Migrated linting to ESLint 9 and `@iobroker/eslint-config` (#45).
 - (xXBJXx) Added Node.js 24 to the CI test matrix (#116).
 - (xXBJXx) Migrated automated npm releases to Trusted Publishing with GitHub OIDC (#169).
-- (xXBJXx) Updated repository metadata and schema configuration, superseding maintenance PRs #214, #215, and #216.
-- (xXBJXx) Updated dependencies, tests, documentation, and privacy safeguards.
+- (xXBJXx) Updated repository metadata and schema configuration, superseding maintenance PRs #214, #215, #216, and #291.
+- (xXBJXx) Updated dependencies and workspace tooling, superseding PRs #91, #140, #147, #203, #211, #220, #256, #281, #298, #301, #303, and #304.
+- (xXBJXx) Updated tests, documentation, and privacy safeguards.
 
 ### 2.1.0 (2024-11-12)
 

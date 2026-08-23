@@ -182,10 +182,11 @@ Informationen für Mitwirkende stehen in der [Entwicklerdokumentation](docs/DEVE
 ### **IN ARBEIT**
 
 - (xXBJXx) BREAKING: vollständig für Node.js 22, js-controller 7.2.2 und Admin 8 neu geschrieben.
-- (xXBJXx) Gespeicherte Autorisierungsdaten durch eine Anmeldung im Arbeitsspeicher, automatische Token-Erneuerung, Antwortprüfung, Wiederholungen und kontoweite Ratenbegrenzung ersetzt (#16, #115, #213).
+- (xXBJXx) Sentry über die ioBroker-Adapterintegration eingerichtet (#4).
+- (xXBJXx) Gespeicherte Autorisierungsdaten durch eine Anmeldung im Arbeitsspeicher, automatische Token-Erneuerung, Antwortprüfung, Wiederholungen und kontoweite Ratenbegrenzung ersetzt (#16, #115, #213, #231).
 - (xXBJXx) Objektstrukturen `pets.*`, `trackers.*` und Zustandsinformationen ergänzt.
 - (xXBJXx) Tiernamen korrigiert sowie alle verfügbaren Tierprofildaten mit richtigen Größen- und Gewichtseinheiten ergänzt.
-- (xXBJXx) Fehlende Datenpunktdefinitionen für zuvor unbekannte API-Felder korrigiert (#81, #113).
+- (xXBJXx) Fehlende Datenpunktdefinitionen für zuvor unbekannte API-Felder korrigiert (#81, #113, #305; ersetzt #114 und #175).
 - (xXBJXx) Bereinigten Datenbaum `api.data.*` und den Schnappschuss `info.currentApi` ergänzt.
 - (xXBJXx) Live-Tracking-, LED- und Signalton-Befehle für unterstützte Tracker ergänzt.
 - (xXBJXx) Adapterkonfiguration für Admin 8 erneuert und die ungültige jsonConfig-Konfiguration entfernt (#176).
@@ -199,8 +200,9 @@ Informationen für Mitwirkende stehen in der [Entwicklerdokumentation](docs/DEVE
 - (xXBJXx) Lint-Prüfung auf ESLint 9 und `@iobroker/eslint-config` umgestellt (#45).
 - (xXBJXx) Node.js 24 zur CI-Testmatrix hinzugefügt (#116).
 - (xXBJXx) Automatische npm-Veröffentlichungen auf Trusted Publishing mit GitHub OIDC umgestellt (#169).
-- (xXBJXx) Repository-Metadaten und Schema-Konfiguration aktualisiert und dadurch die Wartungs-PRs #214, #215 und #216 ersetzt.
-- (xXBJXx) Abhängigkeiten, Tests, Dokumentation und Datenschutzmaßnahmen aktualisiert.
+- (xXBJXx) Repository-Metadaten und Schema-Konfiguration aktualisiert und dadurch die Wartungs-PRs #214, #215, #216 und #291 ersetzt.
+- (xXBJXx) Abhängigkeiten und Workspace-Werkzeuge aktualisiert und dadurch die PRs #91, #140, #147, #203, #211, #220, #256, #281, #298, #301, #303 und #304 ersetzt.
+- (xXBJXx) Tests, Dokumentation und Datenschutzmaßnahmen aktualisiert.
 
 ### 2.1.0 (2024-11-12)
 
