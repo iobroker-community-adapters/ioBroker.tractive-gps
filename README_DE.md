@@ -1,0 +1,239 @@
+![Logo](admin/tractive-gps.png)
+
+# ioBroker.tractive-gps
+
+[![GitHub license](https://img.shields.io/github/license/iobroker-community-adapters/ioBroker.tractive-gps)](https://github.com/iobroker-community-adapters/ioBroker.tractive-gps/blob/main/LICENSE)
+[![Downloads](https://img.shields.io/npm/dm/iobroker.tractive-gps.svg)](https://www.npmjs.com/package/iobroker.tractive-gps)
+![GitHub repo size](https://img.shields.io/github/repo-size/iobroker-community-adapters/ioBroker.tractive-gps)
+[![Translation status](https://weblate.iobroker.net/widgets/adapters/-/tractive-gps/svg-badge.svg)](https://weblate.iobroker.net/engage/adapters/?utm_source=widget)</br>
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/iobroker-community-adapters/ioBroker.tractive-gps)
+![GitHub commits since latest release (by date)](https://img.shields.io/github/commits-since/iobroker-community-adapters/ioBroker.tractive-gps/latest)
+![GitHub last commit](https://img.shields.io/github/last-commit/iobroker-community-adapters/ioBroker.tractive-gps)
+![GitHub issues](https://img.shields.io/github/issues/iobroker-community-adapters/ioBroker.tractive-gps)
+
+**Version:**
+
+[![NPM version](https://img.shields.io/npm/v/iobroker.tractive-gps.svg)](https://www.npmjs.com/package/iobroker.tractive-gps)
+![Current version in stable repository](https://iobroker.live/badges/tractive-gps-stable.svg)
+![Number of Installations](https://iobroker.live/badges/tractive-gps-installed.svg)
+
+## Haftungsausschluss
+
+Alle in diesem Projekt genannten Produkt- und Firmennamen, Logos und Marken gehören ihren jeweiligen Eigentümern. Tractive und die damit verbundenen Namen, Logos und Marken sind Eigentum der Tractive GmbH beziehungsweise ihrer jeweiligen Rechteinhaber. Ihre Verwendung dient ausschließlich der Identifikation und bedeutet weder eine Verbindung mit noch ein Sponsoring oder eine Unterstützung durch die Tractive GmbH oder mit ihr verbundene Unternehmen. Dies ist ein privates, nicht kommerzielles Projekt, das zu Freizeitzwecken entwickelt wird.
+
+## Fehlerberichterstattung mit Sentry
+
+Dieser Adapter verwendet die von ioBroker bereitgestellte Sentry-Integration, um unerwartete Ausnahmen und Programmfehler automatisch an die Entwickler zu melden. Die Fehlerberichterstattung steht seit js-controller Version 3.0 zur Verfügung und hilft dabei, Fehler zu erkennen und zu beheben, die andernfalls möglicherweise unbemerkt blieben.
+
+Details zu den übertragenen Informationen sowie eine Anleitung zum Deaktivieren der Fehlerberichterstattung enthält die [offizielle ioBroker-Sentry-Dokumentation](https://github.com/ioBroker/ioBroker.js-controller#error-reporting-via-iobroker-sentry).
+
+## Beschreibung
+
+Der Adapter verbindet ioBroker mit einem Tractive-Konto und stellt aktuelle Informationen zu Haustieren und GPS-Trackern als ioBroker-Datenpunkte bereit. Dadurch lassen sich Positionen, Batteriestände, Verbindungszustände, Tierinformationen und unterstützte Tracker-Funktionen in Automatisierungen und Visualisierungen verwenden.
+
+Der Adapter verwendet eine inoffizielle Tractive-Service-Schnittstelle. Ein funktionierendes Tractive-Konto und ein aktives Abonnement für die Tracker werden vorausgesetzt. Dieser Community-Adapter ist weder mit Tractive verbunden noch wird er von Tractive unterstützt.
+
+> [English documentation](README.md)
+
+## Voraussetzungen
+
+- Node.js 22.13 oder neuer
+- js-controller 7.2.2 oder neuer
+- Admin 8 oder neuer
+- VIS 2 ab Version 2.12.8 für das mitgelieferte Widget
+- Tractive-Konto mit mindestens einem zugeordneten Tracker
+
+## Funktionen
+
+- Ruft die echten Namen und Profildaten der mit dem Konto verbundenen Tiere ab.
+- Stellt aktuelle GPS-Koordinaten, Höhe, Geschwindigkeit, Positionsgenauigkeit und Aktualisierungszeit bereit.
+- Kann Koordinaten optional in eine lesbare Adresse umwandeln.
+- Stellt Batteriestand, Ladezustand, Verbindungstyp, Online-Status und Energiesparzustand bereit.
+- Liefert Modell, Firmware, Hardwareversion, Fähigkeiten, Geschlecht, Geburtstag, Größe, Gewicht und weitere verfügbare Informationen.
+- Unterstützt Live-Tracking, LED und Signalton, sofern der Tracker die jeweilige Funktion meldet.
+- Speichert einen bereinigten Schnappschuss aller aktuell abgerufenen API-Daten.
+- Enthält eine responsive VIS-2-Karte mit Tierbild, interaktiver Karte, Bereichsanzeige und Tracker-Status.
+- Unterstützt ein von Tractive bereitgestelltes Bild oder ein eigenes, in ioBroker hochgeladenes Bild.
+- Erkennt fehlende oder veraltete Tracker-Daten, ohne vorhandene Objekte automatisch zu löschen.
+
+## Konfiguration
+
+Die Adapterinstanz öffnen und folgende Einstellungen vornehmen:
+
+| Einstellung | Beschreibung |
+| --- | --- |
+| E-Mail | E-Mail-Adresse des Tractive-Kontos. |
+| Passwort | Passwort des Tractive-Kontos. Es wird mit dem ioBroker-Standardverfahren verschlüsselt gespeichert. |
+| Aktualisierungsintervall | Zeit zwischen den regulären Positionsabfragen. Zur Auswahl stehen 2 bis 60 Minuten. |
+| Koordinaten in eine Adresse auflösen | Ruft eine lesbare Adresse zu den aktuellen Koordinaten ab. Deaktivieren, wenn keine Adresse benötigt wird. |
+
+Mit **Verbindung testen** können die eingegebenen Zugangsdaten geprüft werden. Alle Einstellungen werden anschließend mit dem normalen ioBroker-Button **Speichern** am unteren Ende der Konfigurationsseite gespeichert.
+
+Nach dem ersten Speichern bleibt das Passwort unverändert, wenn das Passwortfeld leer gelassen wird. Passwörter im älteren ioBroker-Verschlüsselungsformat werden beim nächsten Speichern automatisch in das aktuelle AES-Format umgewandelt.
+
+### Aktualisierung der Daten
+
+- Positionen werden entsprechend dem eingestellten Aktualisierungsintervall abgerufen.
+- Batterie- und Hardwareinformationen werden alle 15 Minuten aktualisiert.
+- Tierprofile, Bilder und weitere statische Angaben werden beim täglichen Vollabgleich aktualisiert.
+- Nach dem Start des Adapters wird ebenfalls ein Vollabgleich durchgeführt.
+
+Tractive kann Anfragen vorübergehend mit HTTP 429 begrenzen. Der Adapter verteilt seine Anfragen, pausiert bei einer solchen Begrenzung alle weiteren Anfragen und wiederholt sie automatisch. Eine erfolgreiche Aktualisierung ist an `info.lastSuccessfulSync` und `info.dataFresh` erkennbar.
+
+## Objekte und Datenpunkte
+
+Die wichtigsten Objekte sind folgendermaßen gegliedert:
+
+```text
+tractive-gps.0
+├── info
+│   ├── connection
+│   ├── dataFresh
+│   ├── lastSync
+│   ├── lastSuccessfulSync
+│   ├── currentApi
+│   ├── refresh
+│   └── status
+├── pets.<pet-id>.info.*
+├── trackers.<tracker-id>
+│   ├── info.*
+│   ├── status.*
+│   ├── location.*
+│   ├── health.*
+│   └── commands.*
+└── api.data.*
+```
+
+### Adapterinformationen
+
+- `info.connection`: Zeigt an, ob die letzte Synchronisierung erfolgreich war.
+- `info.dataFresh`: Zeigt an, ob aktuelle nutzbare Daten vorhanden sind.
+- `info.lastSync`: Zeitpunkt des letzten Synchronisierungsversuchs.
+- `info.lastSuccessfulSync`: Zeitpunkt der letzten erfolgreichen Synchronisierung.
+- `info.refresh`: Taster zum manuellen Starten eines vollständigen Abgleichs.
+- `info.status`: Aktueller Adapterstatus.
+- `info.currentApi`: Bereinigter JSON-Schnappschuss der aktuell verfügbaren Tractive-Daten.
+
+### Tiere
+
+Die Datenpunkte unter `pets.<pet-id>.info.*` enthalten den Tiernamen und alle verfügbaren Profilinformationen, darunter Tierart, Geschlecht, Geburtstag, Größe, Gewicht, Tracker-Zuordnung und Bildinformationen.
+
+### Tracker
+
+Die Datenpunkte unter `trackers.<tracker-id>.*` enthalten Tracker-Kennung, Batterie, Online- und Verbindungsstatus, Position, Adresse, Zustandsinformationen und unterstützte Befehle.
+
+### Vollständige API-Daten
+
+Die bereinigte API-Antwort wird zusätzlich unter `api.data.*` dargestellt. Passwörter, Zugriffstoken, Autorisierungsdaten, E-Mail-Adressen und Konto-Benutzer-IDs werden entfernt, bevor Daten in ioBroker geschrieben werden.
+
+## Tracker-Befehle
+
+Folgende schreibbare Datenpunkte werden nur angelegt, wenn der gewählte Tracker die jeweilige Funktion unterstützt:
+
+- `trackers.<tracker-id>.commands.liveTracking`
+- `trackers.<tracker-id>.commands.led`
+- `trackers.<tracker-id>.commands.buzzer`
+
+Der gewünschte Datenpunkt wird auf `true` oder `false` gesetzt. Er wird bestätigt, nachdem Tractive den Befehl angenommen hat.
+
+## VIS-2-Widget
+
+Der Adapter enthält das Widget `PetTrackerCard` für VIS 2. Für jedes Tier beziehungsweise jeden Tracker wird ein eigenes Widget eingefügt und in den Widget-Einstellungen mit den gewünschten Datenpunkten verbunden.
+
+Die Karte kann Folgendes anzeigen:
+
+- Tiername, Tierart, Geschlecht, Alter und Gewicht,
+- Tracker-Name und Online-Status,
+- Tierbild,
+- interaktive Leaflet-/OpenStreetMap-Karte,
+- gemeldeter oder manuell eingestellter Positionsradius,
+- Batteriestand und Verbindungstyp,
+- letzte Aktualisierung, Adresse, Energiesparzustand und Positionsgenauigkeit.
+
+Für das Tractive-Bild wird `pets.<pet-id>.info.profilePictureUrl` als API-Bilddatenpunkt ausgewählt. Wird kein Bild geliefert oder kann es nicht geladen werden, lässt sich im Widget-Bereich **Darstellung** ein eigenes Bild auswählen oder hochladen.
+
+Die Karte kann den vollständigen Genauigkeits- oder Bereichskreis automatisch einpassen. Minimaler und maximaler Zoom, Bedienung, Bereichsquelle und ein manueller Radius sind in den Widget-Einstellungen konfigurierbar. Zur Anzeige der Karte werden Kartenkacheln von OpenStreetMap geladen.
+
+## Datenschutz und Sicherheit
+
+- Das Passwort wird mit dem verschlüsselten ioBroker-Konfigurationsverfahren gespeichert.
+- Zugriffstoken bleiben im Arbeitsspeicher und werden automatisch erneuert.
+- Passwörter, Token, E-Mail-Adressen und Konto-Benutzer-IDs werden aus dem gespeicherten API-Schnappschuss entfernt.
+- Genaue Positionen werden lokal in ioBroker-Datenpunkten gespeichert, weil sie für die Funktion des Adapters erforderlich sind.
+- Die Rückwärts-Geokodierung ist optional und sendet bei Aktivierung Koordinaten an den Adressdienst von Tractive.
+- Die Sentry-Fehlerberichterstattung richtet sich nach der globalen ioBroker-Sentry-Konfiguration.
+
+## Fehlerbehebung
+
+- **Verbindungstest schlägt fehl:** E-Mail-Adresse, Passwort, Internetverbindung und ausgehenden HTTPS-Zugriff prüfen.
+- **Keine Tiere oder Tracker sichtbar:** Prüfen, ob die Tracker dem eingestellten Tractive-Konto zugeordnet sind, und anschließend die Adapterinstanz neu starten.
+- **Daten werden nicht aktualisiert:** `info.status`, `info.dataFresh` und `info.lastSuccessfulSync` prüfen.
+- **HTTP 429 wird gemeldet:** Die Instanz weiterlaufen lassen. Der Adapter pausiert seine Anfragen und wiederholt sie automatisch nach Ablauf der Tractive-Begrenzung.
+- **Keine Adresse sichtbar:** Rückwärts-Geokodierung in der Adapterkonfiguration aktivieren.
+- **Ein Befehl fehlt:** Der Tracker meldet die dafür notwendige Fähigkeit nicht.
+- **Tierbild fehlt:** `profilePictureUrl` im Widget zuordnen oder ein eigenes Bild auswählen.
+
+## Entwicklerdokumentation
+
+Informationen für Mitwirkende stehen in der [Entwicklerdokumentation](docs/DEVELOPMENT.md).
+
+## Changelog
+
+### **IN ARBEIT**
+
+- (xXBJXx) BREAKING: vollständig für Node.js 22, js-controller 7.2.2 und Admin 8 neu geschrieben.
+- (xXBJXx) Gespeicherte Autorisierungsdaten durch eine Anmeldung im Arbeitsspeicher, automatische Token-Erneuerung, Antwortprüfung, Wiederholungen und kontoweite Ratenbegrenzung ersetzt (#16, #115, #213).
+- (xXBJXx) Objektstrukturen `pets.*`, `trackers.*` und Zustandsinformationen ergänzt.
+- (xXBJXx) Tiernamen korrigiert sowie alle verfügbaren Tierprofildaten mit richtigen Größen- und Gewichtseinheiten ergänzt.
+- (xXBJXx) Fehlende Datenpunktdefinitionen für zuvor unbekannte API-Felder korrigiert (#81, #113).
+- (xXBJXx) Bereinigten Datenbaum `api.data.*` und den Schnappschuss `info.currentApi` ergänzt.
+- (xXBJXx) Live-Tracking-, LED- und Signalton-Befehle für unterstützte Tracker ergänzt.
+- (xXBJXx) Adapterkonfiguration für Admin 8 erneuert und die ungültige jsonConfig-Konfiguration entfernt (#176).
+- (xXBJXx) VIS-2-Widget `PetTrackerCard` mit Tierbild, Leaflet-/OpenStreetMap-Karte, Bereichsanzeige und Tracker-Informationen ergänzt.
+- (xXBJXx) Unterstützung für Tractive-Profilbilder und eigene ioBroker-Bilder ergänzt.
+- (xXBJXx) Automatische Farben für das helle und dunkle VIS-2-Theme ergänzt.
+- (xXBJXx) Konfigurierbare Kartenbedienung, automatische Bereichsanpassung sowie minimalen und maximalen Zoom ergänzt.
+- (xXBJXx) Passwortspeicherung auf serverseitige ioBroker-AES-Verschlüsselung mit automatischer Migration älterer Passwörter umgestellt.
+- (xXBJXx) Wiederkehrende API-Anfragen reduziert und getrennte Aktualisierungsintervalle für Positionen, Batterieinformationen und statische Profildaten ergänzt.
+- (xXBJXx) Adaptive Behandlung von HTTP 429, globale Anfragepausen, vorsichtige Wiederholungen und zwischengespeicherte Adressauflösung ergänzt.
+- (xXBJXx) Lint-Prüfung auf ESLint 9 und `@iobroker/eslint-config` umgestellt (#45).
+- (xXBJXx) Node.js 24 zur CI-Testmatrix hinzugefügt (#116).
+- (xXBJXx) Repository-Metadaten und Schema-Konfiguration aktualisiert und dadurch die Wartungs-PRs #214, #215 und #216 ersetzt.
+- (xXBJXx) Abhängigkeiten, Tests, Dokumentation und Datenschutzmaßnahmen aktualisiert.
+
+### 2.1.0 (2024-11-12)
+
+- (mcm1957) Node.js 20 wird benötigt.
+- (mcm1957) js-controller 5.0.19 und Admin 6.17.14 werden benötigt.
+- (simatec) Oberfläche an die Regeln für responsives Design angepasst.
+- (mcm1957) Fehler beim jsonConfig-Befehl zur erneuten Autorisierung korrigiert.
+- (mcm1957) Abhängigkeiten aktualisiert.
+
+### 2.0.1 (2024-08-20)
+
+- (bluefox) Verschlüsselung des Zugriffstokens korrigiert.
+
+### 2.0.0 (2024-08-18)
+
+- (bluefox) BREAKING: Zugangsdaten müssen erneut eingegeben werden.
+- (bluefox) Alten Code entfernt und Bedienoberfläche neu geschrieben.
+- (bluefox) Abhängigkeiten aktualisiert.
+
+### 1.2.0 (2024-04-28)
+
+- (mcm1957) Node.js 18 und js-controller 5 oder neuer werden benötigt.
+- (mcm1957) Abhängigkeiten aktualisiert.
+
+### 1.1.0 (2023-11-05)
+
+- (Scrounger) Objekte werden nur noch bei Bedarf erstellt.
+- (Scrounger) Übermäßig viele Warnungen reduziert.
+- (Scrounger) Entfernungsberechnung zwischen ioBroker und Tracker ergänzt.
+
+## Credits
+
+Ursprünglich erstellt von [xXBJXx](https://github.com/xXBJXx) und gepflegt durch die Organisation ioBroker Community Adapters.
+
+## Lizenz
+
+MIT-Lizenz. Siehe [LICENSE](LICENSE).
