@@ -201,7 +201,7 @@ Informationen für Mitwirkende stehen in der [Entwicklerdokumentation](docs/DEVE
 - (xXBJXx) Node.js 24 zur CI-Testmatrix hinzugefügt (#116).
 - (xXBJXx) Automatische npm-Veröffentlichungen auf Trusted Publishing mit GitHub OIDC umgestellt (#169).
 - (xXBJXx) Repository-Metadaten und Schema-Konfiguration aktualisiert und dadurch die Wartungs-PRs #214, #215, #216 und #291 ersetzt.
-- (xXBJXx) Abhängigkeiten und Workspace-Werkzeuge aktualisiert und dadurch die PRs #91, #140, #147, #203, #211, #220, #256, #281, #298, #301, #303 und #304 ersetzt.
+- (xXBJXx) Abhängigkeiten und Workspace-Werkzeuge aktualisiert und dadurch die PRs #91, #140, #147, #203, #211, #220, #256, #281, #298, #301 und #303 ersetzt.
 - (xXBJXx) Tests, Dokumentation und Datenschutzmaßnahmen aktualisiert.
 
 ### 2.1.0 (2024-11-12)

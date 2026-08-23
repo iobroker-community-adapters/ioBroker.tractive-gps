@@ -201,7 +201,7 @@ Information for contributors is available in [Developer documentation](docs/DEVE
 - (xXBJXx) Added Node.js 24 to the CI test matrix (#116).
 - (xXBJXx) Migrated automated npm releases to Trusted Publishing with GitHub OIDC (#169).
 - (xXBJXx) Updated repository metadata and schema configuration, superseding maintenance PRs #214, #215, #216, and #291.
-- (xXBJXx) Updated dependencies and workspace tooling, superseding PRs #91, #140, #147, #203, #211, #220, #256, #281, #298, #301, #303, and #304.
+- (xXBJXx) Updated dependencies and workspace tooling, superseding PRs #91, #140, #147, #203, #211, #220, #256, #281, #298, #301, and #303.
 - (xXBJXx) Updated tests, documentation, and privacy safeguards.
 
 ### 2.1.0 (2024-11-12)
