@@ -8,6 +8,7 @@
 node_modules
 .npm-cache/
 nbproject
+/src-admin/package-lock.json
 
 # npm package files
 iobroker.*.tgz
@@ -22,6 +23,7 @@ admin/src/.DS_Store
 
 # ioBroker dev-server
 .dev-server/
+# Created by the ioBroker release script
 .commitinfo
 
 # Local API samples may contain private account and location data

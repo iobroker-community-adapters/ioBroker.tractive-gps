@@ -198,6 +198,7 @@ Informationen für Mitwirkende stehen in der [Entwicklerdokumentation](docs/DEVE
 - (xXBJXx) Adaptive Behandlung von HTTP 429, globale Anfragepausen, vorsichtige Wiederholungen und zwischengespeicherte Adressauflösung ergänzt.
 - (xXBJXx) Lint-Prüfung auf ESLint 9 und `@iobroker/eslint-config` umgestellt (#45).
 - (xXBJXx) Node.js 24 zur CI-Testmatrix hinzugefügt (#116).
+- (xXBJXx) Automatische npm-Veröffentlichungen auf Trusted Publishing mit GitHub OIDC umgestellt (#169).
 - (xXBJXx) Repository-Metadaten und Schema-Konfiguration aktualisiert und dadurch die Wartungs-PRs #214, #215 und #216 ersetzt.
 - (xXBJXx) Abhängigkeiten, Tests, Dokumentation und Datenschutzmaßnahmen aktualisiert.
 

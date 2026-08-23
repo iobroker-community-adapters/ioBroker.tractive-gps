@@ -198,6 +198,7 @@ Information for contributors is available in [Developer documentation](docs/DEVE
 - (xXBJXx) Added adaptive HTTP 429 handling, global request pauses, conservative retries, and cached address lookup.
 - (xXBJXx) Migrated linting to ESLint 9 and `@iobroker/eslint-config` (#45).
 - (xXBJXx) Added Node.js 24 to the CI test matrix (#116).
+- (xXBJXx) Migrated automated npm releases to Trusted Publishing with GitHub OIDC (#169).
 - (xXBJXx) Updated repository metadata and schema configuration, superseding maintenance PRs #214, #215, and #216.
 - (xXBJXx) Updated dependencies, tests, documentation, and privacy safeguards.
 

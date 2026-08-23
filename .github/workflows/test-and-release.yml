@@ -28,12 +28,13 @@ jobs:
     steps:
       - uses: ioBroker/testing-action-check@v1
         with:
-          node-version: '22.x'
+          node-version: '24.x'
           type-checking: true
           lint: true
 
   # Runs adapter tests on all supported node versions and OSes
   adapter-tests:
+    needs: [check-and-lint]
     if: contains(github.event.head_commit.message, '[skip ci]') == false
 
     runs-on: ${{ matrix.os }}
@@ -51,10 +52,6 @@ jobs:
           # install-command: 'npm install'
           build: true
 
-# TODO: To enable automatic npm releases, create a token on npmjs.org
-# Enter this token as a GitHub secret (with name NPM_TOKEN) in the repository options
-# Then uncomment the following block:
-
   # Deploys the final package to NPM
   deploy:
     needs: [check-and-lint, adapter-tests]
@@ -70,13 +67,13 @@ jobs:
     # Write permissions are required to create GitHub releases
     permissions:
       contents: write
+      id-token: write
 
     steps:
       - uses: ioBroker/testing-action-deploy@v1
         with:
-          node-version: '22.x'
+          node-version: '24.x'
           build: true
-          npm-token: ${{ secrets.NPM_TOKEN }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
           # When using Sentry for error reporting, Sentry can be informed about new releases

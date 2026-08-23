@@ -30,8 +30,7 @@ describe('tracker state model', () => {
         expect(objects.has('trackers.tracker-1.commands.buzzer')).to.equal(true);
         expect(objects.has('trackers.tracker-1.commands.led')).to.equal(false);
         const common = objects.get('trackers.tracker-1.commands.liveTracking')?.common as
-            | ioBroker.StateCommon
-            | undefined;
+            ioBroker.StateCommon | undefined;
         expect(common?.write).to.equal(true);
     });
 
