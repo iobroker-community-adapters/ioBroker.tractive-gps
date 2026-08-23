@@ -1,973 +1,371 @@
-// The adapter-core module gives you access to the core ioBroker functions
-// you need to create an adapter
 import * as utils from '@iobroker/adapter-core';
-// Load your modules here, e.g.:
-// import 'source-map-support/register.js';
-import axios from 'axios';
-import { CronJob } from 'cron';
-import { GeoPosition } from 'geo-position.ts';
-import sourceMapSupport from 'source-map-support';
 
-import { stateAttrb } from './lib/object_definition';
-import { TractiveDevice } from './types/TractiveDevice';
+import { TractiveAPI } from './lib/tractive-api';
 
-sourceMapSupport.install();
-// Global variables here
+const MINIMUM_INTERVAL_SECONDS = 120;
+const MAXIMUM_INTERVAL_SECONDS = 3600;
+const FULL_SYNC_INTERVAL_MS = 24 * 60 * 60 * 1000;
 
 class TractiveGPS extends utils.Adapter {
-	private requestTimer?: ioBroker.Timeout | null;
-	private interval: number;
-	private readonly client_id: string;
-	// private expires_at: number;
+    private tractiveApi: TractiveAPI | null = null;
+    private pollTimer: NodeJS.Timeout | null = null;
+    private syncPromise: Promise<void> | null = null;
+    private fullSyncPending = false;
+    private lastFullSync = 0;
+    private stopped = false;
+    private readonly commandQueues = new Map<string, Promise<void>>();
 
-	private readonly allData: TractiveDevice;
+    public constructor(options: Partial<utils.AdapterOptions> = {}) {
+        super({
+            ...options,
+            name: 'tractive-gps',
+        });
+        this.on('ready', this.onReady.bind(this));
+        this.on('stateChange', this.onStateChange.bind(this));
+        this.on('message', this.onMessage.bind(this));
+        this.on('unload', this.onUnload.bind(this));
+    }
 
-	public constructor(options: Partial<utils.AdapterOptions> = {}) {
-		super({
-			...options,
-			name: 'tractive-gps',
-		});
-		this.on('ready', this.onReady.bind(this));
-		this.on('stateChange', this.onStateChange.bind(this));
-		this.on('message', this.onMessage.bind(this));
-		this.on('unload', this.onUnload.bind(this));
-		this.requestTimer = null;
-		this.interval = 60000;
-		this.client_id = '5f9be055d8912eb21a4cd7ba';
-		this.allData = {
-			userInfo: {
-				user_id: '',
-				expires_at: 0,
-			},
-			trackers: [],
-			tracker: [],
-			device_hw_report: [],
-			positions: [],
-			device_pos_report: [],
-		};
-	}
+    private async onReady(): Promise<void> {
+        this.stopped = false;
+        await this.ensureLifecycleObjects();
+        await this.setState('info.connection', false, true);
+        await this.setState('info.dataFresh', false, true);
+        await this.setState('info.status', 'starting', true);
 
-	/**
-	 * Is called when databases are connected and adapter received configuration.
-	 */
-	private async onReady(): Promise<void> {
-		// Initialize your adapter here
-		this.writeLog(`[Adapter v.${this.version} onReady] Starting adapter`, 'debug');
-		// convert the interval to milliseconds and add a random value between 0 and 100
-		this.interval = this.config.interval * 1000 + Math.floor(Math.random() * 100);
-		// Reset the connection indicator during startup
-		await this.setStateAsync('info.connection', false, true);
-		// check if the access data are available
-		if (this.config.email && this.config.password) {
-			// check if user_id and expires_at is greater than 0, and access_token is present
-			if (this.config.user_id && this.config.expires_at > 0 && this.config.access_token) {
-				// check if expires_at is smaller than now
-				// convert Date.now() to seconds
-				const now = Math.round(Date.now() / 1000);
-				if (this.config.expires_at < now) {
-					// get new access token when expires_at is smaller than now
-					this.writeLog(`[Adapter v.${this.version} onReady] access_token expired`, 'debug');
-					await this.getAccessToken();
-					await this.setStateAsync('info.connection', true, true);
-				} else {
-					this.writeLog(`[Adapter v.${this.version} onReady] access_token valid`, 'debug');
-					this.allData.userInfo.user_id = this.config.user_id;
-					this.allData.userInfo.expires_at = this.config.expires_at;
-					await this.createCronjob();
-					// start the requestData timer
-					this.writeLog(`[Adapter v.${this.version} onReady] start requestData`, 'debug');
-					await this.requestData();
-					await this.setStateAsync('info.connection', true, true);
-				}
-			} else {
-				// get new access token
-				this.writeLog(
-					`[Adapter v.${this.version} onReady] access_token not available call new access_token`,
-					'debug',
-				);
-				await this.getAccessToken();
-				await this.setStateAsync('info.connection', true, true);
-			}
-		} else {
-			this.writeLog(`[Adapter v.${this.version} onReady] email and password are required`, 'error');
-		}
-	}
+        if (!this.config.email || !this.config.password) {
+            await this.setState('info.status', 'missing_credentials', true);
+            this.log.error('Missing credentials. Please enter your Tractive credentials in the adapter settings.');
+            return;
+        }
 
-	// create a cronjob to get new access_token wenn expires_at is reached
-	private async createCronjob(): Promise<void> {
-		// create the cronjob
-		this.writeLog(`[Adapter v.${this.version} createCronjob] create cronjob`, 'debug');
-		const expires_at = this.config.expires_at;
-		console.log('expires_at: ', new Date(expires_at * 1000));
-		const cronjob = new CronJob(
-			new Date(expires_at * 1000),
-			async () => {
-				this.writeLog(`[Adapter v.${this.version} createCronjob] get new access_token`, 'debug');
-				console.log(`[Adapter v.${this.version} createCronjob] get new access_token`);
-				await this.getAccessToken();
-			},
-			null,
-			true,
-			'Europe/Berlin',
-		);
-		console.log('cronjob: ', cronjob);
-	}
+        this.tractiveApi = new TractiveAPI(
+            this.log,
+            this.getObjectAsync.bind(this),
+            this.setState.bind(this),
+            this.extendObjectAsync.bind(this),
+            {
+                reverseGeocoding: Boolean(this.config.reverseGeocoding),
+                getDevicesAsync: this.getDevicesAsync.bind(this),
+            },
+        );
 
-	private async requestData(): Promise<void> {
-		// Request data from all Key Lights every 5 minutes
-		if (this.requestTimer) this.clearTimeout(this.requestTimer);
-		await this.getTrackers();
-		await this.getTrackerInfo();
-		await this.getTrackerDeviceHwReport();
-		await this.getTrackerLocation();
-		// await this.getTrackerPosition('1674226858', '1674313258');
-		await this.createStates();
-		await this.writeAllData();
-		console.log('all data', this.allData);
-		this.requestTimer = this.setTimeout(() => {
-			this.writeLog(`[Adapter v.${this.version} requestData] next request in ${this.interval} ms`, 'debug');
-			this.requestData();
-		}, this.interval);
-	}
+        if (!(await this.tractiveApi.initialize(this.config.email, this.config.password))) {
+            await this.setState('info.status', 'authentication_failed', true);
+            this.log.error('Login to Tractive failed. Please check your credentials.');
+            return;
+        }
 
-	// write all data in the state
-	private async writeAllData(): Promise<void> {
-		for (const device of this.allData.trackers) {
-			for (const [key, value] of Object.entries(device)) {
-				await this.setStateAsync(`${device._id}.trackers.${key}`, { val: value, ack: true });
-			}
-		}
-		for (const device of this.allData.tracker) {
-			for (const [key, value] of Object.entries(device)) {
-				// if key is capabilities and supported_geofence_types then write the data with JSON.stringify
-				if (typeof value === 'object' && value !== null) {
-					await this.setStateAsync(`${device._id}.tracker.${key}`, {
-						val: JSON.stringify(value),
-						ack: true,
-					});
-				} else {
-					await this.setStateAsync(`${device._id}.tracker.${key}`, { val: value, ack: true });
-				}
-			}
-		}
-		for (const device of this.allData.device_hw_report) {
-			for (const [key, value] of Object.entries(device)) {
-				if (typeof value === 'object' && value !== null) {
-					await this.setStateAsync(`${device._id}.device_hw_report.${key}`, {
-						val: JSON.stringify(value),
-						ack: true,
-					});
-				} else {
-					await this.setStateAsync(`${device._id}.device_hw_report.${key}`, { val: value, ack: true });
-				}
-			}
-		}
-		for (const device of this.allData.device_pos_report) {
-			for (const [key, value] of Object.entries(device)) {
-				// if key is latlong then write the data with JSON.stringify and split in latitude,longitude
-				if (key === 'latlong') {
-					await this.setStateAsync(`${device._id}.device_pos_report.${key}`, {
-						val: JSON.stringify(value),
-						ack: true,
-					});
-					await this.setStateAsync(`${device._id}.device_pos_report.latitude`, {
-						val: value[0],
-						ack: true,
-					});
-					await this.setStateAsync(`${device._id}.device_pos_report.longitude`, {
-						val: value[1],
-						ack: true,
-					});
+        this.subscribeStates('info.refresh');
+        this.subscribeStates('trackers.*.commands.*');
+        await this.queueSync(true);
+        this.scheduleNextSync();
+    }
 
-					const sysConfig = await this.getForeignObjectAsync('system.config');
+    private async ensureLifecycleObjects(): Promise<void> {
+        await this.extendObjectAsync('info', {
+            type: 'channel',
+            common: {
+                name: 'Information',
+            },
+            native: {},
+        });
+        await this.extendObjectAsync('info.refresh', {
+            type: 'state',
+            common: {
+                name: 'Refresh data',
+                type: 'boolean',
+                role: 'button',
+                read: false,
+                write: true,
+                def: false,
+            },
+            native: {},
+        });
+        await this.extendObjectAsync('info.lastSync', {
+            type: 'state',
+            common: {
+                name: 'Last synchronization attempt',
+                type: 'number',
+                role: 'date',
+                read: true,
+                write: false,
+                def: 0,
+            },
+            native: {},
+        });
+        await this.extendObjectAsync('info.lastSuccessfulSync', {
+            type: 'state',
+            common: {
+                name: 'Last successful synchronization',
+                type: 'number',
+                role: 'date',
+                read: true,
+                write: false,
+                def: 0,
+            },
+            native: {},
+        });
+        await this.extendObjectAsync('info.dataFresh', {
+            type: 'state',
+            common: {
+                name: 'Data is fresh',
+                type: 'boolean',
+                role: 'indicator',
+                read: true,
+                write: false,
+                def: false,
+            },
+            native: {},
+        });
+        await this.extendObjectAsync('info.status', {
+            type: 'state',
+            common: {
+                name: 'Adapter status',
+                type: 'string',
+                role: 'text',
+                read: true,
+                write: false,
+                def: 'starting',
+                states: {
+                    starting: 'Starting',
+                    ok: 'OK',
+                    synchronization_failed: 'Synchronization failed',
+                    authentication_failed: 'Authentication failed',
+                    missing_credentials: 'Missing credentials',
+                    stopped: 'Stopped',
+                },
+            },
+            native: {},
+        });
+    }
 
-					if (sysConfig && sysConfig.common && sysConfig.common.longitude && sysConfig.common.latitude) {
-						const sysPoint = new GeoPosition(sysConfig.common.latitude, sysConfig.common.longitude);
-						const petPoint = new GeoPosition(value[0], value[1]);
+    private getPollIntervalMs(): number {
+        const configured = Number(this.config.interval) || 300;
+        const seconds = Math.min(MAXIMUM_INTERVAL_SECONDS, Math.max(MINIMUM_INTERVAL_SECONDS, configured));
+        if (seconds !== configured) {
+            this.log.warn(
+                `Configured polling interval is outside the supported range; using ${seconds} seconds instead`,
+            );
+        }
+        return seconds * 1000;
+    }
 
-						await this.setStateAsync(`${device._id}.device_pos_report.distance`, {
-							val: Number(sysPoint.Distance(petPoint).toFixed(0)),
-							ack: true,
-						});
-					} else {
-						this.writeLog('No gps coordinates of system found!', 'warn');
-					}
-				} else {
-					if (typeof value === 'object' && value !== null) {
-						await this.setStateAsync(`${device._id}.device_pos_report.${key}`, {
-							val: JSON.stringify(value),
-							ack: true,
-						});
-					} else {
-						await this.setStateAsync(`${device._id}.device_pos_report.${key}`, { val: value, ack: true });
-					}
-				}
-			}
+    private scheduleNextSync(): void {
+        if (this.stopped) {
+            return;
+        }
+        if (this.pollTimer) {
+            clearTimeout(this.pollTimer);
+        }
+        this.pollTimer = setTimeout(() => {
+            this.pollTimer = null;
+            const fullSyncDue = Date.now() - this.lastFullSync >= FULL_SYNC_INTERVAL_MS;
+            void this.queueSync(fullSyncDue).finally(() => this.scheduleNextSync());
+        }, this.getPollIntervalMs());
+    }
 
-			if (this.allData.positions.length !== 0) {
-				for (const positionsDevice of this.allData.positions) {
-					for (const [key, value] of Object.entries(positionsDevice)) {
-						await this.setStateAsync(`${device._id}.positions.${key}`, {
-							val: JSON.stringify(value),
-							ack: true,
-						});
-					}
-				}
-			} else {
-				// check if the object positions already exists
-				const obj = await this.getObjectAsync(`${device._id}.positions.0`);
-				if (obj) {
-					await this.setStateAsync(`${device._id}.positions.0`, {
-						val: JSON.stringify([]),
-						ack: true,
-					});
-				}
-			}
-		}
-		await this.setStateAsync('json', JSON.stringify(this.allData), true);
-	}
+    private queueSync(fullSync: boolean): Promise<void> {
+        this.fullSyncPending ||= fullSync;
+        if (!this.syncPromise) {
+            this.syncPromise = this.runPendingSyncs().finally(() => {
+                this.syncPromise = null;
+            });
+        }
+        return this.syncPromise;
+    }
 
-	/**
-	 * create the all states for the adapter
-	 */
-	private async createStates(): Promise<void> {
-		// create the device channel for all devices in the this.allData.trackers array
-		for (const device of this.allData.trackers) {
-			// console.log('device', device);
-			// create the device channel
+    private async runPendingSyncs(): Promise<void> {
+        while (!this.stopped && this.tractiveApi) {
+            const fullSync = this.fullSyncPending;
+            this.fullSyncPending = false;
+            await this.performSync(fullSync);
+            if (!this.fullSyncPending) {
+                return;
+            }
+        }
+    }
 
-			if (this.config.nameArray.length > 0) {
-				console.log('this.config.nameArray', this.config.nameArray);
-				for (const object of this.config.nameArray) {
-					if (object.id === device._id) {
-						await this.setObjectNotExistsAsync(device._id, {
-							type: 'device',
-							common: {
-								name: object.name,
-							},
-							native: {},
-						});
+    private async performSync(fullSync: boolean): Promise<void> {
+        if (!this.tractiveApi || this.stopped) {
+            return;
+        }
 
-						// create the channel for the device
-						await this.setObjectNotExistsAsync(`${device._id}.trackers`, {
-							type: 'channel',
-							common: {
-								name: 'trackers',
-							},
-							native: {},
-						});
+        await this.setState('info.lastSync', Date.now(), true);
+        try {
+            const result = fullSync
+                ? await this.tractiveApi.updateAllData()
+                : await this.tractiveApi.updateTrackersOnly();
 
-						await this.setObjectNotExistsAsync(`${device._id}.trackers.name`, {
-							type: 'state',
-							common: {
-								name: 'name',
-								desc: 'name of the tracker',
-								type: 'string',
-								role: 'text',
-								read: true,
-								write: false,
-							},
-							native: {},
-						});
+            if (!result.success) {
+                await this.setState('info.connection', false, true);
+                await this.setState('info.dataFresh', false, true);
+                await this.setState('info.status', 'synchronization_failed', true);
+                this.log.warn('Tractive synchronization failed; the adapter will retry automatically');
+                return;
+            }
 
-						await this.setStateAsync(`${device._id}.trackers.name`, {
-							val: object.name,
-							ack: true,
-						});
-					}
-				}
-			} else {
-				await this.setObjectNotExistsAsync(device._id, {
-					type: 'device',
-					common: {
-						name: device._id,
-					},
-					native: {},
-				});
+            const now = Date.now();
+            if (fullSync) {
+                this.lastFullSync = now;
+            }
+            await this.setState('info.connection', true, true);
+            await this.setState('info.dataFresh', true, true);
+            await this.setState('info.lastSuccessfulSync', now, true);
+            await this.setState('info.status', 'ok', true);
+        } catch {
+            await this.setState('info.connection', false, true);
+            await this.setState('info.dataFresh', false, true);
+            await this.setState('info.status', 'synchronization_failed', true);
+            this.log.error('Unexpected error during Tractive synchronization');
+        }
+    }
 
-				// create the channel for the device
-				await this.setObjectNotExistsAsync(`${device._id}.trackers`, {
-					type: 'channel',
-					common: {
-						name: 'trackers',
-					},
-					native: {},
-				});
-			}
+    private async onStateChange(id: string, state: ioBroker.State | null | undefined): Promise<void> {
+        if (!state || state.ack) {
+            return;
+        }
 
-			// create the states
-			for (const [key] of Object.entries(device)) {
-				const common: ioBroker.StateCommon = stateAttrb[key as keyof typeof stateAttrb];
-				// console.log('common', device);
-				if (common) {
-					await this.setObjectNotExistsAsync(`${device._id}.trackers.${key}`, {
-						type: 'state',
-						common: common,
-						native: {},
-					});
-				} else {
-					this.writeLog(
-						`[Adapter v.${this.version} createStates] no state attribute found for ${key}`,
-						'warn',
-					);
-				}
-			}
+        if (id === `${this.namespace}.info.refresh`) {
+            await this.setState('info.refresh', false, true);
+            await this.queueSync(true);
+            return;
+        }
 
-			// end of the for loop this.allData.trackers
-		}
-		// create the device channel for all devices in the this.allData.tracker array
-		for (const device of this.allData.tracker) {
-			// console.log('device', device);
-			// create the channel for the device
-			await this.setObjectNotExistsAsync(`${device._id}.tracker`, {
-				type: 'channel',
-				common: {
-					name: 'tracker',
-				},
-				native: {},
-			});
-			// create the states
-			for (const [key] of Object.entries(device)) {
-				const common: ioBroker.StateCommon = stateAttrb[key as keyof typeof stateAttrb];
-				// console.log('common', device);
-				if (common) {
-					await this.setObjectNotExistsAsync(`${device._id}.tracker.${key}`, {
-						type: 'state',
-						common: common,
-						native: {},
-					});
-				} else {
-					this.writeLog(
-						`[Adapter v.${this.version} createStates] no state attribute found for ${key} in tracker`,
-						'warn',
-					);
-				}
-			}
+        const prefix = `${this.namespace}.trackers.`;
+        if (!id.startsWith(prefix) || typeof state.val !== 'boolean') {
+            return;
+        }
+        const path = id.slice(prefix.length).split('.');
+        if (path.length !== 3 || path[1] !== 'commands') {
+            return;
+        }
 
-			// end of the for loop this.allData.tracker
-		}
-		// create the device channel for all devices in the this.allData.device_hw_report array
-		for (const device of this.allData.device_hw_report) {
-			// console.log('device', device);
-			// create the channel for the device
-			await this.setObjectNotExistsAsync(`${device._id}.device_hw_report`, {
-				type: 'channel',
-				common: {
-					name: 'device hardware report',
-				},
-				native: {},
-			});
-			// create the states
-			for (const [key] of Object.entries(device)) {
-				const common: ioBroker.StateCommon = stateAttrb[key as keyof typeof stateAttrb];
-				// console.log('common', device);
-				if (common) {
-					await this.setObjectNotExistsAsync(`${device._id}.device_hw_report.${key}`, {
-						type: 'state',
-						common: common,
-						native: {},
-					});
-				} else {
-					this.writeLog(
-						`[Adapter v.${this.version} createStates] no state attribute found for ${key} in device_hw_report`,
-						'warn',
-					);
-				}
-			}
+        const [trackerId, , command] = path;
+        if (!trackerId || !['liveTracking', 'led', 'buzzer'].includes(command)) {
+            return;
+        }
+        await this.queueTrackerCommand(trackerId, command, state.val, id);
+    }
 
-			// end of the for loop this.allData.device_hw_report
-		}
-		// create the device channel for all devices in the this.allData.device_pos_report array
-		for (const device of this.allData.device_pos_report) {
-			// console.log('device', device);
-			// create the channel for the device
-			await this.setObjectNotExistsAsync(`${device._id}.device_pos_report`, {
-				type: 'channel',
-				common: {
-					name: 'device position report',
-				},
-				native: {},
-			});
-			// create the states
-			for (const [key] of Object.entries(device)) {
-				const common: ioBroker.StateCommon = stateAttrb[key as keyof typeof stateAttrb];
-				// console.log('common', device);
-				if (common) {
-					if (key === 'latlong') {
-						await this.setObjectNotExistsAsync(`${device._id}.device_pos_report.${key}`, {
-							type: 'state',
-							common: common,
-							native: {},
-						});
-						await this.setObjectNotExistsAsync(`${device._id}.device_pos_report.latitude`, {
-							type: 'state',
-							common: stateAttrb['latitude'],
-							native: {},
-						});
-						await this.setObjectNotExistsAsync(`${device._id}.device_pos_report.longitude`, {
-							type: 'state',
-							common: stateAttrb['longitude'],
-							native: {},
-						});
-						await this.setObjectNotExistsAsync(`${device._id}.device_pos_report.distance`, {
-							type: 'state',
-							common: stateAttrb['distance'],
-							native: {},
-						});
-					} else {
-						await this.setObjectNotExistsAsync(`${device._id}.device_pos_report.${key}`, {
-							type: 'state',
-							common: common,
-							native: {},
-						});
-					}
-				} else {
-					this.writeLog(
-						`[Adapter v.${this.version} createStates] no state attribute found for ${key} in device_pos_report`,
-						'warn',
-					);
-				}
-			}
+    private async onMessage(message: ioBroker.Message): Promise<void> {
+        if (!message.callback) {
+            return;
+        }
+        if (!/^system\.adapter\.admin\.\d+$/.test(message.from)) {
+            this.sendTo(message.from, message.command, { success: false, error: 'Not authorized' }, message.callback);
+            return;
+        }
+        if (message.command !== 'testConnection') {
+            return;
+        }
+        const payload =
+            message.message && typeof message.message === 'object'
+                ? (message.message as { email?: unknown; password?: unknown })
+                : {};
+        const suppliedEmail = typeof payload.email === 'string' && payload.email ? payload.email : undefined;
+        const suppliedPassword =
+            typeof payload.password === 'string' && payload.password ? payload.password : undefined;
+        const credentials =
+            suppliedEmail && suppliedPassword
+                ? { email: suppliedEmail, password: suppliedPassword }
+                : this.config.email && this.config.password
+                  ? { email: this.config.email, password: this.config.password }
+                  : null;
 
-			// create the device channel for all devices in the this.allData.positions array
-			for (const positionsDevice of this.allData.positions) {
-				// console.log('device', device);
-				// create the channel for the device
-				await this.setObjectNotExistsAsync(`${device._id}.positions`, {
-					type: 'channel',
-					common: {
-						name: 'positions',
-					},
-					native: {},
-				});
-				// // create the states
-				for (const [key] of Object.entries(positionsDevice)) {
-					const common: ioBroker.StateCommon = stateAttrb['positions'];
-					// console.log('common', device);
-					if (common) {
-						await this.setObjectNotExistsAsync(`${device._id}.positions.${key}`, {
-							type: 'state',
-							common: common,
-							native: {},
-						});
-					} else {
-						this.writeLog(
-							`[Adapter v.${this.version} createStates] no state attribute found for ${key} in positions`,
-							'warn',
-						);
-					}
-				}
+        if (!credentials) {
+            this.sendTo(
+                message.from,
+                message.command,
+                { success: false, error: 'Missing credentials' },
+                message.callback,
+            );
+            return;
+        }
 
-				// end of the for loop this.allData.device_pos_report
-			}
+        const testApi = new TractiveAPI(
+            this.log,
+            this.getObjectAsync.bind(this),
+            this.setState.bind(this),
+            this.extendObjectAsync.bind(this),
+            { requestIntervalMs: 0 },
+        );
+        try {
+            const success = await testApi.initialize(credentials.email, credentials.password);
+            this.sendTo(
+                message.from,
+                message.command,
+                success ? { success: true } : { success: false, error: 'Authentication failed' },
+                message.callback,
+            );
+        } finally {
+            testApi.dispose();
+        }
+    }
 
-			// end of the for loop this.allData.positions
-		}
-		await this.setObjectNotExistsAsync(`json`, {
-			type: 'state',
-			common: {
-				name: 'json',
-				desc: 'all data from the api as json',
-				type: 'string',
-				role: 'json',
-				read: true,
-				write: false,
-			},
-			native: {},
-		});
-	}
+    private async queueTrackerCommand(
+        trackerId: string,
+        command: string,
+        enabled: boolean,
+        stateId: string,
+    ): Promise<void> {
+        const previous = this.commandQueues.get(trackerId) ?? Promise.resolve();
+        const current = previous
+            .catch(() => undefined)
+            .then(() => this.executeTrackerCommand(trackerId, command, enabled, stateId));
+        this.commandQueues.set(trackerId, current);
+        try {
+            await current;
+        } finally {
+            if (this.commandQueues.get(trackerId) === current) {
+                this.commandQueues.delete(trackerId);
+            }
+        }
+    }
 
-	/**
-	 * @description a function for log output
-	 */
-	private writeLog(logText: string, logType: 'silly' | 'info' | 'debug' | 'warn' | 'error'): void {
-		if (logType === 'silly') this.log.silly(logText);
-		if (logType === 'info') this.log.info(logText);
-		if (logType === 'debug') this.log.debug(logText);
-		if (logType === 'warn') this.log.warn(logText);
-		if (logType === 'error') this.log.error(logText);
-	}
+    private async executeTrackerCommand(
+        trackerId: string,
+        command: string,
+        enabled: boolean,
+        stateId: string,
+    ): Promise<void> {
+        if (!this.tractiveApi || this.stopped) {
+            return;
+        }
+        const result =
+            command === 'liveTracking'
+                ? await this.tractiveApi.setLiveTracking(trackerId, enabled)
+                : command === 'led'
+                  ? await this.tractiveApi.setLed(trackerId, enabled)
+                  : await this.tractiveApi.setBuzzer(trackerId, enabled);
 
-	/**
-	 * Is called if a subscribed state changes
-	 */
-	private async onStateChange(id: string, state: ioBroker.State | null | undefined): Promise<void> {
-		if (state) {
-			if (state.from === 'system.adapter.' + this.namespace) {
-				// ignore the state change from the adapter itself
-				return;
-			} else {
-				this.writeLog(
-					`[Adapter v.${this.version} onStateChange] state ${id} changed: ${state.val} (ack = ${state.ack})`,
-					'debug',
-				);
-			}
-		} else {
-			return;
-		}
-	}
+        if (result.success) {
+            await this.setState(stateId, enabled, true);
+        } else {
+            this.log.warn(`Tracker command ${command} failed`);
+        }
+    }
 
-	/**
-	 * call all trackers from the user
-	 * https://graph.tractive.com/3/user/${this.user_id}/trackers
-	 */
-	private async getTrackers(): Promise<void> {
-		// Request data from api
-		const url = `https://graph.tractive.com/3/user/${this.allData.userInfo.user_id}/trackers`;
-		const options = {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json',
-				'x-tractive-client': this.client_id,
-				'x-tractive-user': this.allData.userInfo.user_id,
-				Authorization: `Bearer ${this.config.access_token}`,
-			},
-		};
-		try {
-			const response = await axios(url, options);
-			if (response.status === 200) {
-				this.writeLog(
-					`[Adapter v.${this.version} Axios V: ${axios.VERSION} getTrackers] response: ${JSON.stringify(
-						response.data,
-					)}`,
-					'debug',
-				);
-				if (response.data) {
-					this.allData.trackers = response.data;
-					this.writeLog(
-						`[Adapter v.${this.version} Axios V: ${axios.VERSION}  getTrackers] trackers: ${JSON.stringify(
-							this.allData.trackers,
-						)}`,
-						'debug',
-					);
-					this.writeLog(
-						`[Adapter v.${this.version} Axios V: ${axios.VERSION}  getTrackers] trackers: ${JSON.stringify(
-							this.allData.trackers,
-						)}`,
-						'debug',
-					);
-				} else {
-					this.writeLog(`[Adapter v.${this.version} Axios V: ${axios.VERSION}  getTrackers] no data`, 'warn');
-				}
-			} else {
-				this.writeLog(
-					`[Adapter v.${this.version} Axios V: ${axios.VERSION}  getTrackers] error: ${response.status}`,
-					'error',
-				);
-				if (response.data) {
-					this.writeLog(
-						`[Adapter v.${this.version} Axios V: ${axios.VERSION}  getTrackers] response: ${JSON.stringify(
-							response.data,
-						)}`,
-						'error',
-					);
-				}
-			}
-		} catch (error) {
-			this.writeLog(
-				`[Adapter v.${this.version} Axios V: ${axios.VERSION}  getTrackers] error: ${error}`,
-				'error',
-			);
-		}
-	}
-
-	/**
-	 * call all tracker information
-	 * https://graph.tractive.com/3/tracker/${tracker._id}
-	 */
-	private async getTrackerInfo(): Promise<void> {
-		this.allData.tracker = [];
-		// gehe alle tracker durch und hole die informationen
-		for (const tracker of this.allData.trackers) {
-			const url = `https://graph.tractive.com/3/tracker/${tracker._id}`;
-			const options = {
-				method: 'GET',
-				headers: {
-					'Content-Type': 'application/json',
-					'x-tractive-client': this.client_id,
-					'x-tractive-user': this.allData.userInfo.user_id,
-					Authorization: `Bearer ${this.config.access_token}`,
-				},
-			};
-			try {
-				const response = await axios(url, options);
-				if (response.status === 200) {
-					this.writeLog(
-						`[Adapter v.${this.version} Axios V: ${
-							axios.VERSION
-						}  getTrackerInfo] response: ${JSON.stringify(response.data)}`,
-						'debug',
-					);
-					if (response.data) {
-						this.allData.tracker.push(response.data);
-						// this.tracker.push(response.data);
-						this.writeLog(
-							`[Adapter v.${this.version} Axios V: ${
-								axios.VERSION
-							}  getTrackerInfo] tracker: ${JSON.stringify(this.allData.tracker)}`,
-							'debug',
-						);
-						// console.log('tracker Info', this.allData.tracker);
-					} else {
-						this.writeLog(
-							`[Adapter v.${this.version} Axios V: ${axios.VERSION}  getTrackerInfo] no data`,
-							'warn',
-						);
-					}
-				}
-			} catch (error) {
-				this.writeLog(
-					`[Adapter v.${this.version} Axios V: ${axios.VERSION}  getTrackerInfo] error: ${error}`,
-					'error',
-				);
-			}
-		}
-	}
-
-	/**
-	 * call all tracker device_hw_report
-	 * https://graph.tractive.com/3/device_hw_report/${tracker._id}
-	 */
-	private async getTrackerDeviceHwReport(): Promise<void> {
-		this.allData.device_hw_report = [];
-		// gehe alle tracker durch und hole die informationen
-		for (const tracker of this.allData.trackers) {
-			const url = `https://graph.tractive.com/3/device_hw_report/${tracker._id}`;
-			const options = {
-				method: 'GET',
-				headers: {
-					'Content-Type': 'application/json',
-					'x-tractive-client': this.client_id,
-					'x-tractive-user': this.allData.userInfo.user_id,
-					Authorization: `Bearer ${this.config.access_token}`,
-				},
-			};
-			try {
-				const response = await axios(url, options);
-				if (response.status === 200) {
-					this.writeLog(
-						`[Adapter v.${this.version} Axios V: ${
-							axios.VERSION
-						}  getTrackerDeviceHwReport] response: ${JSON.stringify(response.data)}`,
-						'debug',
-					);
-					if (response.data) {
-						this.allData.device_hw_report.push(response.data);
-						this.writeLog(
-							`[Adapter v.${this.version} Axios V: ${
-								axios.VERSION
-							}  getTrackerDeviceHwReport] trackerDeviceHwReport: ${JSON.stringify(
-								this.allData.device_hw_report,
-							)}`,
-							'debug',
-						);
-						// console.log('tracker DeviceHwReport', this.allData.device_hw_report);
-					} else {
-						this.writeLog(
-							`[Adapter v.${this.version} Axios V: ${axios.VERSION}  getTrackerDeviceHwReport] no data`,
-							'warn',
-						);
-					}
-				}
-			} catch (error) {
-				if (error.response && error.response.data.code === 4002) {
-					this.writeLog(
-						`[Adapter v.${this.version} Axios V: ${
-							axios.VERSION
-						}  getTrackerDeviceHwReport] warn: ${JSON.stringify(
-							error.response.data.message,
-						)} - the tracker does not yet contain any data`,
-						'warn',
-					);
-				} else {
-					this.writeLog(
-						`[Adapter v.${this.version} Axios V: ${axios.VERSION}  getTrackerDeviceHwReport] error: ${error}`,
-						'error',
-					);
-				}
-			}
-		}
-	}
-
-	/**
-	 * call all tracker location
-	 * https://graph.tractive.com/3/device_pos_report/${tracker._id}
-	 */
-	private async getTrackerLocation(): Promise<void> {
-		this.allData.device_pos_report = [];
-		// gehe alle tracker durch und hole die informationen
-		for (const tracker of this.allData.trackers) {
-			const url = `https://graph.tractive.com/3/device_pos_report/${tracker._id}`;
-			const options = {
-				method: 'GET',
-				headers: {
-					'Content-Type': 'application/json',
-					'x-tractive-client': this.client_id,
-					'x-tractive-user': this.allData.userInfo.user_id,
-					Authorization: `Bearer ${this.config.access_token}`,
-				},
-			};
-			try {
-				const response = await axios(url, options);
-				if (response.status === 200) {
-					this.writeLog(
-						`[Adapter v.${this.version} Axios V: ${
-							axios.VERSION
-						}  getTrackerLocation] response: ${JSON.stringify(response.data)}`,
-						'debug',
-					);
-					if (response.data) {
-						this.allData.device_pos_report.push(response.data);
-						this.writeLog(
-							`[Adapter v.${this.version} Axios V: ${
-								axios.VERSION
-							}  getTrackerLocation] trackerLocation: ${JSON.stringify(this.allData.device_pos_report)}`,
-							'debug',
-						);
-						// console.log('tracker Location', this.allData.device_pos_report);
-					} else {
-						this.writeLog(
-							`[Adapter v.${this.version} Axios V: ${axios.VERSION}  getTrackerLocation] no data`,
-							'warn',
-						);
-					}
-				}
-			} catch (error) {
-				if (error.response && error.response.data.code === 4002) {
-					this.writeLog(
-						`[Adapter v.${this.version} Axios V: ${
-							axios.VERSION
-						}  getTrackerLocation] warn: ${JSON.stringify(
-							error.response.data.message,
-						)} - the tracker does not yet contain any data`,
-						'warn',
-					);
-				} else {
-					this.writeLog(
-						`[Adapter v.${this.version} Axios V: ${axios.VERSION}  getTrackerLocation] error: ${error}`,
-						'error',
-					);
-				}
-			}
-		}
-	}
-
-	/**
-	 * call all tracker position
-	 * https://graph.tractive.com/3/tracker/CDSOLIJE/positions?time_from=${time_from}&time_to=${time_to}&format=json_segments
-	 * time_from = 1.1.2023 00:00:00 in seconds
-	 * time_to = 1.1.2023 23:59:59 in seconds
-	 * format = json_segments
-	 */
-	private async getTrackerPosition(time_from: string, time_to: string): Promise<void> {
-		this.allData.positions = [];
-		// gehe alle tracker durch und hole die informationen
-		for (const tracker of this.allData.trackers) {
-			const url = `https://graph.tractive.com/3/tracker/${tracker._id}/positions?time_from=${time_from}&time_to=${time_to}&format=json_segments`;
-			const options = {
-				method: 'GET',
-				headers: {
-					'Content-Type': 'application/json',
-					'x-tractive-client': this.client_id,
-					'x-tractive-user': this.allData.userInfo.user_id,
-					Authorization: `Bearer ${this.config.access_token}`,
-				},
-			};
-			try {
-				const response = await axios(url, options);
-				if (response.status === 200) {
-					this.writeLog(
-						`[Adapter v.${this.version} Axios V: ${
-							axios.VERSION
-						}  getTrackerPosition] response: ${JSON.stringify(response.data)}`,
-						'debug',
-					);
-					if (response.data) {
-						this.allData.positions.push(response.data);
-						const testdata: {
-							[key: string]: any;
-						} = {};
-						testdata[tracker._id] = response.data;
-						this.writeLog(
-							`[Adapter v.${this.version} Axios V: ${
-								axios.VERSION
-							}  getTrackerPosition] trackerPosition: ${JSON.stringify(this.allData.positions)}`,
-							'debug',
-						);
-						// console.log('tracker Position', this.allData.positions);
-					} else {
-						this.writeLog(
-							`[Adapter v.${this.version} Axios V: ${axios.VERSION}  getTrackerPosition] no data`,
-							'warn',
-						);
-					}
-				}
-			} catch (error) {
-				this.writeLog(
-					`[Adapter v.${this.version} Axios V: ${axios.VERSION}  getTrackerPosition] error: ${error}`,
-					'error',
-				);
-			}
-		}
-	}
-
-	private async onMessage(obj: ioBroker.Message): Promise<void> {
-		if (typeof obj === 'object' && obj?.message) {
-			if (obj.command === 'refreshToken') {
-				this.writeLog(`[Adapter v.${this.version} onMessage] refresh the Token`, 'debug');
-				const native = await this.getAccessToken(obj.message.email, obj.message.password);
-				// Send response in callback if required
-				if (obj.callback) {
-					if (!native || native.error) {
-						this.sendTo(
-							obj.from,
-							obj.command,
-							{ error: native?.error || 'Cannot get token' },
-							obj.callback,
-						);
-					} else {
-						this.sendTo(obj.from, obj.command, { native }, obj.callback);
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * Is called when adapter shuts down - callback has to be called under any circumstances!
-	 */
-	private async onUnload(callback: () => void): Promise<void> {
-		try {
-			this.writeLog(`[Adapter v.${this.version} onUnload] Adapter stopped`, 'debug');
-			// Here you must clear all timeouts or intervals that may still be active
-			if (this.requestTimer) this.clearTimeout(this.requestTimer);
-			await this.setStateAsync('info.connection', false, true);
-
-			callback();
-		} catch {
-			callback();
-		}
-	}
-
-	private async getAccessToken(
-		email?: string,
-		password?: string,
-	): Promise<{
-		access_token?: string;
-		user_id?: string;
-		expires_at?: string;
-		error?: string;
-	} | null> {
-		console.log('getAccessToken');
-		// get the access token
-		const url = 'https://graph.tractive.com/3/auth/token';
-		console.log('url', url);
-
-		const options = {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				'x-tractive-client': this.client_id,
-			},
-			data: {
-				platform_email: email || this.config.email,
-				platform_token: password || this.config.password,
-				grant_type: 'tractive',
-			},
-		};
-
-		console.log('options', options);
-
-		try {
-			const response = await axios(url, options);
-			console.log('response', response);
-			if (response.status === 200) {
-				this.writeLog(
-					`[Adapter v.${this.version} Axios V: ${axios.VERSION}  getAccessToken] response: ${JSON.stringify(
-						response.data,
-					)}`,
-					'debug',
-				);
-				if (response.data) {
-					if (!password && !email) {
-						// save new token
-						const obj = await this.getForeignObjectAsync(`system.adapter.${this.namespace}`);
-						if (obj) {
-							// write the data into the config
-							obj.native.access_token = response.data.access_token;
-							obj.native.user_id = response.data.user_id;
-							obj.native.expires_at = response.data.expires_at;
-
-							this.allData.userInfo.user_id = response.data.user_id;
-							this.allData.userInfo.expires_at = response.data.expires_at;
-
-							this.writeLog(
-								`[Adapter v.${this.version} Axios V: ${
-									axios.VERSION
-								}  getAccessToken] obj: ${JSON.stringify(obj)}`,
-								'debug',
-							);
-
-							await this.setForeignObjectAsync(`system.adapter.${this.namespace}`, obj);
-
-							this.writeLog(
-								`[Adapter v.${this.version} getAccessToken] new access_token: ${response.data.access_token}`,
-								'debug',
-							);
-						}
-					} else {
-						return {
-							access_token: response.data.access_token,
-							user_id: response.data.user_id,
-							expires_at: response.data.expires_at,
-						};
-					}
-				} else {
-					this.writeLog(
-						`[Adapter v.${this.version} Axios V: ${axios.VERSION} getAccessToken] no data`,
-						'warn',
-					);
-					return {
-						error: 'no data',
-					};
-				}
-			} else {
-				if (response.data) {
-					this.writeLog(
-						`[Adapter v.${this.version} Axios V: ${axios.VERSION} getAccessToken] ${response.status} ${response.statusText} ${response.data}`,
-						'warn',
-					);
-					return {
-						error: response.data.toString(),
-					};
-				} else {
-					this.writeLog(
-						`[Adapter v.${this.version} Axios V: ${axios.VERSION} getAccessToken] ${response.status} ${response.statusText}`,
-						'warn',
-					);
-					return {
-						error: response.statusText.toString(),
-					};
-				}
-			}
-		} catch (error) {
-			this.writeLog(
-				`[Adapter v.${this.version} Axios V: ${axios.VERSION} getAccessToken] error: ${error}`,
-				'error',
-			);
-			return {
-				error: error.toString(),
-			};
-		}
-
-		return null;
-	}
+    private async onUnload(callback: () => void): Promise<void> {
+        this.stopped = true;
+        if (this.pollTimer) {
+            clearTimeout(this.pollTimer);
+            this.pollTimer = null;
+        }
+        this.tractiveApi?.dispose();
+        this.commandQueues.clear();
+        try {
+            await this.setState('info.connection', false, true);
+            await this.setState('info.dataFresh', false, true);
+            await this.setState('info.status', 'stopped', true);
+        } finally {
+            callback();
+        }
+    }
 }
 
 if (require.main !== module) {
-	// Export the constructor in compact mode
-	module.exports = (options: Partial<utils.AdapterOptions> | undefined) => new TractiveGPS(options);
+    module.exports = (options: Partial<utils.AdapterOptions> | undefined) => new TractiveGPS(options);
 } else {
-	// otherwise start the instance directly
-	(() => new TractiveGPS())();
+    (() => new TractiveGPS())();
 }
