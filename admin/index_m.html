@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        />
+        <script>
+            const script = document.createElement('script');
+            window.registerSocketOnLoad = cb => {
+                window.socketLoadedHandler = cb;
+            };
+            script.onload = () => {
+                if (typeof window.socketLoadedHandler === 'function') window.socketLoadedHandler();
+            };
+            script.src =
+                window.location.port === '3000'
+                    ? 'http://localhost:8081/lib/js/socket.io.js'
+                    : '../../lib/js/socket.io.js';
+            document.head.appendChild(script);
+        </script>
+        <title>Tractive GPS</title>
+      <script type="module" crossorigin src="./index.js"></script>
+    </head>
+    <body>
+        <div id="root"></div>
+    </body>
+</html>

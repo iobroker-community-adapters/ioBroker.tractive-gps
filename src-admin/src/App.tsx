@@ -1,222 +1,146 @@
+import { GenericApp, type GenericAppProps, type GenericAppState, I18n, Loader } from '@iobroker/gui-components';
+import { AdminConnection } from '@iobroker/socket-client';
+import { StyledEngineProvider, ThemeProvider } from '@mui/material/styles';
 import React from 'react';
-import { ThemeProvider, StyledEngineProvider, Theme } from '@mui/material/styles';
 
-import {
-    AppBar, Box,
-    Grid, Toolbar,
-} from '@mui/material';
-
-import {
-    Loader, withWidth,
-    GenericApp,
-    type GenericAppSettings,
-    type GenericAppProps,
-    type GenericAppState, Icon,
-} from '@iobroker/adapter-react-v5';
-import '@iobroker/adapter-react-v5/index.css';
-import { PetCard } from './Components/PetCard';
-import type { ItemProps, TractiveDevice } from './types';
-
-import en from './i18n/en.json';
-import de from './i18n/de.json';
-import ru from './i18n/ru.json';
-import es from './i18n/es.json';
-import fr from './i18n/fr.json';
-import it from './i18n/it.json';
-import nl from './i18n/nl.json';
-import pl from './i18n/pl.json';
-import pt from './i18n/pt.json';
-import uk from './i18n/uk.json';
-import zhCN from './i18n/zh-cn.json';
-
-declare global {
-    interface Window {
-        sentryDSN: string | undefined;
-    }
-}
-
-const styles = {
-    root: (theme: Theme) => ({
-        flexGrow: 1,
-        display: 'flex',
-        width: '100%',
-        height: '100%',
-        background: theme.palette.background.default,
-        color: theme.palette.text.primary,
-        fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-    }),
-
-    content: (theme: Theme) => ({
-        width: '100%',
-        height: '100%',
-        backgroundColor: theme.palette.background.default,
-        position: 'relative',
-    }),
-    buttonsContainer: {
-        '& button': {
-            whiteSpace: 'nowrap',
-        },
-    },
-};
+import de from '../../admin/i18n/de.json';
+import en from '../../admin/i18n/en.json';
+import es from '../../admin/i18n/es.json';
+import fr from '../../admin/i18n/fr.json';
+import it from '../../admin/i18n/it.json';
+import nl from '../../admin/i18n/nl.json';
+import pl from '../../admin/i18n/pl.json';
+import pt from '../../admin/i18n/pt.json';
+import ru from '../../admin/i18n/ru.json';
+import uk from '../../admin/i18n/uk.json';
+import zhCn from '../../admin/i18n/zh-cn.json';
+import SettingsForm, { type AdminConfig } from './SettingsForm';
 
 interface AppState extends GenericAppState {
-    ready: boolean;
-    itemArray: ItemProps[];
-    json: string;
-    nameArray: { id: string; name: string }[];
+    native: AdminConfig;
 }
 
-class App extends GenericApp<GenericAppProps, AppState> {
+const translations = { en, de, es, fr, it, nl, pl, pt, ru, uk, 'zh-cn': zhCn };
+
+export default class App extends GenericApp<GenericAppProps, AppState> {
+    private savedPlainNative: AdminConfig | null = null;
+    private storedPassword = '';
+
     constructor(props: GenericAppProps) {
-        const settings: GenericAppSettings = {};
-
-        settings.translations = {
-            en,
-            de,
-            es,
-            fr,
-            it,
-            nl,
-            pl,
-            pt,
-            ru,
-            uk,
-            'zh-cn': zhCN,
-        };
-
-        settings.sentryDSN = window.sentryDSN;
-
-        if (window.location.port === '3000') {
-            settings.socket = { port: '8081' };
-        }
-        if (window.socketUrl?.startsWith(':')) {
-            window.socketUrl = `${window.location.protocol}//${window.location.hostname}${window.socketUrl}`;
-        }
-
-        super(props, settings);
-    }
-
-    static processState(
-        state: Partial<ioBroker.State> | null | undefined,
-        nameArray: { id: string; name: string }[],
-    ): ItemProps[] {
-        const itemArray: ItemProps[] = [];
-        if (state?.val && typeof state.val === 'string') {
-            try {
-                const json: TractiveDevice = JSON.parse(state.val) as TractiveDevice;
-                for (const tracker of json.device_pos_report) {
-                    const device: ItemProps = {
-                        id: tracker._id,
-                        latlong: tracker.latlong,
-                        lastReceived: new Date(tracker.time_rcvd * 1000).toLocaleString(),
-                        radius: tracker.pos_uncertainty,
-                        connection: tracker.sensor_used,
-                    };
-                    if (nameArray && nameArray[tracker._id]) {
-                        device.name = nameArray[tracker._id];
-                    }
-
-                    itemArray.push(device);
-                }
-                for (const tracker of json.device_hw_report) {
-                    const device = {
-                        id: tracker._id,
-                        battery: tracker.battery_level,
-                    };
-                    const index = itemArray.findIndex(item => item.id === device.id);
-                    if (index !== -1) {
-                        itemArray[index].battery = device.battery;
-                    }
-                }
-                for (const tracker of json.tracker) {
-                    const device = {
-                        id: tracker._id,
-                        power_saving: tracker.state_reason === 'POWER_SAVING',
-                        state: tracker.state,
-                        charging_state: tracker.charging_state === 'CHARGING',
-                    };
-                    const index = itemArray.findIndex(item => item.id === device.id);
-                    if (index !== -1) {
-                        itemArray[index].power_saving = device.power_saving;
-                        itemArray[index].state = device.state;
-                        itemArray[index].charging_state = device.charging_state;
-                    }
-                }
-            } catch {
-                console.error(`Cannot parse JSON: ${state.val}`);
-            }
-        }
-        return itemArray;
-    }
-
-    async onConnectionReady() {
-        // read first `${namespace}.json` to get the list of devices
-        const state = await this.socket.getState(`traction-gps.${this.instance}.json`);
-        const config = await this.socket.getObject(`system.adapter.traction-gps.${this.instance}`);
-        const itemArray = App.processState(state, config?.native?.nameArray);
-        this.setState({
-            itemArray,
-            ready: true,
-            nameArray: config?.native?.nameArray || [],
-            json: (state?.val || '').toString(),
+        super(props, {
+            adapterName: 'tractive-gps',
+            // GenericApp expects the constructor at runtime, although its public type currently describes an instance.
+            Connection: AdminConnection as unknown as NonNullable<GenericAppProps['Connection']>,
+            translations,
         });
-        await this.socket.subscribeState(`traction-gps.${this.instance}.json`, this.onJsonChange);
-        await this.socket.subscribeObject(`system.adapter.traction-gps.${this.instance}`, this.onConfigChange);
     }
 
-    onConfigChange = (id: string, obj: ioBroker.Object | null | undefined) => {
-        if (obj?.native?.nameArray) {
-            const itemArray = App.processState({ val: this.state.json }, obj.native.nameArray);
-            if (JSON.stringify(itemArray) !== JSON.stringify(this.state.itemArray)) {
-                this.setState({ itemArray, nameArray: obj.native.nameArray || [] });
-            } else {
-                this.setState({ nameArray: obj.native.nameArray });
+    override onPrepareLoad(settings: Record<string, unknown>): void {
+        this.storedPassword = typeof settings.password === 'string' ? settings.password : '';
+    }
+
+    override onConnectionReady(): void {
+        void this.loadDecryptedPassword();
+    }
+
+    private loadDecryptedPassword = async (): Promise<void> => {
+        try {
+            const password = this.storedPassword ? await this.socket.decrypt(this.storedPassword) : '';
+            const native = { ...this.state.native, password };
+            this.savedPlainNative = structuredClone(native);
+            globalThis.changed = false;
+            this.setState({ native, changed: false });
+        } catch (error) {
+            console.error('Could not decrypt the stored Tractive password', error);
+            const native = { ...this.state.native, password: '' };
+            this.savedPlainNative = structuredClone(native);
+            this.setState({ native, changed: false });
+            this.showAlert(I18n.t('Could not decrypt the stored password. Please enter it again.'), 'error');
+        }
+    };
+
+    override getIsChanged(native: Record<string, unknown>): boolean {
+        return this.savedPlainNative !== null && JSON.stringify(native) !== JSON.stringify(this.savedPlainNative);
+    }
+
+    override onSave(isClose = false): void {
+        void this.saveConfiguration(isClose);
+    }
+
+    private saveConfiguration = async (isClose: boolean): Promise<void> => {
+        if (this.state.isConfigurationError) {
+            this.setState({ errorText: this.state.isConfigurationError });
+            return;
+        }
+
+        try {
+            const instanceObject = await this.socket.getObject(this.instanceId);
+            if (!instanceObject || instanceObject.type !== 'instance') {
+                throw new Error(`Instance object ${this.instanceId} was not found`);
             }
+
+            const plainNative = structuredClone(this.state.native);
+            const encryptedPassword = plainNative.password ? await this.socket.encrypt(plainNative.password) : '';
+            instanceObject.native = {
+                ...instanceObject.native,
+                ...plainNative,
+                password: encryptedPassword,
+            };
+            if (this.state.common) {
+                instanceObject.common = { ...instanceObject.common, ...this.state.common };
+            }
+
+            await this.socket.setObject(this.instanceId, instanceObject);
+            this.savedPlainNative = plainNative;
+            globalThis.changed = false;
+            try {
+                window.parent.postMessage('nochange', '*');
+            } catch {
+                // The Admin page can also run without a parent frame.
+            }
+            this.setState({ changed: false }, () => {
+                if (isClose) {
+                    GenericApp.onClose();
+                }
+            });
+        } catch (error) {
+            console.error('Could not encrypt or save the Tractive configuration', error);
+            this.showAlert(I18n.t('Could not encrypt or save the configuration.'), 'error');
         }
     };
 
-    onJsonChange = (id: string, state: ioBroker.State | null | undefined) => {
-        const itemArray = App.processState(state, this.state.nameArray);
-        if (JSON.stringify(itemArray) !== JSON.stringify(this.state.itemArray)) {
-            this.setState({ itemArray, json: (state?.val || '').toString() });
-        }
+    private testConnection = async (email: string, password?: string): Promise<boolean> => {
+        const result = await this.socket.sendTo<{ success?: boolean }>(this.instanceId, 'testConnection', {
+            email,
+            ...(password ? { password } : {}),
+        });
+        return result?.success === true;
     };
 
-    render() {
-        if (!this.state.ready) {
-            return <StyledEngineProvider injectFirst>
+    render(): React.JSX.Element {
+        if (!this.state.loaded || this.savedPlainNative === null) {
+            return (
+                <StyledEngineProvider injectFirst>
+                    <ThemeProvider theme={this.state.theme}>
+                        <Loader themeType={this.state.themeType} />
+                    </ThemeProvider>
+                </StyledEngineProvider>
+            );
+        }
+
+        return (
+            <StyledEngineProvider injectFirst>
                 <ThemeProvider theme={this.state.theme}>
-                    <Loader themeType={this.state.themeType} />
+                    <SettingsForm
+                        native={this.state.native}
+                        onChange={(key, value) => this.updateNativeValue(key, value)}
+                        onTestConnection={this.testConnection}
+                    />
+                    {this.renderError()}
+                    {this.renderToast()}
+                    {this.renderSaveCloseButtons()}
                 </ThemeProvider>
-            </StyledEngineProvider>;
-        }
-
-        return <StyledEngineProvider injectFirst>
-            <ThemeProvider theme={this.state.theme}>
-                <Box
-                    component="div"
-                    sx={styles.root}
-                    key="divSide"
-                >
-                    <AppBar>
-                        <Toolbar variant="dense">
-                            <Icon src="./tractive-logo.svg" alt="logo" style={{ height: 32, marginRight: 16 }} />
-                        </Toolbar>
-                    </AppBar>
-                    <Grid container>
-                        {this.state.itemArray?.map(items =>
-                            <PetCard
-                                key={items.id}
-                                item={items}
-                                socket={this.socket}
-                            />)}
-                    </Grid>
-                </Box>
-                {this.renderError()}
-                {this.renderToast()}
-            </ThemeProvider>
-        </StyledEngineProvider>;
+            </StyledEngineProvider>
+        );
     }
 }
-
-export default withWidth()(App);
