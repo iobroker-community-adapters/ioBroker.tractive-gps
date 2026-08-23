@@ -1,0 +1,43 @@
+{
+  "compilerOptions": {
+    // Moderne Zielumgebung für Node.js 22
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": [
+      "ES2022"
+    ],
+    // Strikte Typisierung für bessere Codequalität
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    // Pfade und Ausgabe
+    "outDir": "./build/",
+    "sourceMap": true,
+    "inlineSourceMap": false,
+    // Für Entwicklung
+    "noEmit": true,
+    "allowJs": true,
+    "checkJs": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true,
+    // Weitere nützliche Optionen
+    "skipLibCheck": true,
+    "removeComments": false,
+    "noEmitOnError": true,
+    "ignoreDeprecations": "5.0"
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "build/**",
+    "node_modules/**",
+    "admin/**",
+    "test/**"
+  ]
+}

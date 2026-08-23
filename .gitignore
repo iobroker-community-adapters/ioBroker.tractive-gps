@@ -2,9 +2,11 @@
 .*/
 !.vscode/
 !.github/
+!/.run/
 
 *.code-workspace
 node_modules
+.npm-cache/
 nbproject
 
 # npm package files
@@ -18,4 +20,9 @@ admin/i18n/*/flat.txt
 
 admin/src/.DS_Store
 
-/src-admin/package-lock.json
+# ioBroker dev-server
+.dev-server/
+.commitinfo
+
+# Local API samples may contain private account and location data
+/API Result.ts

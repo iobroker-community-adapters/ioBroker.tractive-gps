@@ -1,145 +1,155 @@
 {
-  "name": "iobroker.tractive-gps",
-  "version": "2.1.0",
-  "description": "This adapter allows you to connect to the Tractive GPS service and retrieve the location of your pets.",
-  "author": {
-    "name": "xXBJXx",
-    "email": "issi.dev.iobroker@gmail.com"
-  },
-  "contributors": [
-    {
-      "name": "xXBJXx",
-      "email": "issi.dev.iobroker@gmail.com"
+    "name": "iobroker.tractive-gps",
+    "version": "2.1.0",
+    "description": "This adapter allows you to connect to the Tractive GPS service and retrieve the location of your pets.",
+    "author": {
+        "name": "xXBJXx",
+        "email": "issi.dev.iobroker@gmail.com"
     },
-    {
-      "name": "iobroker-community-adapters",
-      "email": "mcm57@gmx.at"
+    "contributors": [
+        {
+            "name": "xXBJXx",
+            "email": "issi.dev.iobroker@gmail.com"
+        },
+        {
+            "name": "iobroker-community-adapters",
+            "email": "mcm57@gmx.at"
+        }
+    ],
+    "homepage": "https://github.com/iobroker-community-adapters/ioBroker.tractive-gps",
+    "license": "MIT",
+    "keywords": [
+        "ioBroker",
+        "tractive",
+        "gps",
+        "geoposition",
+        "geolocation",
+        "tracking",
+        "dog",
+        "cat",
+        "pet"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/iobroker-community-adapters/ioBroker.tractive-gps.git"
+    },
+    "engines": {
+        "node": ">=22.13.0"
+    },
+    "workspaces": [
+        "src-admin",
+        "src-widgets"
+    ],
+    "dependencies": {
+        "@iobroker/adapter-core": "^3.4.3",
+        "axios": "^1.11.0"
+    },
+    "devDependencies": {
+        "@alcalzone/release-script": "^3.8.0",
+        "@alcalzone/release-script-plugin-iobroker": "^3.7.2",
+        "@alcalzone/release-script-plugin-license": "^3.7.0",
+        "@alcalzone/release-script-plugin-manual-review": "^3.7.0",
+        "@eslint/eslintrc": "^3.3.5",
+        "@eslint/js": "^9.39.4",
+        "@iobroker/adapter-dev": "^1.5.0",
+        "@iobroker/dev-server": "https://codeload.github.com/xXBJXx/dev-server/tar.gz/c0338ae",
+        "@iobroker/eslint-config": "^2.3.4",
+        "@iobroker/testing": "^5.3.0",
+        "@types/chai": "^5.2.2",
+        "@types/chai-as-promised": "^8.0.2",
+        "@types/mocha": "^10.0.10",
+        "@types/node": "^22.17.0",
+        "@types/sinon": "^17.0.4",
+        "@types/sinon-chai": "^4.0.0",
+        "@types/source-map-support": "^0.5.10",
+        "@typescript-eslint/eslint-plugin": "^8.59.2",
+        "@typescript-eslint/parser": "^8.59.2",
+        "chai": "^5.2.1",
+        "chai-as-promised": "^7.1.2",
+        "eslint": "^9.39.4",
+        "eslint-config-prettier": "^10.1.8",
+        "eslint-plugin-import": "^2.32.0",
+        "eslint-plugin-jsdoc": "^62.9.0",
+        "eslint-plugin-prettier": "^5.5.5",
+        "eslint-plugin-react": "^7.37.5",
+        "eslint-plugin-react-hooks": "^7.1.1",
+        "eslint-plugin-unicorn": "^64.0.0",
+        "globals": "^17.6.0",
+        "mocha": "^11.8.0",
+        "prettier": "^3.6.2",
+        "rimraf": "^6.0.1",
+        "sinon": "^22.1.0",
+        "sinon-chai": "^4.0.0",
+        "tiny-glob": "^0.2.9",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.8.3",
+        "typescript-eslint": "^8.59.2"
+    },
+    "main": "build/main.js",
+    "files": [
+        "admin/i18n/",
+        "admin/index_m.html",
+        "admin/index.js",
+        "admin/tractive-gps.png",
+        "admin/tractive-logo.svg",
+        "build/",
+        "widgets/",
+        "io-package.json",
+        "README_DE.md",
+        "LICENSE"
+    ],
+    "scripts": {
+        "prebuild": "rimraf build admin/build admin/.watch",
+        "build": "build-adapter ts && npm run build:admin && npm run build:widgets",
+        "build:admin": "npm --workspace @tractive-gps/admin run build",
+        "build:widgets": "npm --workspace @tractive-gps/vis-widgets run build",
+        "watch": "build-adapter ts --watch",
+        "prebuild:ts": "rimraf build",
+        "build:ts": "build-adapter ts",
+        "watch:ts": "build-adapter ts --watch",
+        "test:ts": "mocha --config test/mocharc.custom.json src/**/*.test.ts",
+        "test:package": "mocha test/package --exit",
+        "test:integration": "mocha test/integration --exit",
+        "test": "npm run test:ts && npm run test:package",
+        "check": "tsc --noEmit && npm --workspace @tractive-gps/admin run check && npm --workspace @tractive-gps/vis-widgets run check",
+        "lint": "eslint src && npm --workspace @tractive-gps/admin run lint && npm --workspace @tractive-gps/vis-widgets run lint",
+        "lint:fix": "eslint --fix src",
+        "format": "prettier --write \"src/**/*.{js,ts,tsx}\"",
+        "format:check": "prettier --check \"src/**/*.{js,ts,tsx}\"",
+        "translate": "translate-adapter",
+        "release": "release-script",
+        "npm": "npm i",
+        "dev-server": "dev-server",
+        "dev": "dev-server watch --noStart",
+        "dev-setup": "dev-server setup",
+        "dev-update": "dev-server update",
+        "dev-upload": "dev-server upload"
+    },
+    "nyc": {
+        "include": [
+            "src/**/*.ts"
+        ],
+        "exclude": [
+            "src/**/*.test.ts"
+        ],
+        "extension": [
+            ".ts"
+        ],
+        "require": [
+            "ts-node/register"
+        ],
+        "reporter": [
+            "text-summary",
+            "html"
+        ],
+        "sourceMap": true,
+        "instrument": true
+    },
+    "bugs": {
+        "url": "https://github.com/iobroker-community-adapters/ioBroker.tractive-gps/issues"
+    },
+    "readmeFilename": "README.md",
+    "overrides": {
+        "jws": "^3.2.3"
     }
-  ],
-  "homepage": "https://github.com/iobroker-community-adapters/ioBroker.tractive-gps",
-  "license": "MIT",
-  "keywords": [
-    "ioBroker",
-    "tractive",
-    "gps",
-    "geoposition",
-    "geolocation",
-    "tracking",
-    "dog",
-    "cat",
-    "pet"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/iobroker-community-adapters/ioBroker.tractive-gps.git"
-  },
-  "engines": {
-    "node": ">= 20"
-  },
-  "dependencies": {
-    "@iobroker/adapter-core": "^3.3.1",
-    "@iobroker/adapter-react-v5": "^7.7.2",
-    "axios": "^1.11.0",
-    "cron": "^4.3.3",
-    "dayjs": "^1.11.13",
-    "geo-position.ts": "^1.4.1"
-  },
-  "devDependencies": {
-    "@alcalzone/release-script": "^3.8.0",
-    "@alcalzone/release-script-plugin-iobroker": "^3.7.2",
-    "@alcalzone/release-script-plugin-license": "^3.7.0",
-    "@alcalzone/release-script-plugin-manual-review": "^3.7.0",
-    "@iobroker/adapter-dev": "^1.4.0",
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.1",
-    "@iobroker/testing": "^5.0.4",
-    "@mui/material": "^6.5.0",
-    "@tsconfig/node16": "^16.1.4",
-    "@types/chai": "^5.2.2",
-    "@types/chai-as-promised": "^8.0.2",
-    "@types/cron": "^2.4.3",
-    "@types/mocha": "^10.0.10",
-    "@types/node": "^22.17.0",
-    "@types/react": "^18.3.23",
-    "@types/react-dom": "^18.3.7",
-    "@types/sinon": "^17.0.4",
-    "@types/sinon-chai": "^4.0.0",
-    "@types/source-map-support": "^0.5.10",
-    "@typescript-eslint/eslint-plugin": "^8.38.0",
-    "@typescript-eslint/parser": "^8.38.0",
-    "chai": "^5.2.1",
-    "chai-as-promised": "^7.1.2",
-    "eslint": "^9.32.0",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-prettier": "^5.5.3",
-    "eslint-plugin-react": "^7.37.5",
-    "mocha": "^11.7.1",
-    "prettier": "^3.6.2",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "rimraf": "^6.0.1",
-    "sinon": "^21.0.0",
-    "sinon-chai": "^4.0.0",
-    "tiny-glob": "^0.2.9",
-    "ts-node": "^10.9.2",
-    "react-error-boundary": "^6.0.0",
-    "typescript": "^5.8.3"
-  },
-  "main": "build/main.js",
-  "files": [
-    "admin{,/!(src)/**}/!(tsconfig|tsconfig.*|.eslintrc).json",
-    "admin{,/!(src)/**}/*.{html,css,png,svg,jpg,js}",
-    "admin/build/",
-    "build/",
-    "www/",
-    "io-package.json",
-    "LICENSE"
-  ],
-  "scripts": {
-    "prebuild": "rimraf build admin/build",
-    "build": "build-adapter all",
-    "watch": "build-adapter all --watch",
-    "prebuild:ts": "rimraf build",
-    "build:ts": "build-adapter ts",
-    "watch:ts": "build-adapter ts --watch",
-    "prebuild:react": "rimraf admin/build",
-    "build:react": "build-adapter react",
-    "watch:react": "build-adapter react --watch",
-    "test:ts": "mocha --config test/mocharc.custom.json src/**/*.test.ts",
-    "test:package": "mocha test/package --exit",
-    "test:integration": "mocha test/integration --exit",
-    "test": "npm run test:ts && npm run test:package",
-    "check": "tsc --noEmit && tsc --noEmit -p admin/tsconfig.json",
-    "lint": "eslint --ext .js,.ts,.tsx src/ admin/src/",
-    "lint:fix": "eslint --fix --ext .js,.ts,.tsx src/ admin/src/",
-    "format": "prettier --write \"src/**/*.{js,ts,tsx}\" \"admin/src/**/*.{js,ts,tsx}\"",
-    "format:check": "prettier --check \"src/**/*.{js,ts,tsx}\" \"admin/src/**/*.{js,ts,tsx}\"",
-    "translate": "translate-adapter",
-    "release": "release-script",
-    "npm": "npm i"
-  },
-  "nyc": {
-    "include": [
-      "src/**/*.ts"
-    ],
-    "exclude": [
-      "src/**/*.test.ts"
-    ],
-    "extension": [
-      ".ts"
-    ],
-    "require": [
-      "ts-node/register"
-    ],
-    "reporter": [
-      "text-summary",
-      "html"
-    ],
-    "sourceMap": true,
-    "instrument": true
-  },
-  "bugs": {
-    "url": "https://github.com/iobroker-community-adapters/ioBroker.tractive-gps/issues"
-  },
-  "readmeFilename": "README.md"
 }
