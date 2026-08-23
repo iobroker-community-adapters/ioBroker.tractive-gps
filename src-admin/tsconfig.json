@@ -1,18 +1,17 @@
-// Specialized tsconfig for the admin directory,
-// includes DOM typings and configures the admin build
 {
-  "extends": "../src/tsconfig.json",
-  "compilerOptions": {
-	"noEmit": false,
-	"outDir": "./build",
-	"sourceMap": true,
-	"sourceRoot": "./src",
-	"noImplicitAny": false,
-	"lib": ["es2018", "DOM"],
-	"jsx": "react",
-    "types": [
-	  "@iobroker/types"
-    ]
-  },
-  "include": ["./src/**/*.ts", "./src/**/*.tsx"]
+    "compilerOptions": {
+        "target": "ES2022",
+        "lib": ["ES2022", "DOM", "DOM.Iterable"],
+        "module": "ESNext",
+        "moduleResolution": "Bundler",
+        "allowSyntheticDefaultImports": true,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "strict": true,
+        "noEmit": true,
+        "jsx": "react-jsx",
+        "skipLibCheck": true,
+        "types": ["@iobroker/types"]
+    },
+    "include": ["src", "vite.config.ts"]
 }

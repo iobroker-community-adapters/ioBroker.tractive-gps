@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/types/types.ts"],
+  "sourcesContent": ["export interface TractiveAuth {\n    access_token: string;\n    expires_at: number;\n    user_id: string;\n}\n\nexport interface TractiveAddress {\n    street: string;\n    house_number: string;\n    zip_code: string;\n    city: string;\n    country: string;\n    full_address: string;\n}\n\nexport type TractivePet = Record<string, unknown>;\nexport type TractiveTracker = Record<string, unknown>;\n\nexport interface TractiveTrackerLocation extends Record<string, unknown> {\n    latlong?: [number, number];\n    address?: TractiveAddress;\n}\n\nexport type TractiveTrackerHardware = Record<string, unknown>;\n\nexport type TractiveAPIResponse<T> = { success: true; data: T } | { success: false; error: string; data?: undefined };\n"],
+  "mappings": ";;;;;;;;;;;;;;AAAA;AAAA;",
+  "names": []
+}

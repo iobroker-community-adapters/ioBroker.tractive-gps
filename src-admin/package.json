@@ -1,55 +1,26 @@
 {
-  "name": "tractive.tab",
-  "version": "1.9.0",
-  "private": true,
-  "dependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "@iobroker/adapter-react-v5": "^6.1.9",
-    "@mui/icons-material": "^5.16.6",
-    "@mui/material": "^5.16.6",
-    "@types/leaflet": "^1.9.12",
-    "@types/react-leaflet": "^3.0.0",
-    "@sentry/browser": "^8.23.0",
-    "babel-eslint": "^10.1.0",
-    "moment": "^2.30.1",
-    "eslint": "^8.57.0",
-    "eslint-config-airbnb": "^19.0.4",
-    "eslint-plugin-eqeqeq-fix": "^1.0.3",
-    "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-jsx-a11y": "^6.9.0",
-    "eslint-plugin-only-warn": "^1.1.0",
-    "eslint-plugin-react": "^7.37.5",
-    "leaflet": "^1.9.4",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-icons": "^5.2.1",
-    "react-leaflet": "^4.2.1",
-    "react-scripts": "^5.0.1",
-    "typescript": "^5.5.4",
-    "@typescript-eslint/parser": "^8.59.0",
-    "@typescript-eslint/eslint-plugin": "^8.60.0"
-  },
-  "homepage": ".",
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build && node build.js",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "lint": "eslint --fix --ext .js,.jsx src",
-    "build:ts": "tsc -p tsconfig.json",
-    "npm": "npm i -f"
-  },
-  "_proxy": "http://127.0.0.1:8081",
-  "allowedHosts": [
-    "127.0.0.1"
-  ],
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ]
+    "name": "@tractive-gps/admin",
+    "private": true,
+    "version": "2.1.0",
+    "type": "module",
+    "scripts": {
+        "build": "tsc --noEmit && vite build",
+        "check": "tsc --noEmit",
+        "lint": "eslint -c eslint.config.mjs src"
+    },
+    "devDependencies": {
+        "@emotion/react": "^11.14.0",
+        "@emotion/styled": "^11.14.1",
+        "@iobroker/eslint-config": "^2.3.4",
+        "@iobroker/gui-components": "^10.0.14",
+        "@iobroker/socket-client": "^5.2.1",
+        "@mui/material": "^9.3.1",
+        "@types/react": "^19.2.17",
+        "@types/react-dom": "^19.2.3",
+        "@vitejs/plugin-react": "^6.0.5",
+        "react": "^19.2.8",
+        "react-dom": "^19.2.8",
+        "typescript": "^5.9.3",
+        "vite": "^8.1.5"
+    }
 }

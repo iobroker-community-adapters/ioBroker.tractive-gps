@@ -1,4 +1,16 @@
-package.json
-package-lock.json
+# Build-Verzeichnisse
 build/
-README.md
+admin/build/
+www/
+
+# Node-Module
+node_modules/
+
+# Pakete
+package-lock.json
+
+# Generierte Dateien
+*.min.js
+*.js.map
+*.d.ts
+*.ts.map

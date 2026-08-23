@@ -2,10 +2,13 @@
 .*/
 !.vscode/
 !.github/
+!/.run/
 
 *.code-workspace
 node_modules
+.npm-cache/
 nbproject
+/src-admin/package-lock.json
 
 # npm package files
 iobroker.*.tgz
@@ -18,7 +21,10 @@ admin/i18n/*/flat.txt
 
 admin/src/.DS_Store
 
-/src-admin/package-lock.json
-
-#ignore .commitinfo created by ioBroker release script
+# ioBroker dev-server
+.dev-server/
+# Created by the ioBroker release script
 .commitinfo
+
+# Local API samples may contain private account and location data
+/API Result.ts

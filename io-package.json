@@ -1,293 +1,259 @@
 {
-  "common": {
-    "name": "tractive-gps",
-    "version": "2.1.0",
-    "news": {
-      "2.1.0": {
-        "en": "Adapter requires node 20 now.\nAdapter requires js-controller 5.0.19 and admin 6.17.14 now.\nAdapter changed to meet Responsive Design rules.\nAn error at jsonConfig invalidating reauthorization command has been corrected.\nDependencies have been updated.",
-        "de": "Adapter benötigt jetzt den Knoten 20.\nAdapter benötigt jetzt js-controller 5.0.19 und admin 6.17.14.\nAdapter geändert, um Responsive Design Regeln zu erfüllen.\nEin Fehler bei jsonConfig, der Reautorisierungsbefehl invalidiert, wurde behoben.\nAbhängigkeiten wurden aktualisiert.",
-        "ru": "Адаптер требует узла 20.\nАдаптер требует js-контроллер 5.0.19 и admin 6.17.14.\nАдаптер изменился, чтобы соответствовать правилам Responsive Design.\nИсправлена ошибка в jsonConfig, аннулирующая команду реавторизации.\nЗависимость была обновлена.",
-        "pt": "Adaptador requer nó 20 agora.\nAdaptador requer js-controller 5.0.19 e admin 6.17.14 agora.\nAdapter mudou para atender às regras de Design Responsável.\nFoi corrigido um erro no comando jsonConfig invalidating reauthorization.\nAs dependências foram atualizadas.",
-        "nl": "Adapter vereist node 20 nu.\nAdapter vereist js-controller 5.01.19 en admin 6.17.14 nu.\nAdapter veranderd om te voldoen aan Responsive Design regels.\nEen fout bij jsonConfig ongeldig maken van reauthorization commando is gecorrigeerd.\nAfhankelijkheden zijn bijgewerkt.",
-        "fr": "Adaptateur nécessite un noeud 20 maintenant.\nAdaptateur nécessite js-controller 5.0.19 et admin 6.17.14 maintenant.\nAdaptateur modifié pour respecter les règles de conception réactive.\nUne erreur à la commande jsonConfig invalidant la réautorisation a été corrigée.\nLes dépendances ont été actualisées.",
-        "it": "Adattatore richiede nodo 20 ora.\nAdattatore richiede js-controller 5.0.19 e admin 6.17.14 ora.\nAdattatore modificato per soddisfare le regole di Responsive Design.\nÈ stato corretto un errore al comando di riautorizzazione di jsonConfig invalidante.\nLe dipendenze sono state aggiornate.",
-        "es": "Adaptador requiere nodo 20 ahora.\nAdaptador requiere js-controller 5.0.19 y admin 6.17.14 ahora.\nAdaptador cambió para cumplir con las reglas de diseño responsable.\nSe ha corregido un error en el comando jsonConfig invalidating reauthorization.\nSe han actualizado las dependencias.",
-        "pl": "Adapter wymaga węzła 20.\nAdapter wymaga sterownika js- 5.0.19 i admin 6.17.14 teraz.\nAdapter zmienił się w celu spełnienia zasad Responsive Design.\nBłąd w jsonConfig unieważnienie polecenia reautoryzacji został poprawiony.\nZaktualizowano zależność.",
-        "uk": "Адаптер вимагає вузла 20 тепер.\nАдаптер вимагає js-controller 5.0.19 і admin 6.17.14 тепер.\nПерехідник змінився для дотримання правил адаптивного дизайну.\nВиправлено помилку в jsonConfig, що недійсне відновлення.\nОновлено залежність.",
-        "zh-cn": "适配器现在需要20号节点.\n适配器现在需要js控制器5.0.19和管理员6.17.14.\n适配器更改以满足应变设计规则.\nJsonConfig 无效重授权命令的错误已被更正 .\n附属关系已经更新."
-      },
-      "2.0.1": {
-        "en": "Fixing encryption of the access token",
-        "de": "Festlegen der Verschlüsselung des Zugriffstokens",
-        "ru": "Исправление шифрования токена доступа",
-        "pt": "Corrigir criptografia do token de acesso",
-        "nl": "Versleuteling van het toegangs token herstellen",
-        "fr": "Correction du chiffrement du jeton d'accès",
-        "it": "Fissare la crittografia del gettone di accesso",
-        "es": "Corrección del cifrado de acceso",
-        "pl": "Ustawienie szyfrowania symbolu dostępu",
-        "uk": "Виправлення шифрування токена доступу",
-        "zh-cn": "修复访问令牌的加密"
-      },
-      "2.0.0": {
-        "en": "BREAKING CHANGE: You must enter your credentials again\nOld code has been removed and GUI has been rewritten\nDependencies have been updated",
-        "de": "BREAKING CHANGE: Sie müssen Ihre Anmeldeinformationen erneut eingeben\nDer alte Code wurde entfernt und GUI wurde neu geschrieben\nAbhängigkeiten wurden aktualisiert",
-        "ru": "Ж: Вы должны снова ввести свои полномочия\nСтарый код был удален, и GUI был переписан\nЗависимость обновлена",
-        "pt": "Muita coisa: Você deve inserir suas credenciais novamente\nCódigo antigo foi removido e GUI foi reescrito\nAs dependências foram atualizadas",
-        "nl": "Breaking VERANDERING: U moet uw referenties opnieuw invoeren\nOude code is verwijderd en GUI is herschreven\nAfhankelijkheden zijn bijgewerkt",
-        "fr": "CHANGEMENT DE BREAING: Vous devez à nouveau entrer vos lettres de créances\nL'ancien code a été supprimé et l'interface graphique a été réécrite\nLes dépendances ont été actualisées",
-        "it": "CAMBIO DI BREAKING: Devi inserire nuovamente le credenziali\nVecchio codice è stato rimosso e GUI è stato riscritto\nLe dipendenze sono state aggiornate",
-        "es": "Cambiando: Debe introducir sus credenciales de nuevo\nSe ha eliminado el código antiguo y GUI ha sido reescrito\nSe han actualizado las dependencias",
-        "pl": "ZMIANA ZBIORCZA: Musisz ponownie wpisać swoje referencje\nStary kod został usunięty i GUI został przepisany\nZaktualizowano zależności",
-        "uk": "БРЕАКІНГ ЗМІН: Ви повинні ввести ваші облікові дані знову\nСтарший код був вилучений і графічний інтерфейс\nЗалежність було оновлено",
-        "zh-cn": "打破变化: 您必须再次输入您的证书\n旧代码已被删除, 并重写 GUI\n依赖关系已更新"
-      },
-      "1.2.0": {
-        "en": "Adapter requires node.js >= 18 and js-controller >= 5 now\nDependencies have been updated",
-        "de": "Adapter benötigt node.js >= 18 und js-controller >= 5 jetzt\nAbhängigkeiten wurden aktualisiert",
-        "ru": "Адаптер требует node.js >= 18 и js-контроллер >= 5 сейчас\nЗависимость обновлена",
-        "pt": "Adapter requer node.js >= 18 e js-controller >= 5 agora\nAs dependências foram atualizadas",
-        "nl": "Voor adaptor zijn node.js < 18 en js-controller > Nu 5\nAfhankelijkheden zijn bijgewerkt",
-        "fr": "L'adaptateur nécessite node.js >= 18 et js-controller >= 5 maintenant\nLes dépendances ont été actualisées",
-        "it": "Adattatore richiede node.js >= 18 e js-controller >= 5 ora\nLe dipendenze sono state aggiornate",
-        "es": "Adaptador requiere node.js √≥= 18 y js-controller 5 ahora\nSe han actualizado las dependencias",
-        "pl": "Adapter wymaga node.js > = 18 i kontroler js- > = 5 teraz\nZaktualizowano zależności",
-        "uk": "Адаптер вимагає node.js >= 18 і js-controller >= 5 тепер\nЗалежність було оновлено",
-        "zh-cn": "适配器需要节点.js QQ18和js控制器 QQ 现在5号\n依赖关系已更新"
-      },
-      "1.1.0": {
-        "en": "Bugfix: objects will be created only if necessary\nBugfix for excessive number of warnings has been added\nDistance calculation between ioBroker and tracker has been added",
-        "de": "Bugfix: Objekte werden nur bei Bedarf erstellt\nBugfix für übermäßige Anzahl von Warnungen wurde hinzugefügt\nEntfernungsberechnung zwischen ioBroker und Tracker wurde hinzugefügt",
-        "ru": "Bugfix: объекты будут созданы только при необходимости\nДобавлен Bugfix для чрезмерного количества предупреждений\nДобавлен расчёт расстояния между ioBroker и tracker",
-        "pt": "Bugfix: os objetos serão criados somente se necessário\nBugfix para o número excessivo de avisos foi adicionado\nCálculo de distância entre ioBroker e rastreador foi adicionado",
-        "nl": "Voorwerpen worden alleen gecreëerd indien nodig\nBugfix voor overmatig aantal waarschuwingen is toegevoegd\nVertaling:",
-        "fr": "Bugfix: les objets ne seront créés que si nécessaire\nBugfix for excessive number of warnings has been added\nCalcul de distance entre ioBroker et tracker a été ajouté",
-        "it": "Bugfix: gli oggetti verranno creati solo se necessario\nBugfix per un numero eccessivo di avvisi è stato aggiunto\nCalcolo a distanza tra ioBroker e tracker è stato aggiunto",
-        "es": "Bugfix: los objetos se crearán sólo si es necesario\nBugfix para el número excesivo de advertencias se ha añadido\nSe ha añadido el cálculo de distancia entre ioBroker y tracker",
-        "pl": "Bugfix: Obiekty będą tworzone tylko wtedy, gdy konieczne będzie koniecznie\nBugfix dla nadmiernej liczby ostrzeżeń został dodany\nObliczenia pomiędzy ioBrokerem i trackerem zostały dodane",
-        "uk": "Виправлення: об'єкти будуть створені тільки при необхідності\nПомилки для надмірної кількості попереджень\nДодано розрахунок дистанції ioBroker та трекер",
-        "zh-cn": "Bugfix:只有在必要情况下才能建立物体\n此外,还增加了过多的警告的力度。\n添加了气布罗克和轨道之间的试验。"
-      },
-      "1.0.0": {
-        "en": "Adapter has been moved into iobroker-community-adapters organisation\nDependencies have been updated",
-        "de": "Adapter wurde in iobroker-community-Adapter Organisation verschoben\nAbhängigkeiten wurden aktualisiert",
-        "ru": "Адаптер переехал в организацию iobroker-community-adapters\nВ зависимости были обновлены",
-        "pt": "Adapter foi transferido para a organização iobroker-community-adapters\nAs dependências foram atualizadas",
-        "nl": "Adapter is verplaatst naar iobroker-community-papters organisatie\nAfhankelijkheid",
-        "fr": "L'adaptateur a été déplacé dans l'organisation iobroker-community-adapters\nLes dépendances ont été mises à jour",
-        "it": "L'adattatore è stato spostato nell'organizzazione degli adattatori della comunità-iobroker\nLe dipendenze sono state aggiornate",
-        "es": "Adaptador ha sido trasladado a la organización de ibroker-community-adapters\nSe han actualizado las dependencias",
-        "pl": "Adapter został przeniesiony do iobrokerskiej organizacji\nZależności zostały zaktualizowane",
-        "uk": "Переміщено перехід на iobroker-community-adapters\nОновлено залежність",
-        "zh-cn": "现已进入加勒比采掘器组织\n已更新了属地"
-      },
-      "1.0.0-alpha.0": {
-        "en": "Adapter has been moved into iobroker-community-adapters organisation\nDependencies have been updated",
-        "de": "Adapter wurde in iobroker-community-Adapter Organisation verschoben\nAbhängigkeiten wurden aktualisiert",
-        "ru": "Адаптер переехал в организацию iobroker-community-adapters\nВ зависимости были обновлены",
-        "pt": "Adapter foi transferido para a organização iobroker-community-adapters\nAs dependências foram atualizadas",
-        "nl": "Adapter is verplaatst naar iobroker-community-papters organisatie\nAfhankelijkheid",
-        "fr": "L'adaptateur a été déplacé dans l'organisation iobroker-community-adapters\nLes dépendances ont été mises à jour",
-        "it": "L'adattatore è stato spostato nell'organizzazione degli adattatori della comunità-iobroker\nLe dipendenze sono state aggiornate",
-        "es": "Adaptador ha sido trasladado a la organización de ibroker-community-adapters\nSe han actualizado las dependencias",
-        "pl": "Adapter został przeniesiony do iobrokerskiej organizacji\nZależności zostały zaktualizowane",
-        "uk": "Переміщено перехід на iobroker-community-adapters\nОновлено залежність",
-        "zh-cn": "现已进入加勒比采掘器组织\n已更新了属地"
-      }
-    },
-    "titleLang": {
-      "en": "Tractive GPS",
-      "de": "Tractive GPS",
-      "ru": "Tractive GPS",
-      "pt": "Tractive GPS",
-      "nl": "Tractive GPS",
-      "fr": "Tractive GPS",
-      "it": "Tractive GPS",
-      "es": "Tractive GPS",
-      "pl": "Tractive GPS",
-      "uk": "Tractive GPS",
-      "zh-cn": "Tractive GPS"
-    },
-    "desc": {
-      "en": "This adapter allows you to connect to the Tractive GPS service and retrieve the location of your pets.",
-      "de": "Mit diesem Adapter können Sie eine Verbindung zum Tractive-GPS-Dienst herstellen und den Standort Ihrer Haustiere abrufen.",
-      "ru": "Этот адаптер позволяет подключиться к службе Tractive GPS и получить данные о местонахождении ваших питомцев.",
-      "pt": "Este adaptador permite-lhe ligar-se ao serviço Tractive GPS e recuperar a localização dos seus animais de estimação.",
-      "nl": "Met deze adapter kunt u verbinding maken met de Tractive GPS service en de locatie van uw huisdieren opvragen.",
-      "fr": "Cet adaptateur vous permet de vous connecter au service GPS Tractive et de récupérer la localisation de vos animaux domestiques.",
-      "it": "Questo adattatore consente di connettersi al servizio Tractive GPS e recuperare la posizione dei tuoi animali domestici.",
-      "es": "Este adaptador le permite conectarse al servicio Tractive GPS y recuperar la ubicación de sus mascotas.",
-      "pl": "Ten adapter pozwala połączyć się z usługą Tractive GPS i otrzymać lokalizację swoich zwierząt.",
-      "uk": "Цей адаптер дозволяє підключитися до служби Tractive GPS і отримати місцезнаходження ваших тварин.",
-      "zh-cn": "此适配器允许您连接到Tractive GPS服务并检索您的宠物的位置。"
-    },
-    "authors": [
-      "xXBJXx <issi.dev.iobroker@gmail.com>",
-      "iobroker-community-adapters <mcm57@gmx.at>"
-    ],
-    "keywords": [
-      "tractive",
-      "gps",
-      "geoposition",
-      "geolocation",
-      "tracking",
-      "dog",
-      "cat",
-      "pet"
-    ],
-    "licenseInformation": {
-      "license": "MIT",
-      "type": "free"
-    },
-    "platform": "Javascript/Node.js",
-    "icon": "tractive-gps.png",
-    "enabled": true,
-    "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.tractive-gps/main/admin/tractive-gps.png",
-    "readme": "https://github.com/iobroker-community-adapters/ioBroker.tractive-gps/blob/main/README.md",
-    "loglevel": "info",
-    "tier": 2,
-    "mode": "daemon",
-    "type": "geoposition",
-    "compact": true,
-    "connectionType": "cloud",
-    "dataSource": "poll",
-    "messagebox": true,
-    "singleton": true,
-    "stopBeforeUpdate": true,
-    "adminUI": {
-      "config": "json",
-      "tab": "materialize"
-    },
-    "adminTab": {
-      "singleton": true,
-      "name": {
-        "en": "Tractive GPS",
-        "de": "Tractive GPS",
-        "ru": "Tractive GPS",
-        "pt": "Tractive GPS",
-        "nl": "Tractive GPS",
-        "fr": "Tractive GPS",
-        "it": "Tractive GPS",
-        "es": "Tractive GPS",
-        "pl": "Tractive GPS",
-        "uk": "Tractive GPS",
-        "zh-cn": "Tractive GPS"
-      },
-      "link": "",
-      "fa-icon": "info"
-    },
-    "eraseOnUpload": true,
-    "dependencies": [
-      {
-        "js-controller": ">=6.0.11"
-      }
-    ],
-    "globalDependencies": [
-      {
-        "admin": ">=7.7.22"
-      }
-    ],
-    "messages": [
-      {
-        "condition": {
-          "operand": "and",
-          "rules": [
-            "oldVersion<2.0.0",
-            "newVersion>=2.0.0"
-          ]
+    "common": {
+        "name": "tractive-gps",
+        "version": "2.1.0",
+        "news": {
+            "2.1.0": {
+                "en": "Adapter requires node 20 now.\nAdapter requires js-controller 5.0.19 and admin 6.17.14 now.\nAdapter changed to meet Responsive Design rules.\nAn error at jsonConfig invalidating reauthorization command has been corrected.\nDependencies have been updated.",
+                "de": "Adapter benötigt jetzt den Knoten 20.\nAdapter benötigt jetzt js-controller 5.0.19 und admin 6.17.14.\nAdapter geändert, um Responsive Design Regeln zu erfüllen.\nEin Fehler bei jsonConfig, der Reautorisierungsbefehl invalidiert, wurde behoben.\nAbhängigkeiten wurden aktualisiert.",
+                "ru": "Адаптер требует узла 20.\nАдаптер требует js-контроллер 5.0.19 и admin 6.17.14.\nАдаптер изменился, чтобы соответствовать правилам Responsive Design.\nИсправлена ошибка в jsonConfig, аннулирующая команду реавторизации.\nЗависимость была обновлена.",
+                "pt": "Adaptador requer nó 20 agora.\nAdaptador requer js-controller 5.0.19 e admin 6.17.14 agora.\nAdapter mudou para atender às regras de Design Responsável.\nFoi corrigido um erro no comando jsonConfig invalidating reauthorization.\nAs dependências foram atualizadas.",
+                "nl": "Adapter vereist node 20 nu.\nAdapter vereist js-controller 5.01.19 en admin 6.17.14 nu.\nAdapter veranderd om te voldoen aan Responsive Design regels.\nEen fout bij jsonConfig ongeldig maken van reauthorization commando is gecorrigeerd.\nAfhankelijkheden zijn bijgewerkt.",
+                "fr": "Adaptateur nécessite un noeud 20 maintenant.\nAdaptateur nécessite js-controller 5.0.19 et admin 6.17.14 maintenant.\nAdaptateur modifié pour respecter les règles de conception réactive.\nUne erreur à la commande jsonConfig invalidant la réautorisation a été corrigée.\nLes dépendances ont été actualisées.",
+                "it": "Adattatore richiede nodo 20 ora.\nAdattatore richiede js-controller 5.0.19 e admin 6.17.14 ora.\nAdattatore modificato per soddisfare le regole di Responsive Design.\nÈ stato corretto un errore al comando di riautorizzazione di jsonConfig invalidante.\nLe dipendenze sono state aggiornate.",
+                "es": "Adaptador requiere nodo 20 ahora.\nAdaptador requiere js-controller 5.0.19 y admin 6.17.14 ahora.\nAdaptador cambió para cumplir con las reglas de diseño responsable.\nSe ha corregido un error en el comando jsonConfig invalidating reauthorization.\nSe han actualizado las dependencias.",
+                "pl": "Adapter wymaga węzła 20.\nAdapter wymaga sterownika js- 5.0.19 i admin 6.17.14 teraz.\nAdapter zmienił się w celu spełnienia zasad Responsive Design.\nBłąd w jsonConfig unieważnienie polecenia reautoryzacji został poprawiony.\nZaktualizowano zależność.",
+                "uk": "Адаптер вимагає вузла 20 тепер.\nАдаптер вимагає js-controller 5.0.19 і admin 6.17.14 тепер.\nПерехідник змінився для дотримання правил адаптивного дизайну.\nВиправлено помилку в jsonConfig, що недійсне відновлення.\nОновлено залежність.",
+                "zh-cn": "适配器现在需要20号节点.\n适配器现在需要js控制器5.0.19和管理员6.17.14.\n适配器更改以满足应变设计规则.\nJsonConfig 无效重授权命令的错误已被更正 .\n附属关系已经更新."
+            },
+            "2.0.1": {
+                "en": "Fixing encryption of the access token",
+                "de": "Festlegen der Verschlüsselung des Zugriffstokens",
+                "ru": "Исправление шифрования токена доступа",
+                "pt": "Corrigir criptografia do token de acesso",
+                "nl": "Versleuteling van het toegangs token herstellen",
+                "fr": "Correction du chiffrement du jeton d'accès",
+                "it": "Fissare la crittografia del gettone di accesso",
+                "es": "Corrección del cifrado de acceso",
+                "pl": "Ustawienie szyfrowania symbolu dostępu",
+                "uk": "Виправлення шифрування токена доступу",
+                "zh-cn": "修复访问令牌的加密"
+            },
+            "2.0.0": {
+                "en": "BREAKING CHANGE: You must enter your credentials again\nOld code has been removed and GUI has been rewritten\nDependencies have been updated",
+                "de": "BREAKING CHANGE: Sie müssen Ihre Anmeldeinformationen erneut eingeben\nDer alte Code wurde entfernt und GUI wurde neu geschrieben\nAbhängigkeiten wurden aktualisiert",
+                "ru": "Ж: Вы должны снова ввести свои полномочия\nСтарый код был удален, и GUI был переписан\nЗависимость обновлена",
+                "pt": "Muita coisa: Você deve inserir suas credenciais novamente\nCódigo antigo foi removido e GUI foi reescrito\nAs dependências foram atualizadas",
+                "nl": "Breaking VERANDERING: U moet uw referenties opnieuw invoeren\nOude code is verwijderd en GUI is herschreven\nAfhankelijkheden zijn bijgewerkt",
+                "fr": "CHANGEMENT DE BREAING: Vous devez à nouveau entrer vos lettres de créances\nL'ancien code a été supprimé et l'interface graphique a été réécrite\nLes dépendances ont été actualisées",
+                "it": "CAMBIO DI BREAKING: Devi inserire nuovamente le credenziali\nVecchio codice è stato rimosso e GUI è stato riscritto\nLe dipendenze sono state aggiornate",
+                "es": "Cambiando: Debe introducir sus credenciales de nuevo\nSe ha eliminado el código antiguo y GUI ha sido reescrito\nSe han actualizado las dependencias",
+                "pl": "ZMIANA ZBIORCZA: Musisz ponownie wpisać swoje referencje\nStary kod został usunięty i GUI został przepisany\nZaktualizowano zależności",
+                "uk": "БРЕАКІНГ ЗМІН: Ви повинні ввести ваші облікові дані знову\nСтарший код був вилучений і графічний інтерфейс\nЗалежність було оновлено",
+                "zh-cn": "打破变化: 您必须再次输入您的证书\n旧代码已被删除, 并重写 GUI\n依赖关系已更新"
+            },
+            "1.2.0": {
+                "en": "Adapter requires node.js >= 18 and js-controller >= 5 now\nDependencies have been updated",
+                "de": "Adapter benötigt node.js >= 18 und js-controller >= 5 jetzt\nAbhängigkeiten wurden aktualisiert",
+                "ru": "Адаптер требует node.js >= 18 и js-контроллер >= 5 сейчас\nЗависимость обновлена",
+                "pt": "Adapter requer node.js >= 18 e js-controller >= 5 agora\nAs dependências foram atualizadas",
+                "nl": "Voor adaptor zijn node.js < 18 en js-controller > Nu 5\nAfhankelijkheden zijn bijgewerkt",
+                "fr": "L'adaptateur nécessite node.js >= 18 et js-controller >= 5 maintenant\nLes dépendances ont été actualisées",
+                "it": "Adattatore richiede node.js >= 18 e js-controller >= 5 ora\nLe dipendenze sono state aggiornate",
+                "es": "Adaptador requiere node.js √≥= 18 y js-controller 5 ahora\nSe han actualizado las dependencias",
+                "pl": "Adapter wymaga node.js > = 18 i kontroler js- > = 5 teraz\nZaktualizowano zależności",
+                "uk": "Адаптер вимагає node.js >= 18 і js-controller >= 5 тепер\nЗалежність було оновлено",
+                "zh-cn": "适配器需要节点.js QQ18和js控制器 QQ 现在5号\n依赖关系已更新"
+            },
+            "1.1.0": {
+                "en": "Bugfix: objects will be created only if necessary\nBugfix for excessive number of warnings has been added\nDistance calculation between ioBroker and tracker has been added",
+                "de": "Bugfix: Objekte werden nur bei Bedarf erstellt\nBugfix für übermäßige Anzahl von Warnungen wurde hinzugefügt\nEntfernungsberechnung zwischen ioBroker und Tracker wurde hinzugefügt",
+                "ru": "Bugfix: объекты будут созданы только при необходимости\nДобавлен Bugfix для чрезмерного количества предупреждений\nДобавлен расчёт расстояния между ioBroker и tracker",
+                "pt": "Bugfix: os objetos serão criados somente se necessário\nBugfix para o número excessivo de avisos foi adicionado\nCálculo de distância entre ioBroker e rastreador foi adicionado",
+                "nl": "Voorwerpen worden alleen gecreëerd indien nodig\nBugfix voor overmatig aantal waarschuwingen is toegevoegd\nVertaling:",
+                "fr": "Bugfix: les objets ne seront créés que si nécessaire\nBugfix for excessive number of warnings has been added\nCalcul de distance entre ioBroker et tracker a été ajouté",
+                "it": "Bugfix: gli oggetti verranno creati solo se necessario\nBugfix per un numero eccessivo di avvisi è stato aggiunto\nCalcolo a distanza tra ioBroker e tracker è stato aggiunto",
+                "es": "Bugfix: los objetos se crearán sólo si es necesario\nBugfix para el número excesivo de advertencias se ha añadido\nSe ha añadido el cálculo de distancia entre ioBroker y tracker",
+                "pl": "Bugfix: Obiekty będą tworzone tylko wtedy, gdy konieczne będzie koniecznie\nBugfix dla nadmiernej liczby ostrzeżeń został dodany\nObliczenia pomiędzy ioBrokerem i trackerem zostały dodane",
+                "uk": "Виправлення: об'єкти будуть створені тільки при необхідності\nПомилки для надмірної кількості попереджень\nДодано розрахунок дистанції ioBroker та трекер",
+                "zh-cn": "Bugfix:只有在必要情况下才能建立物体\n此外,还增加了过多的警告的力度。\n添加了气布罗克和轨道之间的试验。"
+            },
+            "1.0.0": {
+                "en": "Adapter has been moved into iobroker-community-adapters organisation\nDependencies have been updated",
+                "de": "Adapter wurde in iobroker-community-Adapter Organisation verschoben\nAbhängigkeiten wurden aktualisiert",
+                "ru": "Адаптер переехал в организацию iobroker-community-adapters\nВ зависимости были обновлены",
+                "pt": "Adapter foi transferido para a organização iobroker-community-adapters\nAs dependências foram atualizadas",
+                "nl": "Adapter is verplaatst naar iobroker-community-papters organisatie\nAfhankelijkheid",
+                "fr": "L'adaptateur a été déplacé dans l'organisation iobroker-community-adapters\nLes dépendances ont été mises à jour",
+                "it": "L'adattatore è stato spostato nell'organizzazione degli adattatori della comunità-iobroker\nLe dipendenze sono state aggiornate",
+                "es": "Adaptador ha sido trasladado a la organización de ibroker-community-adapters\nSe han actualizado las dependencias",
+                "pl": "Adapter został przeniesiony do iobrokerskiej organizacji\nZależności zostały zaktualizowane",
+                "uk": "Переміщено перехід на iobroker-community-adapters\nОновлено залежність",
+                "zh-cn": "现已进入加勒比采掘器组织\n已更新了属地"
+            },
+            "1.0.0-alpha.0": {
+                "en": "Adapter has been moved into iobroker-community-adapters organisation\nDependencies have been updated",
+                "de": "Adapter wurde in iobroker-community-Adapter Organisation verschoben\nAbhängigkeiten wurden aktualisiert",
+                "ru": "Адаптер переехал в организацию iobroker-community-adapters\nВ зависимости были обновлены",
+                "pt": "Adapter foi transferido para a organização iobroker-community-adapters\nAs dependências foram atualizadas",
+                "nl": "Adapter is verplaatst naar iobroker-community-papters organisatie\nAfhankelijkheid",
+                "fr": "L'adaptateur a été déplacé dans l'organisation iobroker-community-adapters\nLes dépendances ont été mises à jour",
+                "it": "L'adattatore è stato spostato nell'organizzazione degli adattatori della comunità-iobroker\nLe dipendenze sono state aggiornate",
+                "es": "Adaptador ha sido trasladado a la organización de ibroker-community-adapters\nSe han actualizado las dependencias",
+                "pl": "Adapter został przeniesiony do iobrokerskiej organizacji\nZależności zostały zaktualizowane",
+                "uk": "Переміщено перехід на iobroker-community-adapters\nОновлено залежність",
+                "zh-cn": "现已进入加勒比采掘器组织\n已更新了属地"
+            }
         },
-        "title": {
-          "en": "Important notice!",
-          "de": "Wichtiger Hinweis!",
-          "ru": "Важное замечание!",
-          "pt": "Notícia importante!",
-          "nl": "Belangrijke mededeling!",
-          "fr": "Avis important!",
-          "it": "Avviso IMPORTANTE!",
-          "es": "Noticia importante!",
-          "pl": "Ważna uwaga!",
-          "zh-cn": "重要通知!",
-          "uk": "Важливе повідомлення!"
+        "titleLang": {
+            "en": "Tractive GPS",
+            "de": "Tractive GPS",
+            "ru": "Tractive GPS",
+            "pt": "Tractive GPS",
+            "nl": "Tractive GPS",
+            "fr": "Tractive GPS",
+            "it": "Tractive GPS",
+            "es": "Tractive GPS",
+            "pl": "Tractive GPS",
+            "uk": "Tractive GPS",
+            "zh-cn": "Tractive GPS"
         },
-        "text": {
-          "en": "Release 2.0.0 changes the encryption method for passwords. After migration user credentials must be entered again.",
-          "de": "Release 2.0.0 ändert die Verschlüsselungsmethode für Passwörter. Nach der Migration müssen Benutzerberechtigungen erneut eingegeben werden.",
-          "ru": "Выпуск 2.0.0 меняет метод шифрования для паролей. После миграции учетные данные пользователя должны быть введены снова.",
-          "pt": "O Release 2.0.0 muda o método de criptografia para senhas. Após a migração, as credenciais de usuário devem ser inseridas novamente.",
-          "nl": "Release 2.0.0 verandert de encryptiemethode voor wachtwoorden. Na migratie moeten gebruikersgegevens opnieuw worden ingevoerd.",
-          "fr": "La version 2.0.0 modifie la méthode de chiffrement des mots de passe. Après la migration, les identifiants d'utilisateur doivent être entrés à nouveau.",
-          "it": "Rilasciare 2.0.0 modifica il metodo di crittografia per le password. Dopo che le credenziali dell'utente di migrazione devono essere inserite di nuovo.",
-          "es": "La versión 2.0.0 cambia el método de cifrado para contraseñas. Después de que las credenciales de usuario de migración deben ser ingresadas de nuevo.",
-          "pl": "Release 2.0.0 zmienia metodę szyfrowania haseł. Po migracji należy ponownie wpisać dane uwierzytelniające użytkownika.",
-          "uk": "Release 2.0.0 змінює метод шифрування паролів. Після міграції облікових записів користувачів необхідно вводити знову.",
-          "zh-cn": "发布 2.0.0 更改密码的加密方法. 移民后,必须再次输入用户证书."
+        "desc": {
+            "en": "This adapter allows you to connect to the Tractive GPS service and retrieve the location of your pets.",
+            "de": "Mit diesem Adapter können Sie eine Verbindung zum Tractive-GPS-Dienst herstellen und den Standort Ihrer Haustiere abrufen.",
+            "ru": "Этот адаптер позволяет подключиться к службе Tractive GPS и получить данные о местонахождении ваших питомцев.",
+            "pt": "Este adaptador permite-lhe ligar-se ao serviço Tractive GPS e recuperar a localização dos seus animais de estimação.",
+            "nl": "Met deze adapter kunt u verbinding maken met de Tractive GPS service en de locatie van uw huisdieren opvragen.",
+            "fr": "Cet adaptateur vous permet de vous connecter au service GPS Tractive et de récupérer la localisation de vos animaux domestiques.",
+            "it": "Questo adattatore consente di connettersi al servizio Tractive GPS e recuperare la posizione dei tuoi animali domestici.",
+            "es": "Este adaptador le permite conectarse al servicio Tractive GPS y recuperar la ubicación de sus mascotas.",
+            "pl": "Ten adapter pozwala połączyć się z usługą Tractive GPS i otrzymać lokalizację swoich zwierząt.",
+            "uk": "Цей адаптер дозволяє підключитися до служби Tractive GPS і отримати місцезнаходження ваших тварин.",
+            "zh-cn": "此适配器允许您连接到Tractive GPS服务并检索您的宠物的位置。"
         },
-        "link": "https://github.com/iobroker-community-adapters/ioBroker.tractive-gps#changelog",
-        "level": "warn",
-        "linkText": {
-          "en": "Changelog",
-          "de": "Änderungsprotokoll",
-          "ru": "Список изменений",
-          "pt": "Registro de alterações",
-          "nl": "Wijzigingslog",
-          "fr": "Journal des modifications",
-          "it": "Registro delle modifiche",
-          "es": "registro de cambios",
-          "pl": "Dziennik zmian",
-          "zh-cn": "变更日志",
-          "uk": "Журнал змін"
+        "authors": ["xXBJXx <issi.dev.iobroker@gmail.com>", "iobroker-community-adapters <mcm57@gmx.at>"],
+        "keywords": ["tractive", "gps", "geoposition", "geolocation", "tracking", "dog", "cat", "pet"],
+        "licenseInformation": {
+            "license": "MIT",
+            "type": "free"
         },
-        "buttons": [
-          "agree",
-          "cancel"
+        "platform": "Javascript/Node.js",
+        "icon": "tractive-gps.png",
+        "enabled": true,
+        "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.tractive-gps/main/admin/tractive-gps.png",
+        "readme": "https://github.com/iobroker-community-adapters/ioBroker.tractive-gps/blob/main/README.md",
+        "loglevel": "info",
+        "tier": 2,
+        "mode": "daemon",
+        "type": "geoposition",
+        "compact": true,
+        "connectionType": "cloud",
+        "dataSource": "poll",
+        "plugins": {
+            "sentry": {
+                "dsn": "https://a3cc76cdce9f4e74b52390d60fd75278@o384969.ingest.sentry.io/4504555481530368"
+            }
+        },
+        "messagebox": true,
+        "singleton": true,
+        "materialize": true,
+        "stopBeforeUpdate": true,
+        "adminUI": {
+            "config": "materialize"
+        },
+        "visWidgets": {
+            "tractiveGpsWidgets": {
+                "i18n": "component",
+                "name": "tractiveGpsWidgets",
+                "url": "tractive-gps/customWidgets.js",
+                "bundlerType": "module",
+                "components": ["PetTrackerCard"]
+            }
+        },
+        "restartAdapters": ["vis-2"],
+        "eraseOnUpload": true,
+        "dependencies": [
+            {
+                "js-controller": ">=7.2.2",
+                "vis-2": ">=2.12.8"
+            }
+        ],
+        "globalDependencies": [
+            {
+                "admin": ">=8.0.0"
+            }
+        ],
+        "messages": [
+            {
+                "condition": {
+                    "operand": "and",
+                    "rules": ["oldVersion<2.0.0", "newVersion>=2.0.0"]
+                },
+                "title": {
+                    "en": "Important notice!",
+                    "de": "Wichtiger Hinweis!",
+                    "ru": "Важное замечание!",
+                    "pt": "Notícia importante!",
+                    "nl": "Belangrijke mededeling!",
+                    "fr": "Avis important!",
+                    "it": "Avviso IMPORTANTE!",
+                    "es": "Noticia importante!",
+                    "pl": "Ważna uwaga!",
+                    "zh-cn": "重要通知!",
+                    "uk": "Важливе повідомлення!"
+                },
+                "text": {
+                    "en": "Release 2.0.0 changes the encryption method for passwords. After migration user credentials must be entered again.",
+                    "de": "Release 2.0.0 ändert die Verschlüsselungsmethode für Passwörter. Nach der Migration müssen Benutzerberechtigungen erneut eingegeben werden.",
+                    "ru": "Выпуск 2.0.0 меняет метод шифрования для паролей. После миграции учетные данные пользователя должны быть введены снова.",
+                    "pt": "O Release 2.0.0 muda o método de criptografia para senhas. Após a migração, as credenciais de usuário devem ser inseridas novamente.",
+                    "nl": "Release 2.0.0 verandert de encryptiemethode voor wachtwoorden. Na migratie moeten gebruikersgegevens opnieuw worden ingevoerd.",
+                    "fr": "La version 2.0.0 modifie la méthode de chiffrement des mots de passe. Après la migration, les identifiants d'utilisateur doivent être entrés à nouveau.",
+                    "it": "Rilasciare 2.0.0 modifica il metodo di crittografia per le password. Dopo che le credenziali dell'utente di migrazione devono essere inserite di nuovo.",
+                    "es": "La versión 2.0.0 cambia el método de cifrado para contraseñas. Después de que las credenciales de usuario de migración deben ser ingresadas de nuevo.",
+                    "pl": "Release 2.0.0 zmienia metodę szyfrowania haseł. Po migracji należy ponownie wpisać dane uwierzytelniające użytkownika.",
+                    "uk": "Release 2.0.0 змінює метод шифрування паролів. Після міграції облікових записів користувачів необхідно вводити знову.",
+                    "zh-cn": "发布 2.0.0 更改密码的加密方法. 移民后,必须再次输入用户证书."
+                },
+                "link": "https://github.com/iobroker-community-adapters/ioBroker.tractive-gps#changelog",
+                "level": "warn",
+                "linkText": {
+                    "en": "Changelog",
+                    "de": "Änderungsprotokoll",
+                    "ru": "Список изменений",
+                    "pt": "Registro de alterações",
+                    "nl": "Wijzigingslog",
+                    "fr": "Journal des modifications",
+                    "it": "Registro delle modifiche",
+                    "es": "registro de cambios",
+                    "pl": "Dziennik zmian",
+                    "zh-cn": "变更日志",
+                    "uk": "Журнал змін"
+                },
+                "buttons": ["agree", "cancel"]
+            }
         ]
-      }
-    ]
-  },
-  "plugins": {
-    "sentry": {
-      "dsn": "https://a3cc76cdce9f4e74b52390d60fd75278@o384969.ingest.sentry.io/4504555481530368"
-    }
-  },
-  "protectedNative": [
-    "access_token",
-    "password"
-  ],
-  "encryptedNative": [
-    "access_token",
-    "password"
-  ],
-  "native": {
-    "interval": 60,
-    "email": "",
-    "password": "",
-    "access_token": "",
-    "expires_at": 0,
-    "user_id": "",
-    "nameArray": []
-  },
-  "objects": [],
-  "instanceObjects": [
-    {
-      "_id": "info",
-      "type": "channel",
-      "common": {
-        "name": "Information"
-      },
-      "native": {}
     },
-    {
-      "_id": "info.connection",
-      "type": "state",
-      "common": {
-        "role": "indicator.connected",
-        "name": "Device or service connected",
-        "type": "boolean",
-        "read": true,
-        "write": false,
-        "def": false
-      },
-      "native": {}
-    }
-  ]
+    "protectedNative": ["password"],
+    "encryptedNative": ["password"],
+    "native": {
+        "interval": 120,
+        "email": "",
+        "password": "",
+        "reverseGeocoding": false
+    },
+    "objects": [],
+    "instanceObjects": [
+        {
+            "_id": "info",
+            "type": "channel",
+            "common": {
+                "name": "Information"
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.connection",
+            "type": "state",
+            "common": {
+                "role": "indicator.connected",
+                "name": "Device or service connected",
+                "type": "boolean",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        }
+    ]
 }
