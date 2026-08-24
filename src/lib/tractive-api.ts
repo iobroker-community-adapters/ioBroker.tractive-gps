@@ -2,9 +2,12 @@ import type { AxiosInstance, AxiosRequestConfig } from 'axios';
 import axios from 'axios';
 import type {
     TractiveAddress,
+    TractiveAccount,
     TractiveAPIResponse,
     TractiveAuth,
     TractivePet,
+    TractiveShare,
+    TractiveSubscription,
     TractiveTracker,
     TractiveTrackerHardware,
     TractiveTrackerLocation,
@@ -23,6 +26,7 @@ export interface TractiveAPIOptions {
     random?: () => number;
     reverseGeocoding?: boolean;
     getDevicesAsync?: () => Promise<readonly ioBroker.Object[]>;
+    getForeignObjectAsync?: (id: string) => Promise<ioBroker.Object | null | undefined>;
 }
 
 export class TractiveAPI implements ITractiveApiEndpoints {
@@ -37,6 +41,7 @@ export class TractiveAPI implements ITractiveApiEndpoints {
     ) => ioBroker.SetStatePromise;
     public readonly getObjectAsync: (id: string) => Promise<ioBroker.Object | null | undefined>;
     public readonly getDevicesAsync?: () => Promise<readonly ioBroker.Object[]>;
+    public readonly getForeignObjectAsync?: (id: string) => Promise<ioBroker.Object | null | undefined>;
     private readonly tractiveClient = '6536c228870a3c8857d452e8';
     private credentials: { email: string; password: string } | null = null;
     private refreshPromise: Promise<boolean> | null = null;
@@ -82,6 +87,7 @@ export class TractiveAPI implements ITractiveApiEndpoints {
         this.log = log;
         this.getObjectAsync = getObjectAsync;
         this.getDevicesAsync = options.getDevicesAsync;
+        this.getForeignObjectAsync = options.getForeignObjectAsync;
         this.setState = setState;
         this.extendObjectAsync = extendObjectAsync;
 
@@ -348,6 +354,36 @@ export class TractiveAPI implements ITractiveApiEndpoints {
     }
 
     // Endpoints
+    async getAccount(): Promise<TractiveAPIResponse<TractiveAccount>> {
+        if (!this.auth) {
+            return { success: false, error: 'Not authenticated' };
+        }
+        return this.getRecord(`/user/${encodeURIComponent(this.auth.user_id)}`, 'account');
+    }
+
+    async getSubscriptions(): Promise<TractiveAPIResponse<TractiveSubscription[]>> {
+        if (!this.auth) {
+            return { success: false, error: 'Not authenticated' };
+        }
+        return this.getRecordArray(`/user/${encodeURIComponent(this.auth.user_id)}/subscriptions`, 'subscription list');
+    }
+
+    async getSubscription(subscriptionID: string): Promise<TractiveAPIResponse<TractiveSubscription>> {
+        return this.getRecord(`/subscription/${encodeURIComponent(subscriptionID)}`, 'subscription');
+    }
+
+    async getShares(): Promise<TractiveAPIResponse<TractiveShare[]>> {
+        if (!this.auth) {
+            return { success: false, error: 'Not authenticated' };
+        }
+        return this.getRecordArray(`/user/${encodeURIComponent(this.auth.user_id)}/shares`, 'share list');
+    }
+
+    /** Build the same public media URL that is used by Tractive's web application. */
+    getProfilePictureUrl(imageID: string): string {
+        return `https://cdn.tractive.com/3/media/resource/${encodeURIComponent(imageID)}.jpg`;
+    }
+
     /**
      *
      */

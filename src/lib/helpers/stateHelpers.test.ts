@@ -34,7 +34,7 @@ describe('tracker state model', () => {
         expect(common?.write).to.equal(true);
     });
 
-    it('mirrors API values while removing authentication and personal account fields', async () => {
+    it('mirrors complete API values locally, including arrays and personal account fields', async () => {
         const states = new Map<string, ioBroker.StateValue>();
         const objects = new Map<string, ioBroker.PartialObject>();
         const deps: StateDeps = {
@@ -56,10 +56,11 @@ describe('tracker state model', () => {
 
         expect(states.get('api.data.pets.pet1.details.name')).to.equal('Bärli');
         expect(states.get('api.data.pets.pet1.details.breed_ids')).to.equal('["1G91"]');
-        expect(objects.has('api.data.access_token')).to.equal(false);
-        expect(objects.has('api.data.user_id')).to.equal(false);
-        expect(String(states.get('info.currentApi'))).not.to.contain('secret');
-        expect(String(states.get('info.currentApi'))).not.to.contain('private');
+        expect(states.get('api.data.pets.pet1.details.breed_idsItems.0')).to.equal('1G91');
+        expect(states.get('api.data.access_token')).to.equal('secret');
+        expect(states.get('api.data.user_id')).to.equal('private');
+        expect(String(states.get('info.currentApi'))).to.contain('secret');
+        expect(String(states.get('info.currentApi'))).to.contain('private');
     });
 
     it('updates existing legacy states without recreating removed raw objects', async () => {

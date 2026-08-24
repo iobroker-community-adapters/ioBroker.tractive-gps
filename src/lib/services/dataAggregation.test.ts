@@ -20,6 +20,11 @@ describe('data aggregation migration', () => {
                 return Promise.resolve(undefined);
             }) as ITractiveApiEndpoints['setState'],
             getObjectAsync: sinon.stub().resolves(null),
+            getAccount: () => Promise.resolve({ success: true, data: { _id: 'account-1' } }),
+            getSubscriptions: () => Promise.resolve({ success: true, data: [] }),
+            getSubscription: () => Promise.resolve({ success: false, error: 'not called' }),
+            getShares: () => Promise.resolve({ success: true, data: [] }),
+            getProfilePictureUrl: id => `https://cdn.tractive.com/3/media/resource/${id}.jpg`,
             getPets: () => Promise.resolve({ success: true, data: [{ _id: 'pet-1' }] }),
             getPet: () =>
                 Promise.resolve({
@@ -53,7 +58,9 @@ describe('data aggregation migration', () => {
         expect(objects.get('pets.pet-1')?.common?.name).to.equal('Bärli');
         expect(states.get('pets.pet-1.info.name')).to.equal('Bärli');
         expect(states.get('pets.pet-1.info.weight')).to.equal(4.9);
-        expect(states.get('pets.pet-1.info.profilePictureUrl')).to.equal('https://graph.tractive.com/pet/image-1.jpg');
+        expect(states.get('pets.pet-1.info.profilePictureUrl')).to.equal(
+            'https://cdn.tractive.com/3/media/resource/image-1.jpg',
+        );
     });
 
     it('marks retained tracker devices as missing when the account no longer returns them', async () => {
@@ -64,6 +71,11 @@ describe('data aggregation migration', () => {
             extendObjectAsync: sinon.stub().resolves(undefined) as ITractiveApiEndpoints['extendObjectAsync'],
             setState: setState as ITractiveApiEndpoints['setState'],
             getObjectAsync: sinon.stub().resolves(null),
+            getAccount: () => Promise.resolve({ success: true, data: {} }),
+            getSubscriptions: () => Promise.resolve({ success: true, data: [] }),
+            getSubscription: () => Promise.resolve({ success: false, error: 'not called' }),
+            getShares: () => Promise.resolve({ success: true, data: [] }),
+            getProfilePictureUrl: id => id,
             getDevicesAsync: () =>
                 Promise.resolve([
                     {
@@ -86,6 +98,54 @@ describe('data aggregation migration', () => {
 
         expect(result).to.deep.equal({ success: true, data: true });
         expect(setState.calledWithExactly('trackers.retained-tracker.health.missing', true, true)).to.equal(true);
+    });
+
+    it('writes sensor, home status, and distance from the ioBroker system position', async () => {
+        const states = new Map<string, ioBroker.StateValue>();
+        const api: ITractiveApiEndpoints = {
+            auth: { user_id: 'user-1', expires_at: 1_900_000_000 },
+            log: { warn: sinon.stub() } as unknown as ioBroker.Logger,
+            extendObjectAsync: sinon.stub().resolves(undefined) as ITractiveApiEndpoints['extendObjectAsync'],
+            setState: sinon.stub().callsFake((id: string, value: ioBroker.StateValue) => {
+                states.set(id, value);
+                return Promise.resolve(undefined);
+            }) as ITractiveApiEndpoints['setState'],
+            getObjectAsync: sinon.stub().resolves(null),
+            getForeignObjectAsync: () =>
+                Promise.resolve({
+                    _id: 'system.config',
+                    type: 'config',
+                    common: { name: 'System configuration', latitude: 48.2, longitude: 13.4 },
+                    native: {},
+                } as ioBroker.Object),
+            getAccount: () => Promise.resolve({ success: true, data: { _id: 'user-1', email: 'local@example' } }),
+            getSubscriptions: () => Promise.resolve({ success: true, data: [{ _id: 'sub-1' }] }),
+            getSubscription: () => Promise.resolve({ success: true, data: { _id: 'sub-1', plan: 'premium' } }),
+            getShares: () => Promise.resolve({ success: true, data: [{ _id: 'share-1' }] }),
+            getProfilePictureUrl: id => id,
+            getPets: () => Promise.resolve({ success: true, data: [] }),
+            getPet: () => Promise.resolve({ success: false, error: 'not called' }),
+            getImage: () => Promise.resolve({ success: false, error: 'not called' }),
+            getAllTrackers: () => Promise.resolve({ success: true, data: [{ _id: 'tracker-1' }] }),
+            getTracker: () => Promise.resolve({ success: true, data: { _id: 'tracker-1' } }),
+            getTrackerLocation: () =>
+                Promise.resolve({
+                    success: true,
+                    data: { latlong: [48.21, 13.4], sensor_used: 'KNOWN_WIFI', time: 1_787_500_000 },
+                }),
+            getTrackerHardware: () => Promise.resolve({ success: true, data: {} }),
+        };
+
+        expect((await updateAllData(api)).success).to.equal(true);
+        expect(states.get('trackers.tracker-1.status.sensorUsed')).to.equal('KNOWN_WIFI');
+        expect(states.get('trackers.tracker-1.status.home')).to.equal(true);
+        expect(states.get('trackers.tracker-1.location.distance')).to.be.closeTo(1112, 2);
+        expect(states.get('tracker-1.device_pos_report.sensor_used')).to.equal('KNOWN_WIFI');
+        expect(states.get('api.data.account.email')).to.equal('local@example');
+        expect(states.get('api.data.subscriptions.details.sub-1.plan')).to.equal('premium');
+        expect(states.get('api.data.sharesItems.share-1._id')).to.equal('share-1');
+        expect(String(states.get('info.currentApi'))).to.contain('local@example');
+        expect(String(states.get('info.currentApi'))).not.to.contain('access_token');
     });
 
     it('does not refetch static pet, image, tracker detail, or hardware data during frequent polls', async () => {
@@ -117,6 +177,11 @@ describe('data aggregation migration', () => {
             extendObjectAsync: sinon.stub().resolves(undefined) as ITractiveApiEndpoints['extendObjectAsync'],
             setState: sinon.stub().resolves(undefined) as ITractiveApiEndpoints['setState'],
             getObjectAsync: sinon.stub().resolves(null),
+            getAccount: () => Promise.resolve({ success: true, data: {} }),
+            getSubscriptions: () => Promise.resolve({ success: true, data: [] }),
+            getSubscription: () => Promise.resolve({ success: false, error: 'not called' }),
+            getShares: () => Promise.resolve({ success: true, data: [] }),
+            getProfilePictureUrl: id => id,
             getPets,
             getPet,
             getImage,
@@ -131,7 +196,7 @@ describe('data aggregation migration', () => {
 
         expect(getPets.callCount).to.equal(1);
         expect(getPet.callCount).to.equal(1);
-        expect(getImage.callCount).to.equal(1);
+        expect(getImage.callCount).to.equal(0);
         expect(getTracker.callCount).to.equal(1);
         expect(getTrackerHardware.callCount).to.equal(1);
         expect(getAllTrackers.callCount).to.equal(2);
@@ -147,7 +212,7 @@ describe('data aggregation migration', () => {
 
         expect(getPets.callCount).to.equal(1);
         expect(getPet.callCount).to.equal(1);
-        expect(getImage.callCount).to.equal(1);
+        expect(getImage.callCount).to.equal(0);
         expect(getTracker.callCount).to.equal(1);
         expect(getTrackerHardware.callCount).to.equal(2);
         expect(getAllTrackers.callCount).to.equal(3);

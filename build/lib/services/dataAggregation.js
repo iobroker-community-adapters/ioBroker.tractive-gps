@@ -31,6 +31,8 @@ function getAggregationCache(api) {
     return cached;
   }
   const created = {
+    subscriptions: { list: [], details: {} },
+    shares: [],
     petApiData: {},
     petIdByTracker: /* @__PURE__ */ new Map(),
     trackerDetails: /* @__PURE__ */ new Map(),
@@ -155,6 +157,28 @@ function timestampToMilliseconds(value) {
   }
   return value < 1e12 ? value * 1e3 : value;
 }
+function distanceInMeters(latitude1, longitude1, latitude2, longitude2) {
+  const toRadians = (degrees) => degrees * Math.PI / 180;
+  const latitudeDelta = toRadians(latitude2 - latitude1);
+  const longitudeDelta = toRadians(longitude2 - longitude1);
+  const a = Math.sin(latitudeDelta / 2) ** 2 + Math.cos(toRadians(latitude1)) * Math.cos(toRadians(latitude2)) * Math.sin(longitudeDelta / 2) ** 2;
+  return Math.round(6371e3 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+}
+async function getSystemCoordinates(api) {
+  var _a;
+  const systemConfig = await ((_a = api.getForeignObjectAsync) == null ? void 0 : _a.call(api, "system.config"));
+  const common = systemConfig == null ? void 0 : systemConfig.common;
+  const parseCoordinate = (value) => {
+    if (typeof value !== "number" && (typeof value !== "string" || value.trim() === "")) {
+      return void 0;
+    }
+    const coordinate = Number(value);
+    return Number.isFinite(coordinate) ? coordinate : void 0;
+  };
+  const latitude = parseCoordinate(common == null ? void 0 : common.latitude);
+  const longitude = parseCoordinate(common == null ? void 0 : common.longitude);
+  return latitude !== void 0 && longitude !== void 0 ? [latitude, longitude] : void 0;
+}
 function normalizePet(value, imageValue) {
   var _a, _b;
   const records = layers(value);
@@ -205,8 +229,8 @@ function addressText(value) {
   const city = [firstString([record], "zip_code"), firstString([record], "city")].filter(Boolean).join(" ");
   return [street, city, firstString([record], "country")].filter(Boolean).join(", ") || void 0;
 }
-function normalizeTracker(listValue, detailsValue, locationValue, hardwareValue, petIdByTracker) {
-  var _a, _b, _c, _d;
+function normalizeTracker(listValue, detailsValue, locationValue, hardwareValue, petIdByTracker, systemCoordinates) {
+  var _a, _b, _c;
   const records = [...layers(detailsValue), ...layers(listValue)];
   const id = firstString(records, "_id", "id");
   if (!id) {
@@ -220,6 +244,10 @@ function normalizeTracker(listValue, detailsValue, locationValue, hardwareValue,
   const stateReason = firstString(records, "state_reason");
   const positionTime = timestampToMilliseconds(firstNumber(location ? [location] : [], "time", "time_rcvd"));
   const hardwareTime = timestampToMilliseconds(firstNumber(hardware ? [hardware] : [], "time"));
+  const sensorUsed = firstString(location ? [location] : [], "sensor_used", "connection_type");
+  const normalizedSensor = sensorUsed == null ? void 0 : sensorUsed.toUpperCase();
+  const latitude = typeof latlong[0] === "number" ? latlong[0] : void 0;
+  const longitude = typeof latlong[1] === "number" ? latlong[1] : void 0;
   return {
     id,
     name: (_a = firstString(records, "name", "hw_id")) != null ? _a : id,
@@ -229,16 +257,19 @@ function normalizeTracker(listValue, detailsValue, locationValue, hardwareValue,
     petId: (_b = petIdByTracker.get(id)) != null ? _b : firstString(records, "trackable_object_id", "pet_id"),
     online: state === void 0 ? positionTime !== void 0 : !["OFFLINE", "DISABLED"].includes(state.toUpperCase()),
     lastSeen: positionTime,
-    connectionType: (_c = firstString(location ? [location] : [], "connection_type")) != null ? _c : stateReason,
+    connectionType: sensorUsed != null ? sensorUsed : stateReason,
+    sensorUsed,
+    home: normalizedSensor === "KNOWN_WIFI" ? true : normalizedSensor === "GPS" ? false : void 0,
     batteryLevel: firstNumber(hardware ? [hardware] : [], "battery_level"),
     charging: chargingState === void 0 ? void 0 : chargingState.toUpperCase() === "CHARGING",
-    powerSaving: (_d = firstBoolean(records, "battery_save_mode", "power_saving")) != null ? _d : stateReason === void 0 ? void 0 : stateReason.toUpperCase().includes("POWER"),
+    powerSaving: (_c = firstBoolean(records, "battery_save_mode", "power_saving")) != null ? _c : stateReason === void 0 ? void 0 : stateReason.toUpperCase().includes("POWER"),
     positionAccuracy: firstNumber(location ? [location] : [], "pos_uncertainty", "accuracy"),
-    latitude: typeof latlong[0] === "number" ? latlong[0] : void 0,
-    longitude: typeof latlong[1] === "number" ? latlong[1] : void 0,
+    latitude,
+    longitude,
     altitude: firstNumber(location ? [location] : [], "altitude", "alt"),
     speed: firstNumber(location ? [location] : [], "speed"),
     address: addressText(location == null ? void 0 : location.address),
+    distance: systemCoordinates && latitude !== void 0 && longitude !== void 0 ? distanceInMeters(systemCoordinates[0], systemCoordinates[1], latitude, longitude) : void 0,
     capabilities: firstStringArray(records, "capabilities"),
     operationalState: state,
     stateReason,
@@ -255,10 +286,39 @@ function stateDeps(api) {
   };
 }
 async function synchronize(api, fullSync) {
-  var _a, _b, _c;
+  var _a, _b, _c, _d;
   const cache = getAggregationCache(api);
   const hardwareSyncDue = fullSync || Date.now() - cache.lastHardwareSync >= HARDWARE_SYNC_INTERVAL_MS;
   if (fullSync) {
+    const account = await api.getAccount();
+    if (account.success) {
+      cache.account = account.data;
+    } else {
+      api.log.warn("Could not retrieve complete Tractive account data");
+    }
+    const subscriptions = await api.getSubscriptions();
+    if (subscriptions.success) {
+      const details = {};
+      for (const subscription of subscriptions.data) {
+        const subscriptionId = firstString(layers(subscription), "_id", "id");
+        if (!subscriptionId) {
+          continue;
+        }
+        const detail = await api.getSubscription(subscriptionId);
+        if (detail.success) {
+          details[subscriptionId] = detail.data;
+        }
+      }
+      cache.subscriptions = { list: subscriptions.data, details };
+    } else {
+      api.log.warn("Could not retrieve Tractive subscription data");
+    }
+    const shares = await api.getShares();
+    if (shares.success) {
+      cache.shares = shares.data;
+    } else {
+      api.log.warn("Could not retrieve Tractive share data");
+    }
     const petsResult = await api.getPets();
     if (!petsResult.success || !petsResult.data) {
       return { success: false, error: "Could not retrieve pets" };
@@ -277,8 +337,8 @@ async function synchronize(api, fullSync) {
       }
       const detailValue = (_a = details.data) != null ? _a : petListItem;
       const profilePictureId = firstString(layers(detailValue), "profile_picture_id");
-      const profilePicture = profilePictureId ? await api.getImage(profilePictureId) : void 0;
-      const pet = normalizePet(detailValue, profilePicture == null ? void 0 : profilePicture.data);
+      const profilePictureUrl = profilePictureId ? api.getProfilePictureUrl(profilePictureId) : void 0;
+      const pet = normalizePet(detailValue, profilePictureUrl);
       if (!pet) {
         api.log.warn("Skipping pet data that does not match the expected schema");
         continue;
@@ -286,7 +346,7 @@ async function synchronize(api, fullSync) {
       petApiData[petId] = {
         list: petListItem,
         ...details.data ? { details: details.data } : {},
-        ...(profilePicture == null ? void 0 : profilePicture.data) ? { profilePicture: profilePicture.data } : {}
+        ...profilePictureUrl ? { profilePictureUrl } : {}
       };
       if (pet.trackerId) {
         petIdByTracker.set(pet.trackerId, pet.id);
@@ -301,6 +361,7 @@ async function synchronize(api, fullSync) {
     return { success: false, error: "Could not retrieve trackers" };
   }
   let writtenTrackers = 0;
+  const systemCoordinates = await getSystemCoordinates(api);
   const trackerApiData = {};
   const seenTrackerIds = /* @__PURE__ */ new Set();
   for (const trackerListItem of trackersResult.data) {
@@ -330,7 +391,8 @@ async function synchronize(api, fullSync) {
       details.data,
       location.data,
       hardware.data,
-      cache.petIdByTracker
+      cache.petIdByTracker,
+      systemCoordinates
     );
     if (!tracker) {
       api.log.warn("Skipping tracker data that does not match the expected schema");
@@ -345,6 +407,10 @@ async function synchronize(api, fullSync) {
   }
   await (0, import_stateHelpers.writeApiData)(stateDeps(api), {
     updatedAt: Date.now(),
+    userInfo: api.auth ? { user_id: api.auth.user_id, expires_at: api.auth.expires_at } : null,
+    account: (_d = cache.account) != null ? _d : null,
+    subscriptions: cache.subscriptions,
+    shares: cache.shares,
     pets: cache.petApiData,
     trackers: trackerApiData
   });

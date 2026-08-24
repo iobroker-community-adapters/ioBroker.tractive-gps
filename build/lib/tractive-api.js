@@ -40,6 +40,7 @@ class TractiveAPI {
   setState;
   getObjectAsync;
   getDevicesAsync;
+  getForeignObjectAsync;
   tractiveClient = "6536c228870a3c8857d452e8";
   credentials = null;
   refreshPromise = null;
@@ -63,6 +64,7 @@ class TractiveAPI {
     this.log = log;
     this.getObjectAsync = getObjectAsync;
     this.getDevicesAsync = options.getDevicesAsync;
+    this.getForeignObjectAsync = options.getForeignObjectAsync;
     this.setState = setState;
     this.extendObjectAsync = extendObjectAsync;
     this.requestDelay = (_a = options.requestIntervalMs) != null ? _a : 5e3;
@@ -288,6 +290,31 @@ class TractiveAPI {
     return { success: true, data: response.data };
   }
   // Endpoints
+  async getAccount() {
+    if (!this.auth) {
+      return { success: false, error: "Not authenticated" };
+    }
+    return this.getRecord(`/user/${encodeURIComponent(this.auth.user_id)}`, "account");
+  }
+  async getSubscriptions() {
+    if (!this.auth) {
+      return { success: false, error: "Not authenticated" };
+    }
+    return this.getRecordArray(`/user/${encodeURIComponent(this.auth.user_id)}/subscriptions`, "subscription list");
+  }
+  async getSubscription(subscriptionID) {
+    return this.getRecord(`/subscription/${encodeURIComponent(subscriptionID)}`, "subscription");
+  }
+  async getShares() {
+    if (!this.auth) {
+      return { success: false, error: "Not authenticated" };
+    }
+    return this.getRecordArray(`/user/${encodeURIComponent(this.auth.user_id)}/shares`, "share list");
+  }
+  /** Build the same public media URL that is used by Tractive's web application. */
+  getProfilePictureUrl(imageID) {
+    return `https://cdn.tractive.com/3/media/resource/${encodeURIComponent(imageID)}.jpg`;
+  }
   /**
    *
    */

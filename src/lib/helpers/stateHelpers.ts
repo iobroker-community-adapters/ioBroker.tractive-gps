@@ -46,6 +46,8 @@ export interface TrackerStateModel {
     online?: boolean;
     lastSeen?: number;
     connectionType?: string;
+    sensorUsed?: string;
+    home?: boolean;
     batteryLevel?: number;
     charging?: boolean;
     powerSaving?: boolean;
@@ -55,6 +57,7 @@ export interface TrackerStateModel {
     altitude?: number;
     speed?: number;
     address?: string;
+    distance?: number;
     capabilities: readonly string[];
     operationalState?: string;
     stateReason?: string;
@@ -126,25 +129,6 @@ function optional(value: string | number | boolean | undefined): ioBroker.StateV
     return value === undefined ? null : value;
 }
 
-const SENSITIVE_API_KEYS =
-    /^(?:access_?token|refresh_?token|authorization|password|platform_(?:email|token)|email|user_?id|nearby_user_?id)$/i;
-
-function sanitizeApiValue(value: unknown): unknown {
-    if (Array.isArray(value)) {
-        return value.map(sanitizeApiValue);
-    }
-    if (value === null || typeof value !== 'object') {
-        return value;
-    }
-    const sanitized: Record<string, unknown> = {};
-    for (const [key, child] of Object.entries(value as Record<string, unknown>)) {
-        if (!SENSITIVE_API_KEYS.test(key)) {
-            sanitized[key] = sanitizeApiValue(child);
-        }
-    }
-    return sanitized;
-}
-
 function safeIdSegment(value: string): string {
     const result = value.trim().replace(/[.\s*?,;:'"`<>\\/[\](){}]+/g, '_');
     return result || 'value';
@@ -159,34 +143,55 @@ async function writeApiTree(deps: StateDeps, prefix: string, value: unknown): Pr
         return;
     }
 
-    const isArray = Array.isArray(value);
-    const stateValue = isArray ? JSON.stringify(value) : (value as ioBroker.StateValue);
-    const stateType: ioBroker.CommonType = isArray
-        ? 'string'
-        : value === null
-          ? 'mixed'
-          : (typeof value as ioBroker.CommonType);
+    if (Array.isArray(value)) {
+        await writeState(deps, {
+            id: prefix,
+            name: prefix.split('.').at(-1) ?? prefix,
+            type: 'string',
+            role: 'json',
+            value: JSON.stringify(value),
+        });
+        await writeState(deps, {
+            id: `${prefix}Length`,
+            name: 'Length',
+            type: 'number',
+            role: 'value',
+            value: value.length,
+        });
+        await ensureContainer(deps, `${prefix}Items`, 'channel', 'Items');
+        for (const [index, child] of value.entries()) {
+            const record =
+                child !== null && typeof child === 'object' && !Array.isArray(child)
+                    ? (child as Record<string, unknown>)
+                    : undefined;
+            const resourceId =
+                typeof record?._id === 'string' ? record._id : typeof record?.id === 'string' ? record.id : undefined;
+            await writeApiTree(deps, `${prefix}Items.${safeIdSegment(resourceId ?? String(index))}`, child);
+        }
+        return;
+    }
+
+    const stateType: ioBroker.CommonType = value === null ? 'mixed' : (typeof value as ioBroker.CommonType);
     await writeState(deps, {
         id: prefix,
         name: prefix.split('.').at(-1) ?? prefix,
         type: stateType,
-        role: isArray ? 'json' : 'state',
-        value: stateValue,
+        role: 'state',
+        value: value as ioBroker.StateValue,
     });
 }
 
-/** Writes a complete, current API snapshot without credentials or user identifiers. */
+/** Writes the complete API response locally. Callers must never pass credentials or the access token. */
 export async function writeApiData(deps: StateDeps, value: unknown): Promise<void> {
-    const sanitized = sanitizeApiValue(value);
     await ensureContainer(deps, 'api', 'folder', 'Current API data');
     await ensureContainer(deps, 'info', 'channel', 'Information');
-    await writeApiTree(deps, 'api.data', sanitized);
+    await writeApiTree(deps, 'api.data', value);
     await writeState(deps, {
         id: 'info.currentApi',
-        name: 'Current complete API data (sanitized)',
+        name: 'Current complete API data',
         type: 'string',
         role: 'json',
-        value: JSON.stringify(sanitized),
+        value: JSON.stringify(value),
     });
 }
 
@@ -387,6 +392,20 @@ export async function writeTrackerStates(deps: StateDeps, tracker: TrackerStateM
             value: optional(tracker.connectionType),
         },
         {
+            id: `${status}.sensorUsed`,
+            name: 'Position sensor used',
+            type: 'string',
+            role: 'text',
+            value: optional(tracker.sensorUsed),
+        },
+        {
+            id: `${status}.home`,
+            name: 'Tracker is at home',
+            type: 'boolean',
+            role: 'indicator',
+            value: optional(tracker.home),
+        },
+        {
             id: `${status}.batteryLevel`,
             name: 'Battery level',
             type: 'number',
@@ -464,6 +483,14 @@ export async function writeTrackerStates(deps: StateDeps, tracker: TrackerStateM
             value: optional(tracker.address),
         },
         {
+            id: `${location}.distance`,
+            name: 'Distance from ioBroker',
+            type: 'number',
+            role: 'value.distance',
+            unit: 'm',
+            value: optional(tracker.distance),
+        },
+        {
             id: `${health}.operationalState`,
             name: 'Operational state',
             type: 'string',
@@ -510,6 +537,26 @@ export async function writeTrackerStates(deps: StateDeps, tracker: TrackerStateM
         await writeState(deps, state);
     }
 
+    // Keep the two widely used legacy location IDs available for existing
+    // scripts and visualizations. Their canonical equivalents remain below trackers.*.
+    await ensureContainer(deps, tracker.id, 'device', displayName || tracker.id);
+    await ensureContainer(deps, `${tracker.id}.device_pos_report`, 'channel', 'Position report');
+    await writeState(deps, {
+        id: `${tracker.id}.device_pos_report.sensor_used`,
+        name: 'Position sensor used',
+        type: 'string',
+        role: 'text',
+        value: optional(tracker.sensorUsed),
+    });
+    await writeState(deps, {
+        id: `${tracker.id}.device_pos_report.distance`,
+        name: 'Distance from ioBroker',
+        type: 'number',
+        role: 'value.distance',
+        unit: 'm',
+        value: optional(tracker.distance),
+    });
+
     const capabilities = new Set(tracker.capabilities.map(capability => capability.toUpperCase()));
     const commands = `trackers.${tracker.id}.commands`;
     if (capabilities.has('LT')) {
@@ -545,6 +592,8 @@ async function updateLegacyTrackerStates(deps: StateDeps, tracker: TrackerStateM
         [`${tracker.id}.device_pos_report.speed`]: optional(tracker.speed),
         [`${tracker.id}.device_pos_report.altitude`]: optional(tracker.altitude),
         [`${tracker.id}.device_pos_report.pos_uncertainty`]: optional(tracker.positionAccuracy),
+        [`${tracker.id}.device_pos_report.sensor_used`]: optional(tracker.sensorUsed),
+        [`${tracker.id}.device_pos_report.distance`]: optional(tracker.distance),
     };
 
     for (const [id, value] of Object.entries(values)) {

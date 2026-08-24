@@ -283,6 +283,45 @@ describe('TractiveAPI authentication', () => {
         expect(requests[1].url).to.equal('/trackable_object/pet%2Fid');
     });
 
+    it('retrieves account, subscription, and share resources', async () => {
+        const requests: AxiosRequestConfig[] = [];
+        const client = createClient(config => {
+            requests.push(config);
+            if (config.url === '/auth/token') {
+                return Promise.resolve(
+                    response(config, {
+                        access_token: 'test-token',
+                        expires_at: Math.floor(Date.now() / 1000) + 3600,
+                        user_id: 'test/user',
+                    }),
+                );
+            }
+            if (config.url?.endsWith('/subscriptions') || config.url?.endsWith('/shares')) {
+                return Promise.resolve(response(config, []));
+            }
+            return Promise.resolve(response(config, { _id: 'resource-1' }));
+        });
+
+        expect(await client.initialize('user@example.invalid', 'test-password')).to.equal(true);
+        expect((await client.getAccount()).success).to.equal(true);
+        expect((await client.getSubscriptions()).success).to.equal(true);
+        expect((await client.getSubscription('subscription/id')).success).to.equal(true);
+        expect((await client.getShares()).success).to.equal(true);
+        expect(requests.slice(1).map(request => request.url)).to.deep.equal([
+            '/user/test%2Fuser',
+            '/user/test%2Fuser/subscriptions',
+            '/subscription/subscription%2Fid',
+            '/user/test%2Fuser/shares',
+        ]);
+    });
+
+    it('builds the public Tractive CDN profile-picture URL', () => {
+        const client = createClient(config => Promise.resolve(response(config, {})));
+        expect(client.getProfilePictureUrl('image/id')).to.equal(
+            'https://cdn.tractive.com/3/media/resource/image%2Fid.jpg',
+        );
+    });
+
     it('resolves pet image references through the v3 bulk endpoint', async () => {
         const requests: AxiosRequestConfig[] = [];
         const client = createClient(config => {

@@ -65,28 +65,12 @@ async function ensureCommandState(deps, id, name, capability) {
 function optional(value) {
   return value === void 0 ? null : value;
 }
-const SENSITIVE_API_KEYS = /^(?:access_?token|refresh_?token|authorization|password|platform_(?:email|token)|email|user_?id|nearby_user_?id)$/i;
-function sanitizeApiValue(value) {
-  if (Array.isArray(value)) {
-    return value.map(sanitizeApiValue);
-  }
-  if (value === null || typeof value !== "object") {
-    return value;
-  }
-  const sanitized = {};
-  for (const [key, child] of Object.entries(value)) {
-    if (!SENSITIVE_API_KEYS.test(key)) {
-      sanitized[key] = sanitizeApiValue(child);
-    }
-  }
-  return sanitized;
-}
 function safeIdSegment(value) {
   const result = value.trim().replace(/[.\s*?,;:'"`<>\\/[\](){}]+/g, "_");
   return result || "value";
 }
 async function writeApiTree(deps, prefix, value) {
-  var _a, _b;
+  var _a, _b, _c;
   if (value !== null && typeof value === "object" && !Array.isArray(value)) {
     await ensureContainer(deps, prefix, "channel", (_a = prefix.split(".").at(-1)) != null ? _a : prefix);
     for (const [key, child] of Object.entries(value)) {
@@ -94,28 +78,48 @@ async function writeApiTree(deps, prefix, value) {
     }
     return;
   }
-  const isArray = Array.isArray(value);
-  const stateValue = isArray ? JSON.stringify(value) : value;
-  const stateType = isArray ? "string" : value === null ? "mixed" : typeof value;
+  if (Array.isArray(value)) {
+    await writeState(deps, {
+      id: prefix,
+      name: (_b = prefix.split(".").at(-1)) != null ? _b : prefix,
+      type: "string",
+      role: "json",
+      value: JSON.stringify(value)
+    });
+    await writeState(deps, {
+      id: `${prefix}Length`,
+      name: "Length",
+      type: "number",
+      role: "value",
+      value: value.length
+    });
+    await ensureContainer(deps, `${prefix}Items`, "channel", "Items");
+    for (const [index, child] of value.entries()) {
+      const record = child !== null && typeof child === "object" && !Array.isArray(child) ? child : void 0;
+      const resourceId = typeof (record == null ? void 0 : record._id) === "string" ? record._id : typeof (record == null ? void 0 : record.id) === "string" ? record.id : void 0;
+      await writeApiTree(deps, `${prefix}Items.${safeIdSegment(resourceId != null ? resourceId : String(index))}`, child);
+    }
+    return;
+  }
+  const stateType = value === null ? "mixed" : typeof value;
   await writeState(deps, {
     id: prefix,
-    name: (_b = prefix.split(".").at(-1)) != null ? _b : prefix,
+    name: (_c = prefix.split(".").at(-1)) != null ? _c : prefix,
     type: stateType,
-    role: isArray ? "json" : "state",
-    value: stateValue
+    role: "state",
+    value
   });
 }
 async function writeApiData(deps, value) {
-  const sanitized = sanitizeApiValue(value);
   await ensureContainer(deps, "api", "folder", "Current API data");
   await ensureContainer(deps, "info", "channel", "Information");
-  await writeApiTree(deps, "api.data", sanitized);
+  await writeApiTree(deps, "api.data", value);
   await writeState(deps, {
     id: "info.currentApi",
-    name: "Current complete API data (sanitized)",
+    name: "Current complete API data",
     type: "string",
     role: "json",
-    value: JSON.stringify(sanitized)
+    value: JSON.stringify(value)
   });
 }
 async function writePetStates(deps, pet) {
@@ -312,6 +316,20 @@ async function writeTrackerStates(deps, tracker) {
       value: optional(tracker.connectionType)
     },
     {
+      id: `${status}.sensorUsed`,
+      name: "Position sensor used",
+      type: "string",
+      role: "text",
+      value: optional(tracker.sensorUsed)
+    },
+    {
+      id: `${status}.home`,
+      name: "Tracker is at home",
+      type: "boolean",
+      role: "indicator",
+      value: optional(tracker.home)
+    },
+    {
       id: `${status}.batteryLevel`,
       name: "Battery level",
       type: "number",
@@ -389,6 +407,14 @@ async function writeTrackerStates(deps, tracker) {
       value: optional(tracker.address)
     },
     {
+      id: `${location}.distance`,
+      name: "Distance from ioBroker",
+      type: "number",
+      role: "value.distance",
+      unit: "m",
+      value: optional(tracker.distance)
+    },
+    {
       id: `${health}.operationalState`,
       name: "Operational state",
       type: "string",
@@ -434,6 +460,23 @@ async function writeTrackerStates(deps, tracker) {
   for (const state of states) {
     await writeState(deps, state);
   }
+  await ensureContainer(deps, tracker.id, "device", displayName || tracker.id);
+  await ensureContainer(deps, `${tracker.id}.device_pos_report`, "channel", "Position report");
+  await writeState(deps, {
+    id: `${tracker.id}.device_pos_report.sensor_used`,
+    name: "Position sensor used",
+    type: "string",
+    role: "text",
+    value: optional(tracker.sensorUsed)
+  });
+  await writeState(deps, {
+    id: `${tracker.id}.device_pos_report.distance`,
+    name: "Distance from ioBroker",
+    type: "number",
+    role: "value.distance",
+    unit: "m",
+    value: optional(tracker.distance)
+  });
   const capabilities = new Set(tracker.capabilities.map((capability) => capability.toUpperCase()));
   const commands = `trackers.${tracker.id}.commands`;
   if (capabilities.has("LT")) {
@@ -466,7 +509,9 @@ async function updateLegacyTrackerStates(deps, tracker) {
     [`${tracker.id}.device_pos_report.longitude`]: optional(tracker.longitude),
     [`${tracker.id}.device_pos_report.speed`]: optional(tracker.speed),
     [`${tracker.id}.device_pos_report.altitude`]: optional(tracker.altitude),
-    [`${tracker.id}.device_pos_report.pos_uncertainty`]: optional(tracker.positionAccuracy)
+    [`${tracker.id}.device_pos_report.pos_uncertainty`]: optional(tracker.positionAccuracy),
+    [`${tracker.id}.device_pos_report.sensor_used`]: optional(tracker.sensorUsed),
+    [`${tracker.id}.device_pos_report.distance`]: optional(tracker.distance)
   };
   for (const [id, value] of Object.entries(values)) {
     if (await deps.getObjectAsync(id)) {

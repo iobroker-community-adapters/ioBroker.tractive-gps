@@ -62,7 +62,8 @@ class TractiveGPS extends utils.Adapter {
       this.extendObjectAsync.bind(this),
       {
         reverseGeocoding: Boolean(this.config.reverseGeocoding),
-        getDevicesAsync: this.getDevicesAsync.bind(this)
+        getDevicesAsync: this.getDevicesAsync.bind(this),
+        getForeignObjectAsync: this.getForeignObjectAsync.bind(this)
       }
     );
     if (!await this.tractiveApi.initialize(this.config.email, this.config.password)) {

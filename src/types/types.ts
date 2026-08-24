@@ -15,6 +15,9 @@ export interface TractiveAddress {
 
 export type TractivePet = Record<string, unknown>;
 export type TractiveTracker = Record<string, unknown>;
+export type TractiveAccount = Record<string, unknown>;
+export type TractiveSubscription = Record<string, unknown>;
+export type TractiveShare = Record<string, unknown>;
 
 export interface TractiveTrackerLocation extends Record<string, unknown> {
     latlong?: [number, number];
