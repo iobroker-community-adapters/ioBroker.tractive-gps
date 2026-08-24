@@ -24,7 +24,6 @@ interface PetTrackerCardData {
     onlineOid: string;
     staleOid: string;
     lastSeenOid: string;
-    connectionTypeOid: string;
     sensorUsedOid: string;
     homeOid: string;
     distanceOid: string;
@@ -110,7 +109,6 @@ export default class PetTrackerCard extends (window.visRxWidget as typeof VisRxW
                         idField('onlineOid', 'online_state'),
                         idField('staleOid', 'stale_state'),
                         idField('lastSeenOid', 'last_seen_state'),
-                        idField('connectionTypeOid', 'connection_type_state'),
                         idField('sensorUsedOid', 'sensor_used_state'),
                         idField('homeOid', 'home_state'),
                         idField('distanceOid', 'distance_state'),
@@ -369,8 +367,8 @@ export default class PetTrackerCard extends (window.visRxWidget as typeof VisRxW
                                     <Stack spacing={1.5}>
                                         <InfoRow
                                             icon="📶"
-                                            label={PetTrackerCard.t('connection')}
-                                            value={this.stringValue('connectionTypeOid') ?? '—'}
+                                            label={PetTrackerCard.t('position_source')}
+                                            value={sensorUsed ?? '—'}
                                         />
                                         <InfoRow
                                             icon="🕒"

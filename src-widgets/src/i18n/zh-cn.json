@@ -42,6 +42,7 @@
     "not_configured": "请在小组件设置中选择适配器状态。",
     "pet_image": "宠物图片",
     "connection": "连接",
+    "position_source": "位置来源",
     "location_status": "在家 / 外出",
     "distance": "距离",
     "home": "在家",

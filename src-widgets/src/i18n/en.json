@@ -42,6 +42,7 @@
     "not_configured": "Select the adapter states in the widget settings.",
     "pet_image": "Pet image",
     "connection": "Connection",
+    "position_source": "Position source",
     "location_status": "Home / away",
     "distance": "Distance",
     "home": "At home",

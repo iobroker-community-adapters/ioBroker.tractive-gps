@@ -42,6 +42,7 @@
     "not_configured": "Sélectionnez les états de l'adaptateur dans les paramètres du widget.",
     "pet_image": "Image de l'animal",
     "connection": "Connexion",
+    "position_source": "Source de position",
     "location_status": "À la maison / absent",
     "distance": "Distance",
     "home": "À la maison",
