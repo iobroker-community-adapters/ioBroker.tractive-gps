@@ -157,7 +157,7 @@ Die Karte kann Folgendes anzeigen:
 - Batteriestand, Verbindungstyp, Zuhause-/Unterwegs-Status und Entfernung zu ioBroker,
 - letzte Aktualisierung, Adresse, Energiesparzustand und Positionsgenauigkeit.
 
-Für das Tractive-Bild wird `pets.<pet-id>.media.profilePictureUrl` als API-Bilddatenpunkt ausgewählt. Wird kein Bild geliefert oder kann es nicht geladen werden, lässt sich im Widget-Bereich **Darstellung** ein eigenes Bild auswählen oder hochladen.
+Für das Tractive-Bild wird `pets.<pet-id>.media.profilePictureUrl` als API-Bilddatenpunkt ausgewählt. Der Adapter lädt das Tractive-Bild in den lokalen ioBroker-Dateispeicher, da das Tractive-CDN JPEG-Dateien als Download ausliefert. Wird kein Bild geliefert oder kann es nicht geladen werden, lässt sich im Widget-Bereich **Darstellung** ein eigenes Bild auswählen oder hochladen.
 
 Die Karte kann den vollständigen Genauigkeits- oder Bereichskreis automatisch einpassen. Minimaler und maximaler Zoom, Bedienung, Bereichsquelle und ein manueller Radius sind in den Widget-Einstellungen konfigurierbar. Zur Anzeige der Karte werden Kartenkacheln von OpenStreetMap geladen.
 
@@ -199,6 +199,7 @@ Informationen für Mitwirkende stehen in der [Entwicklerdokumentation](docs/DEVE
 - (xXBJXx) Die doppelte Hierarchie `api.data.*` durch einen automatisch erweiterbaren, logischen Datenbaum für Konto, Abonnements, Freigaben, Tiere, Tracker, Position und Hardware ersetzt.
 - (xXBJXx) `sensor_used` und Entfernung zu ioBroker auf Grundlage von PR #3 wiederhergestellt, den Zuhause-/Unterwegs-Status ergänzt und den doppelten Datenpunkt `connectionType` entfernt.
 - (xXBJXx) Tractive-CDN-URLs für Profilbilder korrigiert und Zuhause-/Unterwegs-Status sowie Entfernung zur VIS-2-Karte hinzugefügt.
+- (xXBJXx) Tractive-Profilbilder in ioBroker zwischengespeichert, damit VIS 2 die als Binärdownload ausgelieferten CDN-Dateien anzeigen kann.
 - (xXBJXx) Live-Tracking-, LED- und Signalton-Befehle für unterstützte Tracker ergänzt.
 - (xXBJXx) Adapterkonfiguration für Admin 8 erneuert und die ungültige jsonConfig-Konfiguration entfernt (#176).
 - (xXBJXx) VIS-2-Widget `PetTrackerCard` mit Tierbild, Leaflet-/OpenStreetMap-Karte, Bereichsanzeige und Tracker-Informationen ergänzt.

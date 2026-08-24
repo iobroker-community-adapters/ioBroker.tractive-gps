@@ -350,7 +350,7 @@ async function synchronize(api, fullSync) {
       }
       const detailValue = (_a = details.data) != null ? _a : petListItem;
       const profilePictureId = firstString(layers(detailValue), "profile_picture_id");
-      const profilePictureUrl = profilePictureId ? api.getProfilePictureUrl(profilePictureId) : void 0;
+      const profilePictureUrl = profilePictureId ? await api.getProfilePictureUrl(profilePictureId) : void 0;
       const pet = normalizePet(detailValue, profilePictureUrl);
       if (!pet) {
         api.log.warn("Skipping pet data that does not match the expected schema");

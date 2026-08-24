@@ -28,7 +28,7 @@ export interface ITractiveApiEndpoints {
     getPets(): Promise<TractiveAPIResponse<TractivePet[]>>;
     getPet(petID: string): Promise<TractiveAPIResponse<TractivePet>>;
     getImage(imageID: string): Promise<TractiveAPIResponse<Record<string, unknown>>>;
-    getProfilePictureUrl(imageID: string): string;
+    getProfilePictureUrl(imageID: string): string | Promise<string>;
     getAllTrackers(): Promise<TractiveAPIResponse<TractiveTracker[]>>;
     getTracker(trackerID: string): Promise<TractiveAPIResponse<TractiveTracker>>;
     getTrackerLocation(trackerID: string): Promise<TractiveAPIResponse<TractiveTrackerLocation>>;
@@ -412,7 +412,7 @@ async function synchronize(api: ITractiveApiEndpoints, fullSync: boolean): Promi
             }
             const detailValue = details.data ?? petListItem;
             const profilePictureId = firstString(layers(detailValue), 'profile_picture_id');
-            const profilePictureUrl = profilePictureId ? api.getProfilePictureUrl(profilePictureId) : undefined;
+            const profilePictureUrl = profilePictureId ? await api.getProfilePictureUrl(profilePictureId) : undefined;
             const pet = normalizePet(detailValue, profilePictureUrl);
             if (!pet) {
                 api.log.warn('Skipping pet data that does not match the expected schema');

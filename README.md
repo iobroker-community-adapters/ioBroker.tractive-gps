@@ -157,7 +157,7 @@ The card can display:
 - battery level, connection type, home/away status, and distance from ioBroker,
 - last update, address, power-saving state, and position accuracy.
 
-For the Tractive image, select `pets.<pet-id>.media.profilePictureUrl` as the API image state. If no image is returned or it cannot be loaded, select or upload a custom image in the widget's **Appearance** section.
+For the Tractive image, select `pets.<pet-id>.media.profilePictureUrl` as the API image state. The adapter downloads the Tractive picture into the local ioBroker file storage because the Tractive CDN declares JPEG files as downloads. If no image is returned or it cannot be loaded, select or upload a custom image in the widget's **Appearance** section.
 
 The map can automatically fit the complete accuracy or range circle. Minimum and maximum zoom, interaction, range source, and a manual radius can be configured in the widget. Displaying the map downloads map tiles from OpenStreetMap.
 
@@ -199,6 +199,7 @@ Information for contributors is available in [Developer documentation](docs/DEVE
 - (xXBJXx) Replaced the duplicate `api.data.*` hierarchy with one automatically extensible, logical account, subscription, share, pet, tracker, position, and hardware state tree.
 - (xXBJXx) Restored `sensor_used` and distance-from-ioBroker information based on PR #3, added home/away information, and removed the duplicate `connectionType` state.
 - (xXBJXx) Fixed Tractive CDN profile-picture URLs and added home/away status and distance to the VIS 2 card.
+- (xXBJXx) Cached Tractive profile pictures in ioBroker so VIS 2 can display CDN files delivered as binary downloads.
 - (xXBJXx) Added live tracking, LED, and buzzer commands for supported trackers.
 - (xXBJXx) Rebuilt the adapter configuration for Admin 8 and removed the invalid jsonConfig configuration (#176).
 - (xXBJXx) Added the VIS 2 `PetTrackerCard` widget with pet image, Leaflet/OpenStreetMap map, range display, and tracker information.

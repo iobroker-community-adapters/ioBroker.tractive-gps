@@ -27,6 +27,8 @@ export interface TractiveAPIOptions {
     reverseGeocoding?: boolean;
     getDevicesAsync?: () => Promise<readonly ioBroker.Object[]>;
     getForeignObjectAsync?: (id: string) => Promise<ioBroker.Object | null | undefined>;
+    writeFileAsync?: (adapterName: string | null, path: string, data: Buffer | string) => Promise<void>;
+    fileNamespace?: string;
 }
 
 export class TractiveAPI implements ITractiveApiEndpoints {
@@ -61,6 +63,9 @@ export class TractiveAPI implements ITractiveApiEndpoints {
     private readonly sleep: (milliseconds: number) => Promise<void>;
     private readonly random: () => number;
     private readonly reverseGeocoding: boolean;
+    private readonly writeFileAsync?: TractiveAPIOptions['writeFileAsync'];
+    private readonly fileNamespace?: string;
+    private readonly profilePictureCache = new Map<string, string>();
     private readonly addressCache = new Map<
         string,
         { latitude: number; longitude: number; address: TractiveAddress }
@@ -88,6 +93,8 @@ export class TractiveAPI implements ITractiveApiEndpoints {
         this.getObjectAsync = getObjectAsync;
         this.getDevicesAsync = options.getDevicesAsync;
         this.getForeignObjectAsync = options.getForeignObjectAsync;
+        this.writeFileAsync = options.writeFileAsync;
+        this.fileNamespace = options.fileNamespace;
         this.setState = setState;
         this.extendObjectAsync = extendObjectAsync;
 
@@ -112,7 +119,10 @@ export class TractiveAPI implements ITractiveApiEndpoints {
         this.api.interceptors.request.use(async config => {
             await this.waitForRequestSlot();
 
-            if (config.url !== '/auth/token' && this.auth?.access_token) {
+            const requestUrl = config.url ?? '';
+            const isGraphRequest =
+                !/^https?:\/\//i.test(requestUrl) || /^https:\/\/graph\.tractive\.com\//i.test(requestUrl);
+            if (requestUrl !== '/auth/token' && isGraphRequest && this.auth?.access_token) {
                 config.headers = config.headers || {};
                 config.headers.Authorization = `Bearer ${this.auth.access_token}`;
                 config.headers['X-Tractive-User'] = this.auth.user_id;
@@ -379,9 +389,38 @@ export class TractiveAPI implements ITractiveApiEndpoints {
         return this.getRecordArray(`/user/${encodeURIComponent(this.auth.user_id)}/shares`, 'share list');
     }
 
-    /** Build the same public media URL that is used by Tractive's web application. */
-    getProfilePictureUrl(imageID: string): string {
-        return `https://cdn.tractive.com/3/media/resource/${encodeURIComponent(imageID)}.jpg`;
+    /** Cache a Tractive profile picture in ioBroker because the CDN declares JPEG files as binary downloads. */
+    getProfilePictureUrl(imageID: string): string | Promise<string> {
+        const publicUrl = `https://cdn.tractive.com/3/media/resource/${encodeURIComponent(imageID)}.jpg`;
+        if (!this.writeFileAsync || !this.fileNamespace) {
+            return publicUrl;
+        }
+        const cached = this.profilePictureCache.get(imageID);
+        if (cached) {
+            return cached;
+        }
+        return this.cacheProfilePicture(imageID, publicUrl);
+    }
+
+    private async cacheProfilePicture(imageID: string, publicUrl: string): Promise<string> {
+        try {
+            const response = await this.api.get<ArrayBuffer>(publicUrl, {
+                responseType: 'arraybuffer',
+                signal: this.abortController.signal,
+            });
+            const data = Buffer.from(response.data);
+            if (data.length < 3 || data[0] !== 0xff || data[1] !== 0xd8 || data[2] !== 0xff) {
+                throw new Error('Profile picture is not a JPEG');
+            }
+            const fileName = `${imageID.replace(/[^A-Za-z0-9_-]/g, '_')}.jpg`;
+            await this.writeFileAsync!(this.fileNamespace!, `profile-images/${fileName}`, data);
+            const localUrl = `../${this.fileNamespace}/profile-images/${encodeURIComponent(fileName)}`;
+            this.profilePictureCache.set(imageID, localUrl);
+            return localUrl;
+        } catch {
+            this.log.warn('Could not cache a Tractive profile picture locally; using the public URL as fallback');
+            return publicUrl;
+        }
     }
 
     /**

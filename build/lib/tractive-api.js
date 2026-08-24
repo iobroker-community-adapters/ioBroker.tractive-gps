@@ -55,6 +55,9 @@ class TractiveAPI {
   sleep;
   random;
   reverseGeocoding;
+  writeFileAsync;
+  fileNamespace;
+  profilePictureCache = /* @__PURE__ */ new Map();
   addressCache = /* @__PURE__ */ new Map();
   /**
    *
@@ -65,6 +68,8 @@ class TractiveAPI {
     this.getObjectAsync = getObjectAsync;
     this.getDevicesAsync = options.getDevicesAsync;
     this.getForeignObjectAsync = options.getForeignObjectAsync;
+    this.writeFileAsync = options.writeFileAsync;
+    this.fileNamespace = options.fileNamespace;
     this.setState = setState;
     this.extendObjectAsync = extendObjectAsync;
     this.requestDelay = (_a = options.requestIntervalMs) != null ? _a : 5e3;
@@ -82,9 +87,11 @@ class TractiveAPI {
       timeout: 3e4
     });
     this.api.interceptors.request.use(async (config) => {
-      var _a2;
+      var _a2, _b2;
       await this.waitForRequestSlot();
-      if (config.url !== "/auth/token" && ((_a2 = this.auth) == null ? void 0 : _a2.access_token)) {
+      const requestUrl = (_a2 = config.url) != null ? _a2 : "";
+      const isGraphRequest = !/^https?:\/\//i.test(requestUrl) || /^https:\/\/graph\.tractive\.com\//i.test(requestUrl);
+      if (requestUrl !== "/auth/token" && isGraphRequest && ((_b2 = this.auth) == null ? void 0 : _b2.access_token)) {
         config.headers = config.headers || {};
         config.headers.Authorization = `Bearer ${this.auth.access_token}`;
         config.headers["X-Tractive-User"] = this.auth.user_id;
@@ -311,9 +318,37 @@ class TractiveAPI {
     }
     return this.getRecordArray(`/user/${encodeURIComponent(this.auth.user_id)}/shares`, "share list");
   }
-  /** Build the same public media URL that is used by Tractive's web application. */
+  /** Cache a Tractive profile picture in ioBroker because the CDN declares JPEG files as binary downloads. */
   getProfilePictureUrl(imageID) {
-    return `https://cdn.tractive.com/3/media/resource/${encodeURIComponent(imageID)}.jpg`;
+    const publicUrl = `https://cdn.tractive.com/3/media/resource/${encodeURIComponent(imageID)}.jpg`;
+    if (!this.writeFileAsync || !this.fileNamespace) {
+      return publicUrl;
+    }
+    const cached = this.profilePictureCache.get(imageID);
+    if (cached) {
+      return cached;
+    }
+    return this.cacheProfilePicture(imageID, publicUrl);
+  }
+  async cacheProfilePicture(imageID, publicUrl) {
+    try {
+      const response = await this.api.get(publicUrl, {
+        responseType: "arraybuffer",
+        signal: this.abortController.signal
+      });
+      const data = Buffer.from(response.data);
+      if (data.length < 3 || data[0] !== 255 || data[1] !== 216 || data[2] !== 255) {
+        throw new Error("Profile picture is not a JPEG");
+      }
+      const fileName = `${imageID.replace(/[^A-Za-z0-9_-]/g, "_")}.jpg`;
+      await this.writeFileAsync(this.fileNamespace, `profile-images/${fileName}`, data);
+      const localUrl = `../${this.fileNamespace}/profile-images/${encodeURIComponent(fileName)}`;
+      this.profilePictureCache.set(imageID, localUrl);
+      return localUrl;
+    } catch {
+      this.log.warn("Could not cache a Tractive profile picture locally; using the public URL as fallback");
+      return publicUrl;
+    }
   }
   /**
    *
