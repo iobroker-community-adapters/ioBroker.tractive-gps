@@ -206,6 +206,7 @@ Informationen für Mitwirkende stehen in der [Entwicklerdokumentation](docs/DEVE
 - (xXBJXx) Live-Tracking-, LED- und Signalton-Befehle für unterstützte Tracker ergänzt.
 - (xXBJXx) Bedienelemente für Signalton, LED und Live-Tracking in die VIS-2-Karte aufgenommen.
 - (xXBJXx) Die VIS-2-Karte in kompakte Bereiche für Befehle, Position, Tracker und Tierdaten gegliedert.
+- (xXBJXx) Release-Werkzeuge aktualisiert und Lerna mit einheitlicher Versionierung für die privaten npm-Workspaces ergänzt.
 - (xXBJXx) Adapterkonfiguration für Admin 8 erneuert und die ungültige jsonConfig-Konfiguration entfernt (#176).
 - (xXBJXx) VIS-2-Widget `PetTrackerCard` mit Tierbild, Leaflet-/OpenStreetMap-Karte, Bereichsanzeige und Tracker-Informationen ergänzt.
 - (xXBJXx) Unterstützung für Tractive-Profilbilder und eigene ioBroker-Bilder ergänzt.

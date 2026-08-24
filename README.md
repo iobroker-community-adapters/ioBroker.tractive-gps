@@ -206,6 +206,7 @@ Information for contributors is available in [Developer documentation](docs/DEVE
 - (xXBJXx) Added live tracking, LED, and buzzer commands for supported trackers.
 - (xXBJXx) Added buzzer, LED, and live-tracking controls to the VIS 2 card.
 - (xXBJXx) Reorganized the VIS 2 card into compact command, location, tracker, and pet sections.
+- (xXBJXx) Updated the release tooling and added fixed-version Lerna support for the private npm workspaces.
 - (xXBJXx) Rebuilt the adapter configuration for Admin 8 and removed the invalid jsonConfig configuration (#176).
 - (xXBJXx) Added the VIS 2 `PetTrackerCard` widget with pet image, Leaflet/OpenStreetMap map, range display, and tracker information.
 - (xXBJXx) Added support for Tractive profile images and custom ioBroker images.
