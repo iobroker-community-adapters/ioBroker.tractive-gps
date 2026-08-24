@@ -143,23 +143,6 @@ async function writeDynamicTree(deps: StateDeps, prefix: string, value: unknown)
             role: 'json',
             value: JSON.stringify(value),
         });
-        await writeState(deps, {
-            id: `${prefix}Length`,
-            name: 'Length',
-            type: 'number',
-            role: 'value',
-            value: value.length,
-        });
-        await ensureContainer(deps, `${prefix}Items`, 'channel', 'Items');
-        for (const [index, child] of value.entries()) {
-            const record =
-                child !== null && typeof child === 'object' && !Array.isArray(child)
-                    ? (child as Record<string, unknown>)
-                    : undefined;
-            const resourceId =
-                typeof record?._id === 'string' ? record._id : typeof record?.id === 'string' ? record.id : undefined;
-            await writeDynamicTree(deps, `${prefix}Items.${safeIdSegment(resourceId ?? String(index))}`, child);
-        }
         return;
     }
     await writeState(deps, {
@@ -171,7 +154,7 @@ async function writeDynamicTree(deps: StateDeps, prefix: string, value: unknown)
     });
 }
 
-/** Writes a logical, future-proof state tree and keeps the unmodified response as JSON. */
+/** Writes the selected logical state tree and keeps the unmodified response as one JSON state. */
 export async function writeApiData(
     deps: StateDeps,
     value: Record<string, unknown>,
@@ -203,12 +186,36 @@ export async function writeApiData(
 export async function writePetStates(deps: StateDeps, pet: PetStateModel): Promise<void> {
     await ensureContainer(deps, 'pets', 'folder', 'Pets');
     await ensureContainer(deps, `pets.${pet.id}`, 'device', pet.name || pet.id);
-    const calculated = `pets.${pet.id}.calculated`;
-    await ensureContainer(deps, calculated, 'channel', 'Calculated values');
-    const states: StateDefinition[] = [];
+    const info = `pets.${pet.id}.info`;
+    const activity = `pets.${pet.id}.activity`;
+    const media = `pets.${pet.id}.media`;
+    await ensureContainer(deps, info, 'channel', 'Pet information');
+    const states: StateDefinition[] = [
+        { id: `${info}.name`, name: 'Name', type: 'string', role: 'text', value: pet.name },
+        {
+            id: `${info}.breedIds`,
+            name: 'Breed IDs',
+            type: 'string',
+            role: 'json',
+            value: JSON.stringify(pet.breedIds),
+        },
+        {
+            id: `${info}.personality`,
+            name: 'Personality',
+            type: 'string',
+            role: 'json',
+            value: JSON.stringify(pet.personality),
+        },
+    ];
+    if (pet.type !== undefined) {
+        states.push({ id: `${info}.type`, name: 'Pet type', type: 'string', role: 'text', value: pet.type });
+    }
+    if (pet.gender !== undefined) {
+        states.push({ id: `${info}.gender`, name: 'Gender', type: 'string', role: 'text', value: pet.gender });
+    }
     if (pet.birthday !== undefined) {
         states.push({
-            id: `${calculated}.birthday`,
+            id: `${info}.birthday`,
             name: 'Birthday',
             type: 'number',
             role: 'date',
@@ -217,7 +224,7 @@ export async function writePetStates(deps: StateDeps, pet: PetStateModel): Promi
     }
     if (pet.height !== undefined) {
         states.push({
-            id: `${calculated}.height`,
+            id: `${info}.height`,
             name: 'Height',
             type: 'number',
             role: 'value',
@@ -227,13 +234,118 @@ export async function writePetStates(deps: StateDeps, pet: PetStateModel): Promi
     }
     if (pet.weight !== undefined) {
         states.push({
-            id: `${calculated}.weight`,
+            id: `${info}.weight`,
             name: 'Weight',
             type: 'number',
             role: 'value',
             unit: 'kg',
             value: pet.weight,
         });
+    }
+    if (pet.length !== undefined) {
+        states.push({
+            id: `${info}.length`,
+            name: 'Length',
+            type: 'number',
+            role: 'value',
+            unit: 'cm',
+            value: pet.length,
+        });
+    }
+    if (pet.trackerId !== undefined) {
+        states.push({
+            id: `${info}.trackerId`,
+            name: 'Tracker ID',
+            type: 'string',
+            role: 'text',
+            value: pet.trackerId,
+        });
+    }
+    if (pet.chipId !== undefined) {
+        states.push({ id: `${info}.chipId`, name: 'Chip ID', type: 'string', role: 'text', value: pet.chipId });
+    }
+    if (pet.neutered !== undefined) {
+        states.push({
+            id: `${info}.neutered`,
+            name: 'Neutered',
+            type: 'boolean',
+            role: 'indicator',
+            value: pet.neutered,
+        });
+    }
+    if (pet.lostOrDead !== undefined) {
+        states.push({
+            id: `${info}.lostOrDead`,
+            name: 'Lost or dead',
+            type: 'boolean',
+            role: 'indicator.alarm',
+            value: pet.lostOrDead,
+        });
+    }
+    if (pet.createdAt !== undefined) {
+        states.push({
+            id: `${info}.createdAt`,
+            name: 'Created at',
+            type: 'number',
+            role: 'date',
+            value: pet.createdAt,
+        });
+    }
+    const activityStates: StateDefinition[] = [];
+    if (pet.dailyGoal !== undefined) {
+        activityStates.push({
+            id: `${activity}.dailyGoal`,
+            name: 'Daily goal',
+            type: 'number',
+            role: 'value',
+            value: pet.dailyGoal,
+        });
+    }
+    if (pet.dailyDistanceGoal !== undefined) {
+        activityStates.push({
+            id: `${activity}.dailyDistanceGoal`,
+            name: 'Daily distance goal',
+            type: 'number',
+            role: 'value.distance',
+            value: pet.dailyDistanceGoal,
+        });
+    }
+    if (pet.dailyActiveMinutesGoal !== undefined) {
+        activityStates.push({
+            id: `${activity}.dailyActiveMinutesGoal`,
+            name: 'Daily active minutes goal',
+            type: 'number',
+            role: 'value.interval',
+            unit: 'min',
+            value: pet.dailyActiveMinutesGoal,
+        });
+    }
+    if (activityStates.length) {
+        await ensureContainer(deps, activity, 'channel', 'Activity goals');
+        states.push(...activityStates);
+    }
+    const mediaStates: StateDefinition[] = [];
+    if (pet.profilePictureId !== undefined) {
+        mediaStates.push({
+            id: `${media}.profilePictureId`,
+            name: 'Profile picture ID',
+            type: 'string',
+            role: 'text',
+            value: pet.profilePictureId,
+        });
+    }
+    if (pet.profilePictureUrl !== undefined) {
+        mediaStates.push({
+            id: `${media}.profilePictureUrl`,
+            name: 'Profile picture URL',
+            type: 'string',
+            role: 'text.url',
+            value: pet.profilePictureUrl,
+        });
+    }
+    if (mediaStates.length) {
+        await ensureContainer(deps, media, 'channel', 'Pet image');
+        states.push(...mediaStates);
     }
     for (const state of states) {
         await writeState(deps, state);
@@ -245,9 +357,20 @@ export async function writeTrackerStates(deps: StateDeps, tracker: TrackerStateM
     await ensureContainer(deps, `trackers.${tracker.id}`, 'device', tracker.name || tracker.id);
     const status = `trackers.${tracker.id}.status`;
     const location = `trackers.${tracker.id}.location`;
+    const info = `trackers.${tracker.id}.info`;
+    const hardware = `trackers.${tracker.id}.hardware`;
+    await ensureContainer(deps, info, 'channel', 'Tracker information');
     await ensureContainer(deps, status, 'channel', 'Tracker status');
     await ensureContainer(deps, location, 'channel', 'Location');
     const states: StateDefinition[] = [
+        { id: `${info}.name`, name: 'Name', type: 'string', role: 'text', value: tracker.name },
+        {
+            id: `${info}.capabilities`,
+            name: 'Capabilities',
+            type: 'string',
+            role: 'json',
+            value: JSON.stringify(tracker.capabilities),
+        },
         {
             id: `${status}.stale`,
             name: 'Tracker data is stale',
@@ -263,6 +386,27 @@ export async function writeTrackerStates(deps: StateDeps, tracker: TrackerStateM
             value: false,
         },
     ];
+    if (tracker.model !== undefined) {
+        states.push({ id: `${info}.model`, name: 'Model', type: 'string', role: 'text', value: tracker.model });
+    }
+    if (tracker.firmwareVersion !== undefined) {
+        states.push({
+            id: `${info}.firmwareVersion`,
+            name: 'Firmware version',
+            type: 'string',
+            role: 'text',
+            value: tracker.firmwareVersion,
+        });
+    }
+    if (tracker.hardwareVersion !== undefined) {
+        states.push({
+            id: `${info}.hardwareVersion`,
+            name: 'Hardware version',
+            type: 'string',
+            role: 'text',
+            value: tracker.hardwareVersion,
+        });
+    }
     if (tracker.online !== undefined) {
         states.push({
             id: `${status}.online`,
@@ -292,11 +436,30 @@ export async function writeTrackerStates(deps: StateDeps, tracker: TrackerStateM
     }
     if (tracker.petId !== undefined) {
         states.push({
-            id: `trackers.${tracker.id}.info.pet_id`,
+            id: `${info}.petId`,
             name: 'Pet ID',
             type: 'string',
             role: 'text',
             value: tracker.petId,
+        });
+    }
+    if (tracker.sensorUsed !== undefined) {
+        states.push({
+            id: `${location}.sensorUsed`,
+            name: 'Position source',
+            type: 'string',
+            role: 'text',
+            value: tracker.sensorUsed,
+        });
+    }
+    if (tracker.positionAccuracy !== undefined) {
+        states.push({
+            id: `${location}.positionAccuracy`,
+            name: 'Position accuracy',
+            type: 'number',
+            role: 'value.distance',
+            unit: 'm',
+            value: tracker.positionAccuracy,
         });
     }
     if (tracker.latitude !== undefined) {
@@ -319,6 +482,25 @@ export async function writeTrackerStates(deps: StateDeps, tracker: TrackerStateM
             value: tracker.longitude,
         });
     }
+    if (tracker.altitude !== undefined) {
+        states.push({
+            id: `${location}.altitude`,
+            name: 'Altitude',
+            type: 'number',
+            role: 'value',
+            unit: 'm',
+            value: tracker.altitude,
+        });
+    }
+    if (tracker.speed !== undefined) {
+        states.push({
+            id: `${location}.speed`,
+            name: 'Speed',
+            type: 'number',
+            role: 'value.speed',
+            value: tracker.speed,
+        });
+    }
     if (tracker.distance !== undefined) {
         states.push({
             id: `${location}.distance`,
@@ -331,12 +513,83 @@ export async function writeTrackerStates(deps: StateDeps, tracker: TrackerStateM
     }
     if (tracker.address !== undefined) {
         states.push({
-            id: `${location}.addressText`,
+            id: `${location}.address`,
             name: 'Address',
             type: 'string',
             role: 'text',
             value: tracker.address,
         });
+    }
+    if (tracker.operationalState !== undefined) {
+        states.push({
+            id: `${status}.state`,
+            name: 'Operational state',
+            type: 'string',
+            role: 'text',
+            value: tracker.operationalState,
+        });
+    }
+    if (tracker.stateReason !== undefined) {
+        states.push({
+            id: `${status}.stateReason`,
+            name: 'State reason',
+            type: 'string',
+            role: 'text',
+            value: tracker.stateReason,
+        });
+    }
+    if (tracker.powerSaving !== undefined) {
+        states.push({
+            id: `${status}.powerSaving`,
+            name: 'Power saving',
+            type: 'boolean',
+            role: 'indicator',
+            value: tracker.powerSaving,
+        });
+    }
+    const hardwareStates: StateDefinition[] = [];
+    if (tracker.batteryLevel !== undefined) {
+        hardwareStates.push({
+            id: `${hardware}.batteryLevel`,
+            name: 'Battery level',
+            type: 'number',
+            role: 'value.battery',
+            unit: '%',
+            min: 0,
+            max: 100,
+            value: tracker.batteryLevel,
+        });
+    }
+    if (tracker.charging !== undefined) {
+        hardwareStates.push({
+            id: `${hardware}.charging`,
+            name: 'Charging',
+            type: 'boolean',
+            role: 'indicator',
+            value: tracker.charging,
+        });
+    }
+    if (tracker.batteryState !== undefined) {
+        hardwareStates.push({
+            id: `${hardware}.batteryState`,
+            name: 'Battery state',
+            type: 'string',
+            role: 'text',
+            value: tracker.batteryState,
+        });
+    }
+    if (tracker.lastHardwareUpdate !== undefined) {
+        hardwareStates.push({
+            id: `${hardware}.lastUpdate`,
+            name: 'Last hardware update',
+            type: 'number',
+            role: 'date',
+            value: tracker.lastHardwareUpdate,
+        });
+    }
+    if (hardwareStates.length) {
+        await ensureContainer(deps, hardware, 'channel', 'Hardware and battery');
+        states.push(...hardwareStates);
     }
     for (const state of states) {
         await writeState(deps, state);

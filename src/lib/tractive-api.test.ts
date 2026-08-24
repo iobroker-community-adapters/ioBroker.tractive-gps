@@ -337,18 +337,18 @@ describe('TractiveAPI authentication', () => {
                 requests.push(config);
                 return Promise.resolve(response(config, Buffer.from([0xff, 0xd8, 0xff, 0x00])));
             },
-            { writeFileAsync, fileNamespace: 'tractive-gps.0' },
+            { writeFileAsync, fileNamespace: 'tractive-gps.0.images' },
         );
         client.auth = { access_token: 'private-token', expires_at: 1_900_000_000, user_id: 'user-1' };
 
         const pictureUrl = await client.getProfilePictureUrl('image/id');
 
-        expect(pictureUrl).to.equal('../tractive-gps.0/profile-images/image_id.jpg');
+        expect(pictureUrl).to.equal('../tractive-gps.0.images/profile-images/image_id.jpg');
         expect(requests[0].url).to.equal('https://cdn.tractive.com/3/media/resource/image%2Fid.jpg');
         expect(requests[0].headers?.Authorization).to.equal(undefined);
         expect(writeFileAsync.calledOnce).to.equal(true);
         expect(writeFileAsync.firstCall.args.slice(0, 2)).to.deep.equal([
-            'tractive-gps.0',
+            'tractive-gps.0.images',
             'profile-images/image_id.jpg',
         ]);
     });

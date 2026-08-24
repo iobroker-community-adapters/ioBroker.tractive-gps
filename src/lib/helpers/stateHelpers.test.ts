@@ -34,7 +34,7 @@ describe('tracker state model', () => {
         expect(common?.write).to.equal(true);
     });
 
-    it('mirrors complete API values locally, including arrays and personal account fields', async () => {
+    it('writes selected values without expanding array items', async () => {
         const states = new Map<string, ioBroker.StateValue>();
         const objects = new Map<string, ioBroker.PartialObject>();
         const deps: StateDeps = {
@@ -48,19 +48,16 @@ describe('tracker state model', () => {
             }) as StateDeps['setState'],
         };
 
-        await writeApiData(deps, {
-            pets: { pet1: { details: { name: 'Bärli', breed_ids: ['1G91'] } } },
-            access_token: 'secret',
-            user_id: 'private',
-        });
+        await writeApiData(
+            deps,
+            { account: { email: 'local@example' }, subscriptions: { sub1: { services: ['CARE'] } } },
+            { complete: true },
+        );
 
-        expect(states.get('pets.pet1.details.name')).to.equal('Bärli');
-        expect(states.get('pets.pet1.details.breed_ids')).to.equal('["1G91"]');
-        expect(states.get('pets.pet1.details.breed_idsItems.0')).to.equal('1G91');
-        expect(states.get('access_token')).to.equal('secret');
-        expect(states.get('user_id')).to.equal('private');
-        expect(String(states.get('info.currentApi'))).to.contain('secret');
-        expect(String(states.get('info.currentApi'))).to.contain('private');
+        expect(states.get('account.email')).to.equal('local@example');
+        expect(states.get('subscriptions.sub1.services')).to.equal('["CARE"]');
+        expect(states.has('subscriptions.sub1.servicesItems.0')).to.equal(false);
+        expect(String(states.get('info.currentApi'))).to.equal('{"complete":true}');
     });
 
     it('does not recreate the removed legacy tracker hierarchy', async () => {

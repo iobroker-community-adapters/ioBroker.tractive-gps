@@ -48,7 +48,7 @@ Der Adapter verwendet eine inoffizielle Tractive-Service-Schnittstelle. Ein funk
 - Ruft die echten Namen und Profildaten der mit dem Konto verbundenen Tiere ab.
 - Stellt aktuelle GPS-Koordinaten, Höhe, Geschwindigkeit, Positionsgenauigkeit, Entfernung zum konfigurierten ioBroker-Standort und Aktualisierungszeit bereit.
 - Kann Koordinaten optional in eine lesbare Adresse umwandeln.
-- Stellt Batteriestand, Ladezustand, Verbindungstyp, verwendeten Positionssensor (`KNOWN_WIFI`/`GPS`), Zuhause-/Unterwegs-Status, Online-Status und Energiesparzustand bereit.
+- Stellt Batteriestand, Ladezustand, verwendete Positionsquelle (`KNOWN_WIFI`/`GPS`), Zuhause-/Unterwegs-Status, Online-Status und Energiesparzustand bereit.
 - Liefert Modell, Firmware, Hardwareversion, Fähigkeiten, Geschlecht, Geburtstag, Größe, Gewicht und weitere verfügbare Informationen.
 - Unterstützt Live-Tracking, LED und Signalton, sofern der Tracker die jeweilige Funktion meldet.
 - Speichert alle abgerufenen Konto-, Abonnement-, Freigabe-, Tier-, Tracker-, Positions- und Hardwaredaten als logischen lokalen Datenbaum sowie als vollständigen JSON-Schnappschuss.
@@ -96,13 +96,10 @@ tractive-gps.0
 │   └── status
 ├── account.*
 ├── subscriptions.<subscription-id>.*
-├── shares.<share-id>.*
 ├── pets.<pet-id>
-│   ├── profile.*
-│   ├── assignment.*
-│   ├── properties.*
-│   ├── media.*
-│   └── calculated.*
+│   ├── info.*
+│   ├── activity.*
+│   └── media.*
 ├── trackers.<tracker-id>
 │   ├── info.*
 │   ├── status.*
@@ -123,15 +120,15 @@ tractive-gps.0
 
 ### Tiere
 
-Die Datenpunkte unter `pets.<pet-id>.*` enthalten die vollständige Tierantwort. Profildaten, Tracker-Zuordnung, Ressourceneigenschaften, Medien und normalisierte berechnete Werte sind in logische Kanäle unterteilt.
+Die Datenpunkte unter `pets.<pet-id>.*` enthalten nützliche Tierprofildaten, Tracker-Zuordnung, Aktivitätsziele und das Profilbild. Leere und interne API-Felder werden weggelassen.
 
 ### Tracker
 
-Die Datenpunkte unter `trackers.<tracker-id>.*` enthalten Tracker-Kennung, Status, vollständige Positions- und Hardwareberichte, Entfernung zum ioBroker-Systemstandort, Adresse und unterstützte Befehle. Das echte API-Feld `location.sensor_used` bezeichnet die Positionsquelle. `status.home` wird aus `KNOWN_WIFI` beziehungsweise `GPS` abgeleitet. Einen doppelten Datenpunkt `connectionType` gibt es nicht mehr. Breiten- und Längengrad des ioBroker-Standorts werden in den Systemeinstellungen festgelegt.
+Die Datenpunkte unter `trackers.<tracker-id>.*` enthalten Tracker-Kennung, Betriebs- und Onlinestatus, Position, Positionsquelle, Entfernung zum ioBroker-Systemstandort, Adresse, Batterieinformationen und unterstützte Befehle. `location.sensorUsed` enthält die Tractive-Positionsquelle. `status.home` wird aus `KNOWN_WIFI` beziehungsweise `GPS` abgeleitet. Einen doppelten Datenpunkt `connectionType` gibt es nicht mehr. Breiten- und Längengrad des ioBroker-Standorts werden in den Systemeinstellungen festgelegt.
 
 ### Vollständige API-Daten
 
-Die vollständige Antwort wird unmittelbar in den logischen Hauptordnern `account`, `subscriptions`, `shares`, `pets` und `trackers` dargestellt. Ein zusätzliches Duplikat unter `api.*` wird nicht angelegt. Neu gelieferte Objektfelder werden automatisch ergänzt. Arrays werden als JSON gespeichert und besitzen zusätzlich passende `Length`-Datenpunkte sowie einzeln adressierbare `Items`-Objekte. Die unveränderte kombinierte Antwort bleibt in `info.currentApi` verfügbar. Anmeldepasswort und Zugriffstoken werden dem Datenbaum nie hinzugefügt.
+Nur für Skripte, Automatisierungen und Visualisierungen sinnvoll nutzbare Werte werden als einzelne Datenpunkte angelegt. Leere Werte, API-Metadaten, interne Versionsfelder und doppelte Darstellungen werden weggelassen. Die vollständige unveränderte kombinierte Antwort bleibt als einzelner JSON-Wert in `info.currentApi` verfügbar. Anmeldepasswort und Zugriffstoken werden darin nie abgelegt.
 
 ## Tracker-Befehle
 
@@ -154,7 +151,7 @@ Die Karte kann Folgendes anzeigen:
 - Tierbild,
 - interaktive Leaflet-/OpenStreetMap-Karte,
 - gemeldeter oder manuell eingestellter Positionsradius,
-- Batteriestand, Verbindungstyp, Zuhause-/Unterwegs-Status und Entfernung zu ioBroker,
+- Batteriestand, Positionsquelle, Zuhause-/Unterwegs-Status und Entfernung zu ioBroker,
 - letzte Aktualisierung, Adresse, Energiesparzustand und Positionsgenauigkeit.
 
 Für das Tractive-Bild wird `pets.<pet-id>.media.profilePictureUrl` als API-Bilddatenpunkt ausgewählt. Der Adapter lädt das Tractive-Bild in den lokalen ioBroker-Dateispeicher, da das Tractive-CDN JPEG-Dateien als Download ausliefert. Wird kein Bild geliefert oder kann es nicht geladen werden, lässt sich im Widget-Bereich **Darstellung** ein eigenes Bild auswählen oder hochladen.
@@ -165,7 +162,7 @@ Die Karte kann den vollständigen Genauigkeits- oder Bereichskreis automatisch e
 
 - Das Passwort wird mit dem verschlüsselten ioBroker-Konfigurationsverfahren gespeichert.
 - Zugriffstoken bleiben im Arbeitsspeicher und werden automatisch erneuert.
-- Die vollständigen abgerufenen API-Daten einschließlich persönlicher Konto- und Abonnementinformationen werden lokal im logischen Objektbaum sowie in `info.currentApi` gespeichert. Der Zugriff auf den ioBroker-Objektbaum sollte entsprechend geschützt werden.
+- Ausgewählte Konto- und Abonnementinformationen werden im logischen Objektbaum gespeichert. Die vollständigen abgerufenen API-Daten werden lokal in `info.currentApi` abgelegt. Der Zugriff auf den ioBroker-Objektbaum sollte entsprechend geschützt werden.
 - Passwort und Zugriffstoken werden dem API-Datenbaum nie hinzugefügt und verbleiben geschützt in der verschlüsselten Konfiguration beziehungsweise im Arbeitsspeicher.
 - Genaue Positionen werden lokal in ioBroker-Datenpunkten gespeichert, weil sie für die Funktion des Adapters erforderlich sind.
 - Die Rückwärts-Geokodierung ist optional und sendet bei Aktivierung Koordinaten an den Adressdienst von Tractive.
@@ -196,10 +193,11 @@ Informationen für Mitwirkende stehen in der [Entwicklerdokumentation](docs/DEVE
 - (xXBJXx) Objektstrukturen `pets.*`, `trackers.*` und Zustandsinformationen ergänzt.
 - (xXBJXx) Tiernamen korrigiert sowie alle verfügbaren Tierprofildaten mit richtigen Größen- und Gewichtseinheiten ergänzt.
 - (xXBJXx) Fehlende Datenpunktdefinitionen für zuvor unbekannte API-Felder korrigiert (#81, #113, #305; ersetzt #114 und #175).
-- (xXBJXx) Die doppelte Hierarchie `api.data.*` durch einen automatisch erweiterbaren, logischen Datenbaum für Konto, Abonnements, Freigaben, Tiere, Tracker, Position und Hardware ersetzt.
+- (xXBJXx) Die doppelte API-Hierarchie durch einen ausgewählten Datenbaum für Konto, Abonnements, Tiere, Tracker, Position und Hardware ersetzt und den vollständigen JSON-Schnappschuss beibehalten.
 - (xXBJXx) `sensor_used` und Entfernung zu ioBroker auf Grundlage von PR #3 wiederhergestellt, den Zuhause-/Unterwegs-Status ergänzt und den doppelten Datenpunkt `connectionType` entfernt.
 - (xXBJXx) Tractive-CDN-URLs für Profilbilder korrigiert und Zuhause-/Unterwegs-Status sowie Entfernung zur VIS-2-Karte hinzugefügt.
 - (xXBJXx) Tractive-Profilbilder in ioBroker zwischengespeichert, damit VIS 2 die als Binärdownload ausgelieferten CDN-Dateien anzeigen kann.
+- (xXBJXx) Die Profilbildablage durch einen eigenen ioBroker-Dateicontainer vom Typ `meta` korrigiert.
 - (xXBJXx) Live-Tracking-, LED- und Signalton-Befehle für unterstützte Tracker ergänzt.
 - (xXBJXx) Adapterkonfiguration für Admin 8 erneuert und die ungültige jsonConfig-Konfiguration entfernt (#176).
 - (xXBJXx) VIS-2-Widget `PetTrackerCard` mit Tierbild, Leaflet-/OpenStreetMap-Karte, Bereichsanzeige und Tracker-Informationen ergänzt.

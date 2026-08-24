@@ -5,7 +5,7 @@ import { TractiveAPI } from './lib/tractive-api';
 const MINIMUM_INTERVAL_SECONDS = 120;
 const MAXIMUM_INTERVAL_SECONDS = 3600;
 const FULL_SYNC_INTERVAL_MS = 24 * 60 * 60 * 1000;
-const OBJECT_STRUCTURE_VERSION = 2;
+const OBJECT_STRUCTURE_VERSION = 3;
 
 class TractiveGPS extends utils.Adapter {
     private tractiveApi: TractiveAPI | null = null;
@@ -51,7 +51,7 @@ class TractiveGPS extends utils.Adapter {
                 getDevicesAsync: this.getDevicesAsync.bind(this),
                 getForeignObjectAsync: this.getForeignObjectAsync.bind(this),
                 writeFileAsync: this.writeFileAsync.bind(this),
-                fileNamespace: this.namespace,
+                fileNamespace: `${this.namespace}.images`,
             },
         );
 
@@ -70,6 +70,14 @@ class TractiveGPS extends utils.Adapter {
     }
 
     private async ensureLifecycleObjects(): Promise<void> {
+        await this.extendObjectAsync('images', {
+            type: 'meta',
+            common: {
+                name: 'Tractive profile images',
+                type: 'meta.user',
+            },
+            native: {},
+        });
         await this.extendObjectAsync('info', {
             type: 'channel',
             common: {
@@ -171,7 +179,7 @@ class TractiveGPS extends utils.Adapter {
         for (const id of Object.keys(objects)) {
             const relativeId = id.startsWith(namespacePrefix) ? id.slice(namespacePrefix.length) : id;
             const root = relativeId.split('.')[0];
-            if (root && root !== 'info') {
+            if (root && root !== 'info' && root !== 'images') {
                 roots.add(root);
             }
         }

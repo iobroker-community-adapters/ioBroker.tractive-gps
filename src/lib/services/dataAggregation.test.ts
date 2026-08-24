@@ -56,10 +56,10 @@ describe('data aggregation migration', () => {
 
         expect(await updateAllData(api)).to.deep.equal({ success: true, data: true });
         expect(objects.get('pets.pet-1')?.common?.name).to.equal('Bärli');
-        expect(states.get('pets.pet-1.profile.name')).to.equal('Bärli');
-        expect(states.get('pets.pet-1.profile.activity_settings.daily_goal')).to.equal(1000);
-        expect(states.get('pets.pet-1.profile.activity_settings.daily_distance_goal')).to.equal(2500);
-        expect(states.get('pets.pet-1.calculated.weight')).to.equal(4.9);
+        expect(states.get('pets.pet-1.info.name')).to.equal('Bärli');
+        expect(states.get('pets.pet-1.activity.dailyGoal')).to.equal(1000);
+        expect(states.get('pets.pet-1.activity.dailyDistanceGoal')).to.equal(2500);
+        expect(states.get('pets.pet-1.info.weight')).to.equal(4.9);
         expect(states.get('pets.pet-1.media.profilePictureUrl')).to.equal(
             'https://cdn.tractive.com/3/media/resource/image-1.jpg',
         );
@@ -122,7 +122,8 @@ describe('data aggregation migration', () => {
                 } as ioBroker.Object),
             getAccount: () => Promise.resolve({ success: true, data: { _id: 'user-1', email: 'local@example' } }),
             getSubscriptions: () => Promise.resolve({ success: true, data: [{ _id: 'sub-1' }] }),
-            getSubscription: () => Promise.resolve({ success: true, data: { _id: 'sub-1', plan: 'premium' } }),
+            getSubscription: () =>
+                Promise.resolve({ success: true, data: { _id: 'sub-1', plan_type_used: 'premium' } }),
             getShares: () => Promise.resolve({ success: true, data: [{ _id: 'share-1' }] }),
             getProfilePictureUrl: id => id,
             getPets: () => Promise.resolve({ success: true, data: [] }),
@@ -148,19 +149,19 @@ describe('data aggregation migration', () => {
         };
 
         expect((await updateAllData(api)).success).to.equal(true);
-        expect(states.get('trackers.tracker-1.location.sensor_used')).to.equal('KNOWN_WIFI');
+        expect(states.get('trackers.tracker-1.location.sensorUsed')).to.equal('KNOWN_WIFI');
         expect(states.get('trackers.tracker-1.status.home')).to.equal(true);
         expect(states.get('trackers.tracker-1.location.distance')).to.be.closeTo(1112, 2);
         expect(states.get('trackers.tracker-1.status.state')).to.equal('OPERATIONAL');
-        expect(states.get('trackers.tracker-1.status.state_reason')).to.equal('POWER_SAVING');
-        expect(states.get('trackers.tracker-1.hardware.battery_level')).to.equal(95);
-        expect(states.get('trackers.tracker-1.location.latlong')).to.equal('[48.21,13.4]');
+        expect(states.get('trackers.tracker-1.status.stateReason')).to.equal('POWER_SAVING');
+        expect(states.get('trackers.tracker-1.hardware.batteryLevel')).to.equal(95);
+        expect(states.has('trackers.tracker-1.location.latlong')).to.equal(false);
         expect(states.has('trackers.tracker-1.status.connectionType')).to.equal(false);
         expect(states.has('api.data.account.email')).to.equal(false);
         expect(states.has('tracker-1.device_pos_report.sensor_used')).to.equal(false);
         expect(states.get('account.email')).to.equal('local@example');
-        expect(states.get('subscriptions.sub-1.plan')).to.equal('premium');
-        expect(states.get('shares.share-1._id')).to.equal('share-1');
+        expect(states.get('subscriptions.sub-1.planType')).to.equal('premium');
+        expect(states.has('shares.share-1._id')).to.equal(false);
         expect(String(states.get('info.currentApi'))).to.contain('local@example');
         expect(String(states.get('info.currentApi'))).not.to.contain('access_token');
     });

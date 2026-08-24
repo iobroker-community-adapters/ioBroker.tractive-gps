@@ -45,11 +45,8 @@ function getAggregationCache(api) {
 function asRecord(value) {
   return value !== null && typeof value === "object" && !Array.isArray(value) ? value : void 0;
 }
-function withoutKeys(value, keys) {
-  return Object.fromEntries(Object.entries(value).filter(([key]) => !keys.has(key)));
-}
-function withKeys(value, keys) {
-  return Object.fromEntries(Object.entries(value).filter(([key]) => keys.has(key)));
+function compactRecord(value) {
+  return Object.fromEntries(Object.entries(value).filter(([, child]) => child !== null && child !== void 0));
 }
 function resourcesById(values) {
   return Object.fromEntries(
@@ -196,6 +193,7 @@ async function getSystemCoordinates(api) {
 function normalizePet(value, imageValue) {
   var _a, _b;
   const records = layers(value);
+  const activitySettings = records.map((record) => asRecord(record.activity_settings)).find(Boolean);
   const id = firstString(records, "_id", "id");
   if (!id) {
     return void 0;
@@ -219,9 +217,9 @@ function normalizePet(value, imageValue) {
     profilePictureUrl: (_b = firstString(records, "profile_picture_url", "picture_url", "image_url")) != null ? _b : findImageSource(imageValue),
     galleryPictureIds: firstStringArray(records, "gallery_picture_ids"),
     createdAt: timestampToMilliseconds(firstNumber(records, "created_at")),
-    dailyGoal: firstNumber(records, "daily_goal"),
-    dailyDistanceGoal: firstNumber(records, "daily_distance_goal"),
-    dailyActiveMinutesGoal: firstNumber(records, "daily_active_minutes_goal")
+    dailyGoal: firstNumber(activitySettings ? [activitySettings] : [], "daily_goal"),
+    dailyDistanceGoal: firstNumber(activitySettings ? [activitySettings] : [], "daily_distance_goal"),
+    dailyActiveMinutesGoal: firstNumber(activitySettings ? [activitySettings] : [], "daily_active_minutes_goal")
   };
 }
 function normalizeHeight(value) {
@@ -299,13 +297,13 @@ function stateDeps(api) {
   };
 }
 async function synchronize(api, fullSync) {
-  var _a, _b, _c, _d, _e;
+  var _a, _b, _c, _d, _e, _f, _g, _h;
   const cache = getAggregationCache(api);
   const hardwareSyncDue = fullSync || Date.now() - cache.lastHardwareSync >= HARDWARE_SYNC_INTERVAL_MS;
   if (fullSync) {
-    const account = await api.getAccount();
-    if (account.success) {
-      cache.account = account.data;
+    const account2 = await api.getAccount();
+    if (account2.success) {
+      cache.account = account2.data;
     } else {
       api.log.warn("Could not retrieve complete Tractive account data");
     }
@@ -427,68 +425,48 @@ async function synchronize(api, fullSync) {
     pets: cache.petApiData,
     trackers: trackerApiData
   };
-  const petTree = Object.fromEntries(
-    Object.entries(cache.petApiData).map(([petId, source]) => {
-      var _a2, _b2, _c2, _d2, _e2;
-      const details = (_b2 = (_a2 = asRecord(source.details)) != null ? _a2 : asRecord(source.list)) != null ? _b2 : {};
-      const profile = (_c2 = asRecord(details.details)) != null ? _c2 : {};
-      const assignmentKeys = /* @__PURE__ */ new Set(["device_id", "home_location"]);
-      const properties = {
-        ...(_d2 = asRecord(source.list)) != null ? _d2 : {},
-        ...withoutKeys(details, /* @__PURE__ */ new Set(["details", ...assignmentKeys]))
-      };
-      return [
-        petId,
-        {
-          profile,
-          assignment: withKeys(details, assignmentKeys),
-          properties,
-          media: { profilePictureUrl: (_e2 = source.profilePictureUrl) != null ? _e2 : null }
-        }
-      ];
-    })
+  const account = (_e = asRecord(cache.account)) != null ? _e : {};
+  const accountDetails = (_f = asRecord(account.details)) != null ? _f : {};
+  const accountDemographics = (_g = asRecord(account.demographics)) != null ? _g : {};
+  const accountSettings = (_h = asRecord(account.settings)) != null ? _h : {};
+  const subscriptions = Object.fromEntries(
+    Object.entries({ ...resourcesById(cache.subscriptions.list), ...cache.subscriptions.details }).map(
+      ([subscriptionId, source]) => {
+        var _a2, _b2;
+        const subscription = (_a2 = asRecord(source)) != null ? _a2 : {};
+        const renewal = (_b2 = asRecord(subscription.renewal_information)) != null ? _b2 : {};
+        return [
+          subscriptionId,
+          compactRecord({
+            status: subscription.status,
+            validFrom: subscription.valid_from,
+            validTo: subscription.valid_to,
+            recurring: subscription.recurring,
+            planType: subscription.plan_type_used,
+            trackerId: subscription.tracker_id,
+            billingInterval: subscription.billing_interval,
+            insuranceActive: subscription.insurance_active,
+            renewalCurrency: renewal.currency,
+            renewalTotal: renewal.total
+          })
+        ];
+      }
+    )
   );
-  const trackerStatusKeys = /* @__PURE__ */ new Set([
-    "state",
-    "state_reason",
-    "charging_state",
-    "battery_state",
-    "battery_save_mode",
-    "power_saving_zone_id",
-    "prioritized_zone_id",
-    "prioritized_zone_type",
-    "prioritized_zone_last_seen_at",
-    "prioritized_zone_entered_at"
-  ]);
-  const trackerTree = Object.fromEntries(
-    Object.entries(trackerApiData).map(([trackerId, source]) => {
-      var _a2, _b2, _c2, _d2, _e2;
-      const details = (_b2 = (_a2 = asRecord(source.details)) != null ? _a2 : asRecord(source.list)) != null ? _b2 : {};
-      return [
-        trackerId,
-        {
-          info: { ...(_c2 = asRecord(source.list)) != null ? _c2 : {}, ...withoutKeys(details, trackerStatusKeys) },
-          status: withKeys(details, trackerStatusKeys),
-          location: (_d2 = source.location) != null ? _d2 : {},
-          hardware: (_e2 = source.hardware) != null ? _e2 : {}
-        }
-      ];
-    })
-  );
-  const subscriptions = {
-    ...resourcesById(cache.subscriptions.list),
-    ...cache.subscriptions.details
-  };
   const logicalTree = {
     updatedAt: rawSnapshot.updatedAt,
-    account: {
-      ...(_e = cache.account) != null ? _e : {},
-      session: rawSnapshot.userInfo
-    },
-    subscriptions,
-    shares: resourcesById(cache.shares),
-    pets: petTree,
-    trackers: trackerTree
+    account: compactRecord({
+      email: account.email,
+      firstName: accountDetails.first_name,
+      lastName: accountDetails.last_name,
+      activatedAt: account.activated_at,
+      country: accountDemographics.country,
+      language: accountDemographics.language,
+      metricSystem: accountSettings.metric_system,
+      distanceUnit: accountSettings.distance_unit,
+      weightUnit: accountSettings.weight_unit
+    }),
+    subscriptions
   };
   await (0, import_stateHelpers.writeApiData)(stateDeps(api), logicalTree, rawSnapshot);
   if (api.getDevicesAsync) {
