@@ -187,8 +187,7 @@ To use the command switches, assign the corresponding `trackers.<tracker-id>.com
 Information for contributors is available in [Developer documentation](docs/DEVELOPMENT.md).
 
 ## Changelog
-
-### **WORK IN PROGRESS**
+### 3.0.0 (2026-08-24)
 
 - (xXBJXx) BREAKING: rewritten for Node.js 22, js-controller 7.2.2, and Admin 8.
 - (xXBJXx) Configured Sentry through ioBroker's adapter integration (#4).
@@ -244,12 +243,6 @@ Information for contributors is available in [Developer documentation](docs/DEVE
 
 - (mcm1957) Adapter requires Node.js 18 and js-controller 5 or newer.
 - (mcm1957) Updated dependencies.
-
-### 1.1.0 (2023-11-05)
-
-- (Scrounger) Create objects only when necessary.
-- (Scrounger) Reduced excessive warnings.
-- (Scrounger) Added distance calculation between ioBroker and the tracker.
 
 ## Credits
 

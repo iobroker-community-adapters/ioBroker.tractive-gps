@@ -1,259 +1,285 @@
 {
-    "common": {
-        "name": "tractive-gps",
-        "version": "2.1.0",
-        "news": {
-            "2.1.0": {
-                "en": "Adapter requires node 20 now.\nAdapter requires js-controller 5.0.19 and admin 6.17.14 now.\nAdapter changed to meet Responsive Design rules.\nAn error at jsonConfig invalidating reauthorization command has been corrected.\nDependencies have been updated.",
-                "de": "Adapter benötigt jetzt den Knoten 20.\nAdapter benötigt jetzt js-controller 5.0.19 und admin 6.17.14.\nAdapter geändert, um Responsive Design Regeln zu erfüllen.\nEin Fehler bei jsonConfig, der Reautorisierungsbefehl invalidiert, wurde behoben.\nAbhängigkeiten wurden aktualisiert.",
-                "ru": "Адаптер требует узла 20.\nАдаптер требует js-контроллер 5.0.19 и admin 6.17.14.\nАдаптер изменился, чтобы соответствовать правилам Responsive Design.\nИсправлена ошибка в jsonConfig, аннулирующая команду реавторизации.\nЗависимость была обновлена.",
-                "pt": "Adaptador requer nó 20 agora.\nAdaptador requer js-controller 5.0.19 e admin 6.17.14 agora.\nAdapter mudou para atender às regras de Design Responsável.\nFoi corrigido um erro no comando jsonConfig invalidating reauthorization.\nAs dependências foram atualizadas.",
-                "nl": "Adapter vereist node 20 nu.\nAdapter vereist js-controller 5.01.19 en admin 6.17.14 nu.\nAdapter veranderd om te voldoen aan Responsive Design regels.\nEen fout bij jsonConfig ongeldig maken van reauthorization commando is gecorrigeerd.\nAfhankelijkheden zijn bijgewerkt.",
-                "fr": "Adaptateur nécessite un noeud 20 maintenant.\nAdaptateur nécessite js-controller 5.0.19 et admin 6.17.14 maintenant.\nAdaptateur modifié pour respecter les règles de conception réactive.\nUne erreur à la commande jsonConfig invalidant la réautorisation a été corrigée.\nLes dépendances ont été actualisées.",
-                "it": "Adattatore richiede nodo 20 ora.\nAdattatore richiede js-controller 5.0.19 e admin 6.17.14 ora.\nAdattatore modificato per soddisfare le regole di Responsive Design.\nÈ stato corretto un errore al comando di riautorizzazione di jsonConfig invalidante.\nLe dipendenze sono state aggiornate.",
-                "es": "Adaptador requiere nodo 20 ahora.\nAdaptador requiere js-controller 5.0.19 y admin 6.17.14 ahora.\nAdaptador cambió para cumplir con las reglas de diseño responsable.\nSe ha corregido un error en el comando jsonConfig invalidating reauthorization.\nSe han actualizado las dependencias.",
-                "pl": "Adapter wymaga węzła 20.\nAdapter wymaga sterownika js- 5.0.19 i admin 6.17.14 teraz.\nAdapter zmienił się w celu spełnienia zasad Responsive Design.\nBłąd w jsonConfig unieważnienie polecenia reautoryzacji został poprawiony.\nZaktualizowano zależność.",
-                "uk": "Адаптер вимагає вузла 20 тепер.\nАдаптер вимагає js-controller 5.0.19 і admin 6.17.14 тепер.\nПерехідник змінився для дотримання правил адаптивного дизайну.\nВиправлено помилку в jsonConfig, що недійсне відновлення.\nОновлено залежність.",
-                "zh-cn": "适配器现在需要20号节点.\n适配器现在需要js控制器5.0.19和管理员6.17.14.\n适配器更改以满足应变设计规则.\nJsonConfig 无效重授权命令的错误已被更正 .\n附属关系已经更新."
-            },
-            "2.0.1": {
-                "en": "Fixing encryption of the access token",
-                "de": "Festlegen der Verschlüsselung des Zugriffstokens",
-                "ru": "Исправление шифрования токена доступа",
-                "pt": "Corrigir criptografia do token de acesso",
-                "nl": "Versleuteling van het toegangs token herstellen",
-                "fr": "Correction du chiffrement du jeton d'accès",
-                "it": "Fissare la crittografia del gettone di accesso",
-                "es": "Corrección del cifrado de acceso",
-                "pl": "Ustawienie szyfrowania symbolu dostępu",
-                "uk": "Виправлення шифрування токена доступу",
-                "zh-cn": "修复访问令牌的加密"
-            },
-            "2.0.0": {
-                "en": "BREAKING CHANGE: You must enter your credentials again\nOld code has been removed and GUI has been rewritten\nDependencies have been updated",
-                "de": "BREAKING CHANGE: Sie müssen Ihre Anmeldeinformationen erneut eingeben\nDer alte Code wurde entfernt und GUI wurde neu geschrieben\nAbhängigkeiten wurden aktualisiert",
-                "ru": "Ж: Вы должны снова ввести свои полномочия\nСтарый код был удален, и GUI был переписан\nЗависимость обновлена",
-                "pt": "Muita coisa: Você deve inserir suas credenciais novamente\nCódigo antigo foi removido e GUI foi reescrito\nAs dependências foram atualizadas",
-                "nl": "Breaking VERANDERING: U moet uw referenties opnieuw invoeren\nOude code is verwijderd en GUI is herschreven\nAfhankelijkheden zijn bijgewerkt",
-                "fr": "CHANGEMENT DE BREAING: Vous devez à nouveau entrer vos lettres de créances\nL'ancien code a été supprimé et l'interface graphique a été réécrite\nLes dépendances ont été actualisées",
-                "it": "CAMBIO DI BREAKING: Devi inserire nuovamente le credenziali\nVecchio codice è stato rimosso e GUI è stato riscritto\nLe dipendenze sono state aggiornate",
-                "es": "Cambiando: Debe introducir sus credenciales de nuevo\nSe ha eliminado el código antiguo y GUI ha sido reescrito\nSe han actualizado las dependencias",
-                "pl": "ZMIANA ZBIORCZA: Musisz ponownie wpisać swoje referencje\nStary kod został usunięty i GUI został przepisany\nZaktualizowano zależności",
-                "uk": "БРЕАКІНГ ЗМІН: Ви повинні ввести ваші облікові дані знову\nСтарший код був вилучений і графічний інтерфейс\nЗалежність було оновлено",
-                "zh-cn": "打破变化: 您必须再次输入您的证书\n旧代码已被删除, 并重写 GUI\n依赖关系已更新"
-            },
-            "1.2.0": {
-                "en": "Adapter requires node.js >= 18 and js-controller >= 5 now\nDependencies have been updated",
-                "de": "Adapter benötigt node.js >= 18 und js-controller >= 5 jetzt\nAbhängigkeiten wurden aktualisiert",
-                "ru": "Адаптер требует node.js >= 18 и js-контроллер >= 5 сейчас\nЗависимость обновлена",
-                "pt": "Adapter requer node.js >= 18 e js-controller >= 5 agora\nAs dependências foram atualizadas",
-                "nl": "Voor adaptor zijn node.js < 18 en js-controller > Nu 5\nAfhankelijkheden zijn bijgewerkt",
-                "fr": "L'adaptateur nécessite node.js >= 18 et js-controller >= 5 maintenant\nLes dépendances ont été actualisées",
-                "it": "Adattatore richiede node.js >= 18 e js-controller >= 5 ora\nLe dipendenze sono state aggiornate",
-                "es": "Adaptador requiere node.js √≥= 18 y js-controller 5 ahora\nSe han actualizado las dependencias",
-                "pl": "Adapter wymaga node.js > = 18 i kontroler js- > = 5 teraz\nZaktualizowano zależności",
-                "uk": "Адаптер вимагає node.js >= 18 і js-controller >= 5 тепер\nЗалежність було оновлено",
-                "zh-cn": "适配器需要节点.js QQ18和js控制器 QQ 现在5号\n依赖关系已更新"
-            },
-            "1.1.0": {
-                "en": "Bugfix: objects will be created only if necessary\nBugfix for excessive number of warnings has been added\nDistance calculation between ioBroker and tracker has been added",
-                "de": "Bugfix: Objekte werden nur bei Bedarf erstellt\nBugfix für übermäßige Anzahl von Warnungen wurde hinzugefügt\nEntfernungsberechnung zwischen ioBroker und Tracker wurde hinzugefügt",
-                "ru": "Bugfix: объекты будут созданы только при необходимости\nДобавлен Bugfix для чрезмерного количества предупреждений\nДобавлен расчёт расстояния между ioBroker и tracker",
-                "pt": "Bugfix: os objetos serão criados somente se necessário\nBugfix para o número excessivo de avisos foi adicionado\nCálculo de distância entre ioBroker e rastreador foi adicionado",
-                "nl": "Voorwerpen worden alleen gecreëerd indien nodig\nBugfix voor overmatig aantal waarschuwingen is toegevoegd\nVertaling:",
-                "fr": "Bugfix: les objets ne seront créés que si nécessaire\nBugfix for excessive number of warnings has been added\nCalcul de distance entre ioBroker et tracker a été ajouté",
-                "it": "Bugfix: gli oggetti verranno creati solo se necessario\nBugfix per un numero eccessivo di avvisi è stato aggiunto\nCalcolo a distanza tra ioBroker e tracker è stato aggiunto",
-                "es": "Bugfix: los objetos se crearán sólo si es necesario\nBugfix para el número excesivo de advertencias se ha añadido\nSe ha añadido el cálculo de distancia entre ioBroker y tracker",
-                "pl": "Bugfix: Obiekty będą tworzone tylko wtedy, gdy konieczne będzie koniecznie\nBugfix dla nadmiernej liczby ostrzeżeń został dodany\nObliczenia pomiędzy ioBrokerem i trackerem zostały dodane",
-                "uk": "Виправлення: об'єкти будуть створені тільки при необхідності\nПомилки для надмірної кількості попереджень\nДодано розрахунок дистанції ioBroker та трекер",
-                "zh-cn": "Bugfix:只有在必要情况下才能建立物体\n此外,还增加了过多的警告的力度。\n添加了气布罗克和轨道之间的试验。"
-            },
-            "1.0.0": {
-                "en": "Adapter has been moved into iobroker-community-adapters organisation\nDependencies have been updated",
-                "de": "Adapter wurde in iobroker-community-Adapter Organisation verschoben\nAbhängigkeiten wurden aktualisiert",
-                "ru": "Адаптер переехал в организацию iobroker-community-adapters\nВ зависимости были обновлены",
-                "pt": "Adapter foi transferido para a organização iobroker-community-adapters\nAs dependências foram atualizadas",
-                "nl": "Adapter is verplaatst naar iobroker-community-papters organisatie\nAfhankelijkheid",
-                "fr": "L'adaptateur a été déplacé dans l'organisation iobroker-community-adapters\nLes dépendances ont été mises à jour",
-                "it": "L'adattatore è stato spostato nell'organizzazione degli adattatori della comunità-iobroker\nLe dipendenze sono state aggiornate",
-                "es": "Adaptador ha sido trasladado a la organización de ibroker-community-adapters\nSe han actualizado las dependencias",
-                "pl": "Adapter został przeniesiony do iobrokerskiej organizacji\nZależności zostały zaktualizowane",
-                "uk": "Переміщено перехід на iobroker-community-adapters\nОновлено залежність",
-                "zh-cn": "现已进入加勒比采掘器组织\n已更新了属地"
-            },
-            "1.0.0-alpha.0": {
-                "en": "Adapter has been moved into iobroker-community-adapters organisation\nDependencies have been updated",
-                "de": "Adapter wurde in iobroker-community-Adapter Organisation verschoben\nAbhängigkeiten wurden aktualisiert",
-                "ru": "Адаптер переехал в организацию iobroker-community-adapters\nВ зависимости были обновлены",
-                "pt": "Adapter foi transferido para a organização iobroker-community-adapters\nAs dependências foram atualizadas",
-                "nl": "Adapter is verplaatst naar iobroker-community-papters organisatie\nAfhankelijkheid",
-                "fr": "L'adaptateur a été déplacé dans l'organisation iobroker-community-adapters\nLes dépendances ont été mises à jour",
-                "it": "L'adattatore è stato spostato nell'organizzazione degli adattatori della comunità-iobroker\nLe dipendenze sono state aggiornate",
-                "es": "Adaptador ha sido trasladado a la organización de ibroker-community-adapters\nSe han actualizado las dependencias",
-                "pl": "Adapter został przeniesiony do iobrokerskiej organizacji\nZależności zostały zaktualizowane",
-                "uk": "Переміщено перехід на iobroker-community-adapters\nОновлено залежність",
-                "zh-cn": "现已进入加勒比采掘器组织\n已更新了属地"
-            }
-        },
-        "titleLang": {
-            "en": "Tractive GPS",
-            "de": "Tractive GPS",
-            "ru": "Tractive GPS",
-            "pt": "Tractive GPS",
-            "nl": "Tractive GPS",
-            "fr": "Tractive GPS",
-            "it": "Tractive GPS",
-            "es": "Tractive GPS",
-            "pl": "Tractive GPS",
-            "uk": "Tractive GPS",
-            "zh-cn": "Tractive GPS"
-        },
-        "desc": {
-            "en": "This adapter allows you to connect to the Tractive GPS service and retrieve the location of your pets.",
-            "de": "Mit diesem Adapter können Sie eine Verbindung zum Tractive-GPS-Dienst herstellen und den Standort Ihrer Haustiere abrufen.",
-            "ru": "Этот адаптер позволяет подключиться к службе Tractive GPS и получить данные о местонахождении ваших питомцев.",
-            "pt": "Este adaptador permite-lhe ligar-se ao serviço Tractive GPS e recuperar a localização dos seus animais de estimação.",
-            "nl": "Met deze adapter kunt u verbinding maken met de Tractive GPS service en de locatie van uw huisdieren opvragen.",
-            "fr": "Cet adaptateur vous permet de vous connecter au service GPS Tractive et de récupérer la localisation de vos animaux domestiques.",
-            "it": "Questo adattatore consente di connettersi al servizio Tractive GPS e recuperare la posizione dei tuoi animali domestici.",
-            "es": "Este adaptador le permite conectarse al servicio Tractive GPS y recuperar la ubicación de sus mascotas.",
-            "pl": "Ten adapter pozwala połączyć się z usługą Tractive GPS i otrzymać lokalizację swoich zwierząt.",
-            "uk": "Цей адаптер дозволяє підключитися до служби Tractive GPS і отримати місцезнаходження ваших тварин.",
-            "zh-cn": "此适配器允许您连接到Tractive GPS服务并检索您的宠物的位置。"
-        },
-        "authors": ["xXBJXx <issi.dev.iobroker@gmail.com>", "iobroker-community-adapters <mcm57@gmx.at>"],
-        "keywords": ["tractive", "gps", "geoposition", "geolocation", "tracking", "dog", "cat", "pet"],
-        "licenseInformation": {
-            "license": "MIT",
-            "type": "free"
-        },
-        "platform": "Javascript/Node.js",
-        "icon": "tractive-gps.png",
-        "enabled": true,
-        "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.tractive-gps/main/admin/tractive-gps.png",
-        "readme": "https://github.com/iobroker-community-adapters/ioBroker.tractive-gps/blob/main/README.md",
-        "loglevel": "info",
-        "tier": 2,
-        "mode": "daemon",
-        "type": "geoposition",
-        "compact": true,
-        "connectionType": "cloud",
-        "dataSource": "poll",
-        "plugins": {
-            "sentry": {
-                "dsn": "https://a3cc76cdce9f4e74b52390d60fd75278@o384969.ingest.sentry.io/4504555481530368"
-            }
-        },
-        "messagebox": true,
-        "singleton": true,
-        "materialize": true,
-        "stopBeforeUpdate": true,
-        "adminUI": {
-            "config": "materialize"
-        },
-        "visWidgets": {
-            "tractiveGpsWidgets": {
-                "i18n": "component",
-                "name": "tractiveGpsWidgets",
-                "url": "tractive-gps/customWidgets.js",
-                "bundlerType": "module",
-                "components": ["PetTrackerCard"]
-            }
-        },
-        "restartAdapters": ["vis-2"],
-        "eraseOnUpload": true,
-        "dependencies": [
-            {
-                "js-controller": ">=7.2.2",
-                "vis-2": ">=2.12.8"
-            }
-        ],
-        "globalDependencies": [
-            {
-                "admin": ">=8.0.0"
-            }
-        ],
-        "messages": [
-            {
-                "condition": {
-                    "operand": "and",
-                    "rules": ["oldVersion<2.0.0", "newVersion>=2.0.0"]
-                },
-                "title": {
-                    "en": "Important notice!",
-                    "de": "Wichtiger Hinweis!",
-                    "ru": "Важное замечание!",
-                    "pt": "Notícia importante!",
-                    "nl": "Belangrijke mededeling!",
-                    "fr": "Avis important!",
-                    "it": "Avviso IMPORTANTE!",
-                    "es": "Noticia importante!",
-                    "pl": "Ważna uwaga!",
-                    "zh-cn": "重要通知!",
-                    "uk": "Важливе повідомлення!"
-                },
-                "text": {
-                    "en": "Release 2.0.0 changes the encryption method for passwords. After migration user credentials must be entered again.",
-                    "de": "Release 2.0.0 ändert die Verschlüsselungsmethode für Passwörter. Nach der Migration müssen Benutzerberechtigungen erneut eingegeben werden.",
-                    "ru": "Выпуск 2.0.0 меняет метод шифрования для паролей. После миграции учетные данные пользователя должны быть введены снова.",
-                    "pt": "O Release 2.0.0 muda o método de criptografia para senhas. Após a migração, as credenciais de usuário devem ser inseridas novamente.",
-                    "nl": "Release 2.0.0 verandert de encryptiemethode voor wachtwoorden. Na migratie moeten gebruikersgegevens opnieuw worden ingevoerd.",
-                    "fr": "La version 2.0.0 modifie la méthode de chiffrement des mots de passe. Après la migration, les identifiants d'utilisateur doivent être entrés à nouveau.",
-                    "it": "Rilasciare 2.0.0 modifica il metodo di crittografia per le password. Dopo che le credenziali dell'utente di migrazione devono essere inserite di nuovo.",
-                    "es": "La versión 2.0.0 cambia el método de cifrado para contraseñas. Después de que las credenciales de usuario de migración deben ser ingresadas de nuevo.",
-                    "pl": "Release 2.0.0 zmienia metodę szyfrowania haseł. Po migracji należy ponownie wpisać dane uwierzytelniające użytkownika.",
-                    "uk": "Release 2.0.0 змінює метод шифрування паролів. Після міграції облікових записів користувачів необхідно вводити знову.",
-                    "zh-cn": "发布 2.0.0 更改密码的加密方法. 移民后,必须再次输入用户证书."
-                },
-                "link": "https://github.com/iobroker-community-adapters/ioBroker.tractive-gps#changelog",
-                "level": "warn",
-                "linkText": {
-                    "en": "Changelog",
-                    "de": "Änderungsprotokoll",
-                    "ru": "Список изменений",
-                    "pt": "Registro de alterações",
-                    "nl": "Wijzigingslog",
-                    "fr": "Journal des modifications",
-                    "it": "Registro delle modifiche",
-                    "es": "registro de cambios",
-                    "pl": "Dziennik zmian",
-                    "zh-cn": "变更日志",
-                    "uk": "Журнал змін"
-                },
-                "buttons": ["agree", "cancel"]
-            }
+  "common": {
+    "name": "tractive-gps",
+    "version": "3.0.0",
+    "news": {
+      "3.0.0": {
+        "en": "BREAKING: rewritten for Node.js 22, js-controller 7.2.2, and Admin 8.\nConfigured Sentry through ioBroker's adapter integration (#4).\nReplaced stored authorization data with in-memory authentication, automatic token renewal, request validation, retry handling, and account-wide rate limiting (#16, #115, #213, #231).\nAdded the `pets.*`, `trackers.*`, and health object structures.\nFixed pet names and added all available pet profile states with corrected height and weight units.\nFixed missing state definitions for API fields that were not known in advance (#81, #113, #305; supersedes #114 and #175).\nReplaced the duplicate API hierarchy with a curated account, subscription, pet, tracker, position, and hardware state tree while retaining the complete JSON snapshot.\nRestored `sensor_used` and distance-from-ioBroker information based on PR #3, added home/away information, and removed the duplicate `connectionType` state.\nFixed Tractive CDN profile-picture URLs and added home/away status and distance to the VIS 2 card.\nCached Tractive profile pictures in ioBroker so VIS 2 can display CDN files delivered as binary downloads.\nFixed profile-picture storage by using a dedicated ioBroker `meta` file container.\nAdded the local profile-picture URL, textual charging state, speed, and altitude to the curated states and VIS 2 card.\nFixed recognition of relative ioBroker file URLs in `localProfilePictureUrl`.\nAdded live tracking, LED, and buzzer commands for supported trackers.\nAdded buzzer, LED, and live-tracking controls to the VIS 2 card.\nReorganized the VIS 2 card into compact command, location, tracker, and pet sections.\nUpdated the release tooling and added fixed-version Lerna support for the private npm workspaces.\nRebuilt the adapter configuration for Admin 8 and removed the invalid jsonConfig configuration (#176).\nAdded the VIS 2 `PetTrackerCard` widget with pet image, Leaflet/OpenStreetMap map, range display, and tracker information.\nAdded support for Tractive profile images and custom ioBroker images.\nAdded automatic light and dark theme colors to the VIS 2 widget.\nAdded configurable map interaction, automatic range fitting, and minimum and maximum zoom.\nSwitched password storage to ioBroker's server-side AES encryption and automatic migration of older passwords.\nReduced recurring API traffic and added separate update intervals for positions, battery information, and static profile data.\nAdded adaptive HTTP 429 handling, global request pauses, conservative retries, and cached address lookup.\nMigrated linting to ESLint 9 and `@iobroker/eslint-config` (#45).\nAdded Node.js 24 to the CI test matrix (#116).\nMigrated automated npm releases to Trusted Publishing with GitHub OIDC (#169).\nUpdated repository metadata and schema configuration, superseding maintenance PRs #214, #215, #216, and #291.\nUpdated dependencies and workspace tooling, superseding PRs #91, #140, #147, #203, #211, #220, #256, #281, #298, #301, and #303.\nUpdated tests, documentation, and privacy safeguards.",
+        "de": "EILMELDUNG: Neu geschrieben für Node.js 22, js-controller 7.2.2 und Admin 8.\nSentry wurde über die Adapterintegration von ioBroker konfiguriert (#4).\nDie gespeicherten Autorisierungsdaten wurden durch In-Memory-Authentifizierung, automatische Token-Erneuerung, Anforderungsvalidierung, Wiederholungsbehandlung und kontoweite Ratenbegrenzung ersetzt (#16, #115, #213, #231).\nDie Objektstrukturen `pets.*`, `trackers.*` und health wurden hinzugefügt.\nDie Namen der Haustiere wurden korrigiert und alle verfügbaren Haustierprofil-Status mit den korrekten Einheiten für Größe und Gewicht hinzugefügt.\nFehlende Statusdefinitionen für API-Felder, die nicht im Voraus bekannt waren, wurden behoben (#81, #113, #305; ersetzt #114 und #175).\nDie doppelte API-Hierarchie wurde durch einen übersichtlichen Baum aus Konto-, Abonnement-, Haustier-, Tracker-, Positions- und Hardware-Status ersetzt, wobei der vollständige JSON-Snapshot beibehalten wurde.\nDie Informationen zu `sensor_used` und zur Entfernung vom ioBroker wurden basierend auf PR #3 wiederhergestellt, die Informationen zu „home/away“ wurden hinzugefügt und der doppelte Status `connectionType` entfernt.\nDie URLs der Tractive CDN-Profilbilder wurden korrigiert und der VIS 2-Karte wurden Heim-/Auswärtsstatus und Entfernung hinzugefügt.\nZwischengespeicherte Tractive-Profilbilder in ioBroker, damit VIS 2 als Binär-Downloads bereitgestellte CDN-Dateien anzeigen kann.\nDie Speicherung von Profilbildern wurde durch die Verwendung eines dedizierten ioBroker `meta`-Dateicontainers fixiert.\nDie lokale Profilbild-URL, der textuelle Ladestatus, die Geschwindigkeit und die Höhe wurden zu den kuratierten Zuständen und der VIS 2-Karte hinzugefügt.\nDie Erkennung relativer ioBroker-Datei-URLs in `localProfilePictureUrl` wurde korrigiert.\nLive-Tracking, LED- und Summer-Befehle für unterstützte Tracker hinzugefügt.\nDie VIS 2-Karte wurde um einen Summer, eine LED und Live-Tracking-Steuerung erweitert.\nDie VIS 2-Karte wurde in kompakte Befehls-, Standort-, Tracker- und Haustierabschnitte neu organisiert.\nDie Release-Tools wurden aktualisiert und die Unterstützung für Lerna mit fester Version für die privaten npm-Workspaces hinzugefügt.\nDie Adapterkonfiguration für Admin 8 wurde neu erstellt und die ungültige jsonConfig-Konfiguration entfernt (#176).\nDas VIS 2 `PetTrackerCard`-Widget wurde mit Haustierbild, Leaflet/OpenStreetMap-Karte, Entfernungsanzeige und Tracker-Informationen hinzugefügt.\nUnterstützung für Tractive-Profilbilder und benutzerdefinierte ioBroker-Bilder hinzugefügt.\nDem VIS 2-Widget wurden automatische helle und dunkle Designfarben hinzugefügt.\nKonfigurierbare Karteninteraktion, automatische Bereichsanpassung sowie minimaler und maximaler Zoom wurden hinzugefügt.\nDie Passwortspeicherung wurde auf die serverseitige AES-Verschlüsselung von ioBroker und die automatische Migration älterer Passwörter umgestellt.\nDer wiederkehrende API-Datenverkehr wurde reduziert und separate Aktualisierungsintervalle für Positionen, Batterieinformationen und statische Profildaten hinzugefügt.\nAdaptive HTTP 429-Behandlung, globale Anfragepausen, konservative Wiederholungsversuche und zwischengespeicherte Adressauflösung hinzugefügt.\nLinting auf ESLint 9 und `@iobroker/eslint-config` migriert (#45).\nNode.js 24 wurde zur CI-Testmatrix hinzugefügt (#116).\nAutomatisierte npm-Releases wurden mit GitHub OIDC auf Trusted Publishing umgestellt (#169).\nAktualisierte Metadaten und Schema-Konfiguration des Repositorys, ersetzt die Wartungs-PRs #214, #215, #216 und #291.\nAktualisierte Abhängigkeiten und Workspace-Tools, ersetzt PRs #91, #140, #147, #203, #211, #220, #256, #281, #298, #301 und #303.\nAktualisierte Tests, Dokumentation und Datenschutzvorkehrungen.",
+        "ru": "КРИТИЧЕСКИ ВАЖНО: переписано для Node.js 22, js-controller 7.2.2 и Admin 8.\nНастроил Sentry через интеграцию адаптера ioBroker (#4).\nЗаменены хранимые данные авторизации на аутентификацию в оперативной памяти, автоматическое обновление токенов, проверку запросов, обработку повторных попыток и ограничение скорости запросов для всей учетной записи (#16, #115, #213, #231).\nДобавлены структуры объектов `pets.*`, `trackers.*` и `health`.\nИсправлены имена питомцев и добавлены все доступные состояния профиля питомцев с исправленными единицами измерения роста и веса.\nИсправлены отсутствующие определения состояний для полей API, которые не были известны заранее (#81, #113, #305; заменяет #114 и #175).\nЗаменили дублирующуюся иерархию API на тщательно подобранное дерево состояний учетной записи, подписки, питомца, трекера, позиции и оборудования, сохранив при этом полный JSON-снимок.\nВосстановлена информация о `sensor_used` и расстоянии от ioBroker на основе запроса на слияние #3, добавлена информация о состоянии дома/вне дома и удалено дублирующееся состояние `connectionType`.\nИсправлены URL-адреса изображений профиля Tractive CDN и добавлены информация о статусе «дома/в гостях» и расстоянии в карточку VIS 2.\nКэширование изображений профиля Tractive в ioBroker позволяет VIS 2 отображать файлы CDN, доставляемые в виде бинарных файлов для скачивания.\nИсправлена проблема с хранением изображений профиля за счет использования специального контейнера для метаданных в ioBroker.\nДобавлены локальный URL-адрес изображения профиля, текстовое описание состояния зарядки, скорость и высота над уровнем моря в список контролируемых штатов и на карту VIS 2.\nИсправлено распознавание относительных URL-адресов файлов ioBroker в `localProfilePictureUrl`.\nДобавлены команды для отслеживания в реальном времени, управления светодиодами и звуковым сигналом для поддерживаемых трекеров.\nДобавлены элементы управления звуковым сигналом, светодиодом и отслеживанием в реальном времени на карту VIS 2.\nРазделил карту VIS 2 на компактные разделы: управление, определение местоположения, отслеживание и отслеживание питомцев.\nОбновлены инструменты для выпуска релизов и добавлена поддержка Lerna с исправленной версией для закрытых рабочих пространств npm.\nПересобрал конфигурацию адаптера для Admin 8 и удалил недействительную конфигурацию jsonConfig (#176).\nДобавлен виджет VIS 2 `PetTrackerCard` с изображением питомца, картой Leaflet/OpenStreetMap, отображением ареала обитания и информацией о трекере.\nДобавлена поддержка изображений профиля Tractive и пользовательских изображений ioBroker.\nВ виджет VIS 2 добавлена автоматическая смена цветов светлой и темной тем.\nДобавлена возможность настройки взаимодействия с картой, автоматическая подгонка диапазона, а также минимальное и максимальное масштабирование.\nПереключен механизм хранения паролей на серверное AES-шифрование ioBroker и автоматическая миграция старых паролей.\nСнижен объем повторяющегося трафика API и добавлены отдельные интервалы обновления для данных о местоположении, информации о батарее и статических данных профиля.\nДобавлена адаптивная обработка HTTP-кода 429, глобальные паузы запросов, консервативные повторные попытки и поиск адреса в кэше.\nПеренесено тестирование на ESLint 9 и `@iobroker/eslint-config` (#45).\nДобавлен Node.js 24 в матрицу CI-тестирования (#116).\nПеренесены автоматизированные релизы npm в систему доверенной публикации GitHub OIDC (#169).\nОбновлены метаданные репозитория и конфигурация схемы, заменяющие запросы на поддержку #214, #215, #216 и #291.\nОбновлены зависимости и инструменты для работы в рабочей области, заменяющие запросы на слияние #91, #140, #147, #203, #211, #220, #256, #281, #298, #301 и #303.\nОбновлены тесты, документация и меры защиты конфиденциальности.",
+        "pt": "ÚLTIMA HORA: reescrito para Node.js 22, js-controller 7.2.2 e Admin 8.\nConfigurei o Sentry através da integração do adaptador do ioBroker (#4).\nSubstituímos os dados de autorização armazenados por autenticação em memória, renovação automática de tokens, validação de solicitações, tratamento de novas tentativas e limitação de taxa em toda a conta (#16, #115, #213, #231).\nAdicionadas as estruturas de objetos `pets.*`, `trackers.*` e de saúde.\nCorrigimos os nomes dos animais de estimação e adicionamos todos os perfis de animais disponíveis com as unidades de altura e peso corretas.\nCorrigidas as definições de estado ausentes para campos da API que não eram conhecidas antecipadamente (#81, #113, #305; substitui #114 e #175).\nSubstituímos a hierarquia de API duplicada por uma árvore organizada de contas, assinaturas, animais de estimação, rastreadores, posições e estados de hardware, mantendo o snapshot JSON completo.\nRestauramos as informações de `sensor_used` e distância do ioBroker com base no PR #3, adicionamos informações de casa/ausente e removemos o estado duplicado de `connectionType`.\nCorrigimos os URLs da foto de perfil do CDN Tractive e adicionamos o status de casa/fora e a distância ao cartão VIS 2.\nAs imagens de perfil do Tractive são armazenadas em cache no ioBroker para que o VIS 2 possa exibir arquivos CDN entregues como downloads binários.\nArmazenamento fixo de fotos de perfil usando um contêiner de arquivo `meta` ioBroker dedicado.\nAdicionamos o URL da foto de perfil local, o estado de carregamento em formato de texto, a velocidade e a altitude aos estados selecionados e ao cartão VIS 2.\nCorreção no reconhecimento de URLs de arquivos ioBroker relativos em `localProfilePictureUrl`.\nAdicionadas funções de rastreamento em tempo real, LED e alarme sonoro para rastreadores compatíveis.\nAdicionamos buzzer, LED e controles de rastreamento ao vivo à placa VIS 2.\nReorganizamos o cartão VIS 2 em seções compactas de comando, localização, rastreador e animal de estimação.\nAtualizamos as ferramentas de lançamento e adicionamos suporte para versões fixas do Lerna nos espaços de trabalho privados do npm.\nRecriei a configuração do adaptador para Admin 8 e removi a configuração jsonConfig inválida (#176).\nAdicionado o widget VIS 2 `PetTrackerCard` com imagem do animal de estimação, mapa Leaflet/OpenStreetMap, exibição do alcance e informações do rastreador.\nAdicionado suporte para imagens de perfil do Tractive e imagens personalizadas do ioBroker.\nAdicionadas cores automáticas para temas claros e escuros ao widget VIS 2.\nAdicionada interação configurável com o mapa, ajuste automático de alcance e zoom mínimo e máximo.\nAlteramos o armazenamento de senhas para a criptografia AES do lado do servidor do ioBroker e a migração automática de senhas antigas.\nReduzimos o tráfego recorrente da API e adicionamos intervalos de atualização separados para posições, informações da bateria e dados de perfil estático.\nAdicionada a capacidade de lidar com erros HTTP 429 de forma adaptativa, pausas globais em requisições, novas tentativas conservadoras e pesquisa de endereços em cache.\nMigração do linting para ESLint 9 e `@iobroker/eslint-config` (#45).\nAdicionado Node.js 24 à matriz de testes de CI (#116).\nMigramos as versões automatizadas do npm para Publicação Confiável com o GitHub OIDC (#169).\nMetadados e configuração de esquema do repositório atualizados, substituindo os PRs de manutenção nº 214, nº 215, nº 216 e nº 291.\nDependências e ferramentas de espaço de trabalho atualizadas, substituindo os PRs #91, #140, #147, #203, #211, #220, #256, #281, #298, #301 e #303.\nTestes, documentação e medidas de segurança de privacidade atualizados.",
+        "nl": "NIEUWS: herschreven voor Node.js 22, js-controller 7.2.2 en Admin 8.\nSentry geconfigureerd via de adapterintegratie van ioBroker (#4).\nDe opgeslagen autorisatiegegevens zijn vervangen door authenticatie in het geheugen, automatische tokenvernieuwing, validatie van verzoeken, afhandeling van herhaalpogingen en accountbrede snelheidsbeperking (#16, #115, #213, #231).\nDe objectstructuren `pets.*`, `trackers.*` en health zijn toegevoegd.\nDe namen van huisdieren zijn gecorrigeerd en alle beschikbare profielstatussen voor huisdieren zijn toegevoegd, inclusief de juiste eenheden voor lengte en gewicht.\nOntbrekende statusdefinities voor API-velden die niet van tevoren bekend waren, zijn gecorrigeerd (#81, #113, #305; vervangt #114 en #175).\nDe dubbele API-hiërarchie is vervangen door een gestructureerde boomstructuur voor accounts, abonnementen, huisdieren, trackers, locaties en hardwarestatus, waarbij de volledige JSON-snapshot behouden is gebleven.\nDe informatie over `sensor_used` en de afstand tot ioBroker is hersteld op basis van PR #3, er is informatie over thuis/afwezig toegevoegd en de dubbele status van `connectionType` is verwijderd.\nDe URL's voor profielfoto's op het Tractive CDN-netwerk zijn gecorrigeerd en de thuis-/uitstatus en afstand zijn toegevoegd aan de VIS 2-kaart.\nDe profielfoto's van Tractive worden in ioBroker opgeslagen, zodat VIS 2 CDN-bestanden kan weergeven die als binaire downloads worden aangeboden.\nVaste opslag van profielfoto's door gebruik te maken van een speciale ioBroker `meta`-bestandscontainer.\nDe lokale profielfoto-URL, de tekstuele laadstatus, de snelheid en de hoogte zijn toegevoegd aan de samengestelde statussen en de VIS 2-kaart.\nDe herkenning van relatieve ioBroker-bestands-URL's in `localProfilePictureUrl` is gecorrigeerd.\nEr zijn live tracking-, LED- en buzzercommando's toegevoegd voor ondersteunde trackers.\nEr zijn buzzer-, LED- en live-tracking-functies toegevoegd aan de VIS 2-kaart.\nDe VIS 2-kaart is opnieuw ingedeeld in compacte secties voor commando's, locatie, tracking en huisdieren.\nDe release-tools zijn bijgewerkt en er is ondersteuning voor Lerna met vaste versies toegevoegd voor de privé npm-werkruimtes.\nDe adapterconfiguratie voor Admin 8 is opnieuw opgebouwd en de ongeldige jsonConfig-configuratie (#176) is verwijderd.\nDe VIS 2 `PetTrackerCard` widget is toegevoegd met een afbeelding van het huisdier, een Leaflet/OpenStreetMap-kaart, een weergave van het bereik en trackerinformatie.\nOndersteuning toegevoegd voor Tractive-profielafbeeldingen en aangepaste ioBroker-afbeeldingen.\nEr zijn automatische lichte en donkere themakleuren toegevoegd aan de VIS 2-widget.\nConfigureerbare kaartinteractie, automatische bereikaanpassing en minimale en maximale zoomniveaus zijn toegevoegd.\nDe wachtwoordopslag is overgeschakeld naar de server-side AES-encryptie van ioBroker en de automatische migratie van oudere wachtwoorden.\nHet terugkerende API-verkeer is verminderd en er zijn aparte update-intervallen toegevoegd voor posities, batterij-informatie en statische profielgegevens.\nAdaptieve afhandeling van HTTP 429-fouten, globale pauzes voor verzoeken, conservatieve herhaalpogingen en adresopzoeking in de cache zijn toegevoegd.\nDe linting is gemigreerd naar ESLint 9 en `@iobroker/eslint-config` (#45).\nNode.js 24 is toegevoegd aan de CI-testmatrix (#116).\nGeautomatiseerde npm-releases zijn gemigreerd naar Trusted Publishing met GitHub OIDC (#169).\nDe metadata en schema-configuratie van de repository zijn bijgewerkt, waarmee de onderhouds-PR's #214, #215, #216 en #291 zijn vervangen.\nAfhankelijkheden en werkruimtetools bijgewerkt, waarmee de pull requests #91, #140, #147, #203, #211, #220, #256, #281, #298, #301 en #303 worden vervangen.\nBijgewerkte tests, documentatie en privacywaarborgen.",
+        "fr": "NOUVELLE MISE À JOUR : réécrit pour Node.js 22, js-controller 7.2.2 et Admin 8.\nSentry configuré via l'intégration de l'adaptateur ioBroker (#4).\nRemplacement des données d'autorisation stockées par une authentification en mémoire, un renouvellement automatique des jetons, une validation des requêtes, une gestion des nouvelles tentatives et une limitation du débit à l'échelle du compte (#16, #115, #213, #231).\nAjout des structures d'objets `pets.*`, `trackers.*` et health.\nCorrection des noms des animaux de compagnie et ajout de tous les états de profil disponibles pour les animaux, avec des unités de taille et de poids corrigées.\nCorrection des définitions d'état manquantes pour les champs d'API qui n'étaient pas connus à l'avance (#81, #113, #305 ; remplace #114 et #175).\nRemplacement de la hiérarchie API dupliquée par une arborescence organisée des comptes, abonnements, animaux de compagnie, traqueurs, positions et états matériels, tout en conservant l'intégralité de l'instantané JSON.\nLes informations `sensor_used` et distance-from-ioBroker ont été restaurées sur la base de la PR n° 3, les informations home/away ont été ajoutées et l'état `connectionType` en double a été supprimé.\nCorrection des URL des photos de profil du CDN Tractive et ajout du statut domicile/extérieur et de la distance à la carte VIS 2.\nMise en cache des images de profil Tractive dans ioBroker afin que VIS 2 puisse afficher les fichiers CDN distribués sous forme de téléchargements binaires.\nStockage fixe de la photo de profil grâce à un conteneur de fichiers `meta` dédié à ioBroker.\nAjout de l'URL de la photo de profil locale, de l'état de charge textuel, de la vitesse et de l'altitude aux états sélectionnés et à la carte VIS 2.\nCorrection de la reconnaissance des URL de fichiers ioBroker relatives dans `localProfilePictureUrl`.\nAjout de commandes de suivi en direct, de LED et de buzzer pour les trackers compatibles.\nAjout d'un buzzer, d'une LED et de commandes de suivi en direct à la carte VIS 2.\nLa carte VIS 2 a été réorganisée en sections compactes pour la commande, la localisation, le suivi et les animaux de compagnie.\nMise à jour des outils de publication et ajout de la prise en charge de Lerna à version fixe pour les espaces de travail npm privés.\nJ'ai reconstruit la configuration de l'adaptateur pour Admin 8 et supprimé la configuration jsonConfig invalide (#176).\nAjout du widget VIS 2 `PetTrackerCard` avec image de l'animal, carte Leaflet/OpenStreetMap, affichage de la portée et informations du traqueur.\nAjout de la prise en charge des images de profil Tractive et des images personnalisées ioBroker.\nAjout de couleurs automatiques pour les thèmes clair et sombre au widget VIS 2.\nAjout d'une interaction cartographique configurable, d'un ajustement automatique de la portée et d'un zoom minimum et maximum.\nNous avons migré le stockage des mots de passe vers le chiffrement AES côté serveur d'ioBroker et la migration automatique des anciens mots de passe.\nRéduction du trafic API récurrent et ajout d'intervalles de mise à jour distincts pour les positions, les informations sur la batterie et les données de profil statiques.\nAjout d'une gestion adaptative des erreurs HTTP 429, de pauses globales sur les requêtes, de tentatives de nouvelle connexion conservatrices et d'une recherche d'adresse mise en cache.\nMigration du linting vers ESLint 9 et `@iobroker/eslint-config` (#45).\nAjout de Node.js 24 à la matrice de tests CI (#116).\nMigration des versions automatisées npm vers Trusted Publishing avec GitHub OIDC (#169).\nMise à jour des métadonnées du dépôt et de la configuration du schéma, remplaçant les PR de maintenance n° 214, n° 215, n° 216 et n° 291.\nDépendances mises à jour et outils d'espace de travail, remplaçant les PR #91, #140, #147, #203, #211, #220, #256, #281, #298, #301 et #303.\nTests, documentation et mesures de protection de la vie privée mis à jour.",
+        "it": "ULTIM'ORA: riscritto per Node.js 22, js-controller 7.2.2 e Admin 8.\nConfigurazione di Sentry tramite l'integrazione dell'adattatore di ioBroker (#4).\nSostituiti i dati di autorizzazione memorizzati con autenticazione in memoria, rinnovo automatico del token, convalida della richiesta, gestione dei tentativi e limitazione della frequenza a livello di account (#16, #115, #213, #231).\nSono state aggiunte le strutture oggetto `pets.*`, `trackers.*` e health.\nCorretti i nomi degli animali domestici e aggiunti tutti gli stati del profilo degli animali domestici disponibili con le unità di misura corrette per altezza e peso.\nRisolti i problemi relativi alle definizioni di stato mancanti per i campi API non noti in anticipo (#81, #113, #305; sostituisce #114 e #175).\nÈ stata sostituita la gerarchia API duplicata con una struttura ad albero curata per account, abbonamenti, animali domestici, tracker, posizioni e stato dell'hardware, mantenendo al contempo l'istantanea JSON completa.\nRipristinate le informazioni `sensor_used` e `distance-from-ioBroker` in base alla PR #3, aggiunte le informazioni casa/fuori casa e rimosso lo stato `connectionType` duplicato.\nCorretti gli URL delle immagini del profilo di Tractive CDN e aggiunti lo stato casa/fuori casa e la distanza alla scheda VIS 2.\nLe immagini del profilo di Tractive sono state memorizzate nella cache di ioBroker in modo che VIS 2 possa visualizzare i file CDN distribuiti come download binari.\nRisolto il problema di archiviazione dell'immagine del profilo utilizzando un contenitore di file `meta` dedicato di ioBroker.\nAggiunti l'URL dell'immagine del profilo locale, lo stato di ricarica testuale, la velocità e l'altitudine agli stati selezionati e alla scheda VIS 2.\nRisolto il problema relativo al riconoscimento degli URL dei file ioBroker in `localProfilePictureUrl`.\nAggiunti i comandi per il tracciamento in tempo reale, i LED e il cicalino per i tracker supportati.\nSono stati aggiunti i controlli per il buzzer, il LED e il tracciamento in tempo reale alla scheda VIS 2.\nLa scheda VIS 2 è stata riorganizzata in sezioni compatte dedicate a comando, posizione, tracciamento e animale domestico.\nHo aggiornato gli strumenti di rilascio e aggiunto il supporto per Lerna a versione fissa per gli spazi di lavoro npm privati.\nHo ricostruito la configurazione dell'adattatore per Admin 8 e ho rimosso la configurazione jsonConfig non valida (#176).\nAggiunto il widget VIS 2 `PetTrackerCard` con immagine dell'animale, mappa Leaflet/OpenStreetMap, visualizzazione del raggio d'azione e informazioni sul localizzatore.\nAggiunto il supporto per le immagini del profilo di Tractive e per le immagini personalizzate di ioBroker.\nAggiunti i colori automatici per il tema chiaro e scuro al widget VIS 2.\nSono state aggiunte funzionalità di interazione configurabile con la mappa, adattamento automatico dell'intervallo e zoom minimo e massimo.\nHo migrato la gestione delle password alla crittografia AES lato server di ioBroker e alla migrazione automatica delle password meno recenti.\nAbbiamo ridotto il traffico API ricorrente e aggiunto intervalli di aggiornamento separati per posizione, informazioni sulla batteria e dati statici del profilo.\nAggiunte la gestione adattiva dell'errore HTTP 429, le pause globali delle richieste, i tentativi di ripetizione prudenti e la ricerca degli indirizzi nella cache.\nMigrazione del linting a ESLint 9 e `@iobroker/eslint-config` (#45).\nAggiunto Node.js 24 alla matrice di test CI (#116).\nMigrazione delle release npm automatiche a Trusted Publishing con GitHub OIDC (#169).\nAggiornati i metadati del repository e la configurazione dello schema, in sostituzione delle pull request di manutenzione n. 214, 215, 216 e 291.\nAggiornate le dipendenze e gli strumenti dell'area di lavoro, sostituendo le pull request #91, #140, #147, #203, #211, #220, #256, #281, #298, #301 e #303.\nTest, documentazione e misure di sicurezza per la privacy aggiornati.",
+        "es": "ÚLTIMA HORA: reescrito para Node.js 22, js-controller 7.2.2 y Admin 8.\nSe configuró Sentry a través de la integración del adaptador de ioBroker (#4).\nSe reemplazaron los datos de autorización almacenados con autenticación en memoria, renovación automática de tokens, validación de solicitudes, manejo de reintentos y limitación de velocidad en toda la cuenta (#16, #115, #213, #231).\nSe agregaron las estructuras de objetos `pets.*`, `trackers.*` y health.\nSe corrigieron los nombres de las mascotas y se agregaron todos los estados disponibles del perfil de la mascota con las unidades de altura y peso corregidas.\nSe corrigieron las definiciones de estado faltantes para los campos de API que no se conocían de antemano (#81, #113, #305; reemplaza a #114 y #175).\nSe reemplazó la jerarquía de API duplicada con un árbol de estado de cuenta, suscripción, mascota, rastreador, posición y hardware seleccionado, conservando la instantánea JSON completa.\nSe restauró la información `sensor_used` y distance-from-ioBroker según la solicitud de extracción n.° 3, se agregó información de local/ausente y se eliminó el estado duplicado `connectionType`.\nSe corrigieron las URL de las imágenes de perfil de Tractive CDN y se agregó el estado de local/visitante y la distancia a la tarjeta VIS 2.\nSe almacenaron en caché las imágenes de perfil de Tractive en ioBroker para que VIS 2 pueda mostrar los archivos CDN entregados como descargas binarias.\nSe solucionó el problema del almacenamiento de la imagen de perfil mediante el uso de un contenedor de archivos `meta` de ioBroker dedicado.\nSe añadieron la URL de la imagen de perfil local, el estado de carga textual, la velocidad y la altitud a los estados seleccionados y a la tarjeta VIS 2.\nSe corrigió el reconocimiento de las URL de archivos ioBroker relativas en `localProfilePictureUrl`.\nSe han añadido comandos de seguimiento en tiempo real, LED y zumbador para los rastreadores compatibles.\nSe añadieron controles de zumbador, LED y seguimiento en tiempo real a la tarjeta VIS 2.\nSe reorganizó la tarjeta VIS 2 en secciones compactas de comando, ubicación, rastreador y mascota.\nSe actualizaron las herramientas de lanzamiento y se agregó compatibilidad con Lerna de versión fija para los espacios de trabajo privados de npm.\nSe reconstruyó la configuración del adaptador para Admin 8 y se eliminó la configuración jsonConfig no válida (#176).\nSe ha añadido el widget `PetTrackerCard` de VIS 2 con imagen de la mascota, mapa de Leaflet/OpenStreetMap, visualización del rango e información del rastreador.\nSe ha añadido compatibilidad con imágenes de perfil de Tractive e imágenes personalizadas de ioBroker.\nSe han añadido colores de tema claro y oscuro automáticos al widget VIS 2.\nSe ha añadido interacción configurable con el mapa, ajuste automático de rango y niveles mínimo y máximo de zoom.\nSe cambió el almacenamiento de contraseñas al cifrado AES del lado del servidor de ioBroker y a la migración automática de contraseñas antiguas.\nSe redujo el tráfico recurrente de la API y se agregaron intervalos de actualización separados para las posiciones, la información de la batería y los datos de perfil estático.\nSe ha añadido un manejo adaptativo del error HTTP 429, pausas globales en las solicitudes, reintentos conservadores y búsqueda de direcciones en caché.\nSe migró el análisis de código a ESLint 9 y `@iobroker/eslint-config` (#45).\nSe agregó Node.js 24 a la matriz de pruebas de CI (#116).\nSe migraron las versiones automatizadas de npm a Trusted Publishing con GitHub OIDC (#169).\nSe actualizaron los metadatos del repositorio y la configuración del esquema, reemplazando las solicitudes de mantenimiento n.° 214, n.° 215, n.° 216 y n.° 291.\nSe han actualizado las dependencias y las herramientas del espacio de trabajo, reemplazando las solicitudes de extracción n.° 91, 140, 147, 203, 211, 220, 256, 281, 298, 301 y 303.\nPruebas, documentación y medidas de protección de la privacidad actualizadas.",
+        "pl": "PILNE: przepisano dla Node.js 22, js-controller 7.2.2 i Admin 8.\nSkonfigurowano Sentry poprzez integrację adaptera ioBroker (#4).\nZastąpiono zapisane dane autoryzacyjne uwierzytelnianiem w pamięci, automatycznym odnawianiem tokenów, sprawdzaniem poprawności żądań, obsługą ponownych prób i ograniczaniem przepustowości na poziomie konta (#16, #115, #213, #231).\nDodano struktury `pets.*`, `trackers.*` i obiekty zdrowia.\nNaprawiono imiona zwierząt i dodano wszystkie dostępne stany profili zwierząt z poprawionymi jednostkami wzrostu i wagi.\nNaprawiono brakujące definicje stanu dla pól API, które nie były znane wcześniej (#81, #113, #305; zastępuje #114 i #175).\nZastąpiono zduplikowaną hierarchię API uporządkowanym drzewem stanu konta, subskrypcji, zwierzaka, modułu śledzącego, pozycji i sprzętu, zachowując jednocześnie kompletny obraz stanu JSON.\nPrzywrócono informacje `sensor_used` i distance-from-ioBroker na podstawie PR #3, dodano informacje dom/poza domem i usunięto zduplikowany stan `connectionType`.\nNaprawiono adresy URL zdjęć profilowych Tractive CDN oraz dodano status dom/wyjazd oraz odległość do karty VIS 2.\nZapisano w pamięci podręcznej zdjęcia profilowe Tractive w ioBroker, aby VIS 2 mógł wyświetlać pliki CDN dostarczane jako pliki binarne.\nNaprawiono przechowywanie zdjęć profilowych poprzez użycie dedykowanego kontenera plików `meta` ioBroker.\nDodano adres URL lokalnego zdjęcia profilowego, stan ładowania, prędkość i wysokość do wybranych stanów i karty VIS 2.\nNaprawiono rozpoznawanie względnych adresów URL plików ioBroker w `localProfilePictureUrl`.\nDodano polecenia dotyczące śledzenia na żywo, diod LED i brzęczyka dla obsługiwanych trackerów.\nDodano brzęczyk, diodę LED i sterowanie śledzeniem na żywo do karty VIS 2.\nZreorganizowano kartę VIS 2, dzieląc ją na kompaktowe sekcje dotyczące dowodzenia, lokalizacji, śledzenia i zwierząt domowych.\nZaktualizowano narzędzia wydania i dodano obsługę stałej wersji Lerna dla prywatnych obszarów roboczych npm.\nPonownie utworzono konfigurację adaptera dla wersji Admin 8 i usunięto nieprawidłową konfigurację jsonConfig (#176).\nDodano widżet VIS 2 `PetTrackerCard` ze zdjęciem zwierzaka, mapą Leaflet/OpenStreetMap, wyświetlaniem zasięgu i informacjami o śledzeniu.\nDodano obsługę obrazów profilowych Tractive i niestandardowych obrazów ioBroker.\nDodano automatyczne jasne i ciemne kolory motywu do widżetu VIS 2.\nDodano konfigurowalną interakcję z mapą, automatyczne dopasowywanie zasięgu oraz minimalny i maksymalny zoom.\nZmieniono przechowywanie haseł na szyfrowanie AES po stronie serwera firmy ioBroker i automatyczną migrację starszych haseł.\nZredukowano cykliczny ruch API i dodano osobne interwały aktualizacji dla pozycji, informacji o baterii i statycznych danych profilowych.\nDodano adaptacyjną obsługę protokołu HTTP 429, globalne pauzy w żądaniach, ostrożne ponowne próby i wyszukiwanie adresów w pamięci podręcznej.\nPrzeniesiono linting do ESLint 9 i `@iobroker/eslint-config` (#45).\nDodano Node.js 24 do macierzy testów CI (#116).\nPrzeniesiono automatyczne wydania npm do Trusted Publishing z GitHub OIDC (#169).\nZaktualizowano metadane repozytorium i konfigurację schematu, zastępując żądania konserwacyjne nr 214, 215, 216 i 291.\nZaktualizowano zależności i narzędzia obszaru roboczego, zastępując żądania PR nr 91, 140, 147, 203, 211, 220, 256, 281, 298, 301 i 303.\nZaktualizowane testy, dokumentacja i zabezpieczenia prywatności.",
+        "uk": "ВАЖЛИВО: переписано для Node.js 22, js-controller 7.2.2 та Admin 8.\nНалаштував Sentry через інтеграцію адаптера ioBroker (№4).\nЗамінено збережені дані авторизації на автентифікацію в пам'яті, автоматичне поновлення токенів, перевірку запитів, обробку повторних спроб та обмеження швидкості для всього облікового запису (№16, №115, №213, №231).\nДодано структури об'єктів `pets.*`, `trackers.*` та health.\nВиправлено імена домашніх тварин та додано всі доступні стани профілів домашніх тварин із виправленими одиницями зросту та ваги.\nВиправлено відсутність визначень станів для полів API, які не були відомі заздалегідь (#81, #113, #305; замінює #114 та #175).\nЗамінено дублікат ієрархії API кураторським деревом облікових записів, підписок, домашніх тварин, трекерів, позицій та станів обладнання, зберігаючи при цьому повний знімок JSON.\nВідновлено інформацію `sensor_used` та distance-from-ioBroker на основі PR №3, додано інформацію про стан вдома/відсутності та видалено дублікат стану `connectionType`.\nВиправлено URL-адреси зображень профілю Tractive CDN та додано статус «вдома/відсутні» та відстань до картки VIS 2.\nКешовані зображення профілю Tractive в ioBroker, щоб VIS 2 міг відображати CDN-файли, що надсилаються як бінарні завантаження.\nВиправлено зберігання зображень профілю за допомогою спеціального контейнера метафайлів ioBroker.\nДодано URL-адресу локального зображення профілю, текстовий стан заряджання, швидкість та висоту до кураторських станів та картки VIS 2.\nВиправлено розпізнавання відносних URL-адрес файлів ioBroker у `localProfilePictureUrl`.\nДодано команди відстеження в реальному часі, світлодіодного індикатора та зумера для підтримуваних трекерів.\nДо карти VIS 2 додано зумер, світлодіодний індикатор та елементи керування відстеженням у реальному часі.\nКартку VIS 2 реорганізовано в компактні розділи командування, місцезнаходження, відстеження та домашніх тварин.\nОновлено інструменти випуску та додано підтримку Lerna у фіксованих версіях для приватних робочих просторів npm.\nПеребудовано конфігурацію адаптера для Admin 8 та видалено недійсну конфігурацію jsonConfig (#176).\nДодано віджет VIS 2 `PetTrackerCard` із зображенням домашньої тварини, картою Leaflet/OpenStreetMap, відображенням ареалу та інформацією про трекер.\nДодано підтримку зображень профілю Tractive та користувацьких зображень ioBroker.\nДодано автоматичні світлі та темні кольори теми до віджета VIS 2.\nДодано налаштовану взаємодію з картою, автоматичне підлаштування діапазону, а також мінімальне та максимальне масштабування.\nПереключено зберігання паролів на серверне шифрування AES від ioBroker та автоматичну міграцію старих паролів.\nЗменшено періодичний трафік API та додано окремі інтервали оновлення для позицій, інформації про батарею та статичних даних профілю.\nДодано адаптивну обробку HTTP 429, глобальні паузи запитів, консервативні повторні спроби та пошук кешованих адрес.\nЛінтинг перенесено до ESLint 9 та `@iobroker/eslint-config` (#45).\nДодано Node.js 24 до матриці тестування CI (#116).\nПеренесено автоматизовані релізи npm до Trusted Publishing з GitHub OIDC (#169).\nОновлено метадані репозиторію та конфігурацію схеми, що замінює вимоги щодо обслуговування №214, №215, №216 та №291.\nОновлено залежності та інструменти робочої області, що замінюють PR №91, №140, №147, №203, №211, №220, №256, №281, №298, №301 та №303.\nОновлені тести, документація та заходи безпеки конфіденційності.",
+        "zh-cn": "重大更新：已重写为 Node.js 22、js-controller 7.2.2 和 Admin 8。\n通过 ioBroker 的适配器集成配置 Sentry（#4）。\n用内存身份验证、自动令牌续期、请求验证、重试处理和帐户范围速率限制替换存储的授权数据（#16、#115、#213、#231）。\n添加了 `pets.*`、`trackers.*` 和 health 对象结构。\n修正了宠物名称，并添加了所有可用的宠物档案状态，以及更正后的身高和体重单位。\n修复了事先未知的 API 字段缺少状态定义的问题（#81、#113、#305；取代 #114 和 #175）。\n用精心整理的帐户、订阅、宠物、跟踪器、位置和硬件状态树替换了重复的 API 层次结构，同时保留了完整的 JSON 快照。\n根据 PR #3 恢复了 `sensor_used` 和 distance-from-ioBroker 信息，添加了 home/away 信息，并删除了重复的 `connectionType` 状态。\n修复了 Tractive CDN 个人资料图片 URL，并在 VIS 2 卡片中添加了主场/客场状态和距离。\n在 ioBroker 中缓存 Tractive 个人资料图片，以便 VIS 2 可以显示以二进制下载形式提供的 CDN 文件。\n通过使用专用的 ioBroker `meta` 文件容器来固定个人资料图片存储。\n在精选状态和 VIS 2 卡片中添加了本地个人资料图片 URL、文本充电状态、速度和海拔。\n修复了 `localProfilePictureUrl` 中对相对 ioBroker 文件 URL 的识别问题。\n为支持的追踪器添加了实时追踪、LED 和蜂鸣器命令。\n在 VIS 2 卡上增加了蜂鸣器、LED 和实时跟踪控制。\n将 VIS 2 卡重新组织成紧凑的命令、位置、追踪器和宠物部分。\n更新了发布工具，并为私有 npm 工作区添加了固定版本的 Lerna 支持。\n为 Admin 8 重建了适配器配置，并删除了无效的 jsonConfig 配置（#176）。\n添加了 VIS 2 `PetTrackerCard` 小部件，包含宠物图片、Leaflet/OpenStreetMap 地图、范围显示和追踪器信息。\n新增对 Tractive 个人资料图片和自定义 ioBroker 图片的支持。\n为 VIS 2 小部件添加了自动浅色和深色主题颜色。\n增加了可配置的地图交互、自动范围拟合以及最小和最大缩放级别。\n将密码存储方式切换到 ioBroker 的服务器端 AES 加密，并自动迁移旧密码。\n减少了重复的 API 流量，并为位置、电池信息和静态配置文件数据添加了单独的更新间隔。\n增加了自适应 HTTP 429 处理、全局请求暂停、保守重试和缓存地址查找。\n将 linting 迁移到 ESLint 9 和 `@iobroker/eslint-config` (#45)。\n将 Node.js 24 添加到 CI 测试矩阵（#116）。\n将自动化的 npm 发布迁移到使用 GitHub OIDC 的可信发布（#169）。\n更新了存储库元数据和模式配置，取代了维护 PR #214、#215、#216 和 #291。\n更新了依赖项和工作区工具，取代了 PR #91、#140、#147、#203、#211、#220、#256、#281、#298、#301 和 #303。\n更新了测试、文档和隐私保护措施。"
+      },
+      "2.1.0": {
+        "en": "Adapter requires node 20 now.\nAdapter requires js-controller 5.0.19 and admin 6.17.14 now.\nAdapter changed to meet Responsive Design rules.\nAn error at jsonConfig invalidating reauthorization command has been corrected.\nDependencies have been updated.",
+        "de": "Adapter benötigt jetzt den Knoten 20.\nAdapter benötigt jetzt js-controller 5.0.19 und admin 6.17.14.\nAdapter geändert, um Responsive Design Regeln zu erfüllen.\nEin Fehler bei jsonConfig, der Reautorisierungsbefehl invalidiert, wurde behoben.\nAbhängigkeiten wurden aktualisiert.",
+        "ru": "Адаптер требует узла 20.\nАдаптер требует js-контроллер 5.0.19 и admin 6.17.14.\nАдаптер изменился, чтобы соответствовать правилам Responsive Design.\nИсправлена ошибка в jsonConfig, аннулирующая команду реавторизации.\nЗависимость была обновлена.",
+        "pt": "Adaptador requer nó 20 agora.\nAdaptador requer js-controller 5.0.19 e admin 6.17.14 agora.\nAdapter mudou para atender às regras de Design Responsável.\nFoi corrigido um erro no comando jsonConfig invalidating reauthorization.\nAs dependências foram atualizadas.",
+        "nl": "Adapter vereist node 20 nu.\nAdapter vereist js-controller 5.01.19 en admin 6.17.14 nu.\nAdapter veranderd om te voldoen aan Responsive Design regels.\nEen fout bij jsonConfig ongeldig maken van reauthorization commando is gecorrigeerd.\nAfhankelijkheden zijn bijgewerkt.",
+        "fr": "Adaptateur nécessite un noeud 20 maintenant.\nAdaptateur nécessite js-controller 5.0.19 et admin 6.17.14 maintenant.\nAdaptateur modifié pour respecter les règles de conception réactive.\nUne erreur à la commande jsonConfig invalidant la réautorisation a été corrigée.\nLes dépendances ont été actualisées.",
+        "it": "Adattatore richiede nodo 20 ora.\nAdattatore richiede js-controller 5.0.19 e admin 6.17.14 ora.\nAdattatore modificato per soddisfare le regole di Responsive Design.\nÈ stato corretto un errore al comando di riautorizzazione di jsonConfig invalidante.\nLe dipendenze sono state aggiornate.",
+        "es": "Adaptador requiere nodo 20 ahora.\nAdaptador requiere js-controller 5.0.19 y admin 6.17.14 ahora.\nAdaptador cambió para cumplir con las reglas de diseño responsable.\nSe ha corregido un error en el comando jsonConfig invalidating reauthorization.\nSe han actualizado las dependencias.",
+        "pl": "Adapter wymaga węzła 20.\nAdapter wymaga sterownika js- 5.0.19 i admin 6.17.14 teraz.\nAdapter zmienił się w celu spełnienia zasad Responsive Design.\nBłąd w jsonConfig unieważnienie polecenia reautoryzacji został poprawiony.\nZaktualizowano zależność.",
+        "uk": "Адаптер вимагає вузла 20 тепер.\nАдаптер вимагає js-controller 5.0.19 і admin 6.17.14 тепер.\nПерехідник змінився для дотримання правил адаптивного дизайну.\nВиправлено помилку в jsonConfig, що недійсне відновлення.\nОновлено залежність.",
+        "zh-cn": "适配器现在需要20号节点.\n适配器现在需要js控制器5.0.19和管理员6.17.14.\n适配器更改以满足应变设计规则.\nJsonConfig 无效重授权命令的错误已被更正 .\n附属关系已经更新."
+      },
+      "2.0.1": {
+        "en": "Fixing encryption of the access token",
+        "de": "Festlegen der Verschlüsselung des Zugriffstokens",
+        "ru": "Исправление шифрования токена доступа",
+        "pt": "Corrigir criptografia do token de acesso",
+        "nl": "Versleuteling van het toegangs token herstellen",
+        "fr": "Correction du chiffrement du jeton d'accès",
+        "it": "Fissare la crittografia del gettone di accesso",
+        "es": "Corrección del cifrado de acceso",
+        "pl": "Ustawienie szyfrowania symbolu dostępu",
+        "uk": "Виправлення шифрування токена доступу",
+        "zh-cn": "修复访问令牌的加密"
+      },
+      "2.0.0": {
+        "en": "BREAKING CHANGE: You must enter your credentials again\nOld code has been removed and GUI has been rewritten\nDependencies have been updated",
+        "de": "BREAKING CHANGE: Sie müssen Ihre Anmeldeinformationen erneut eingeben\nDer alte Code wurde entfernt und GUI wurde neu geschrieben\nAbhängigkeiten wurden aktualisiert",
+        "ru": "Ж: Вы должны снова ввести свои полномочия\nСтарый код был удален, и GUI был переписан\nЗависимость обновлена",
+        "pt": "Muita coisa: Você deve inserir suas credenciais novamente\nCódigo antigo foi removido e GUI foi reescrito\nAs dependências foram atualizadas",
+        "nl": "Breaking VERANDERING: U moet uw referenties opnieuw invoeren\nOude code is verwijderd en GUI is herschreven\nAfhankelijkheden zijn bijgewerkt",
+        "fr": "CHANGEMENT DE BREAING: Vous devez à nouveau entrer vos lettres de créances\nL'ancien code a été supprimé et l'interface graphique a été réécrite\nLes dépendances ont été actualisées",
+        "it": "CAMBIO DI BREAKING: Devi inserire nuovamente le credenziali\nVecchio codice è stato rimosso e GUI è stato riscritto\nLe dipendenze sono state aggiornate",
+        "es": "Cambiando: Debe introducir sus credenciales de nuevo\nSe ha eliminado el código antiguo y GUI ha sido reescrito\nSe han actualizado las dependencias",
+        "pl": "ZMIANA ZBIORCZA: Musisz ponownie wpisać swoje referencje\nStary kod został usunięty i GUI został przepisany\nZaktualizowano zależności",
+        "uk": "БРЕАКІНГ ЗМІН: Ви повинні ввести ваші облікові дані знову\nСтарший код був вилучений і графічний інтерфейс\nЗалежність було оновлено",
+        "zh-cn": "打破变化: 您必须再次输入您的证书\n旧代码已被删除, 并重写 GUI\n依赖关系已更新"
+      },
+      "1.2.0": {
+        "en": "Adapter requires node.js >= 18 and js-controller >= 5 now\nDependencies have been updated",
+        "de": "Adapter benötigt node.js >= 18 und js-controller >= 5 jetzt\nAbhängigkeiten wurden aktualisiert",
+        "ru": "Адаптер требует node.js >= 18 и js-контроллер >= 5 сейчас\nЗависимость обновлена",
+        "pt": "Adapter requer node.js >= 18 e js-controller >= 5 agora\nAs dependências foram atualizadas",
+        "nl": "Voor adaptor zijn node.js < 18 en js-controller > Nu 5\nAfhankelijkheden zijn bijgewerkt",
+        "fr": "L'adaptateur nécessite node.js >= 18 et js-controller >= 5 maintenant\nLes dépendances ont été actualisées",
+        "it": "Adattatore richiede node.js >= 18 e js-controller >= 5 ora\nLe dipendenze sono state aggiornate",
+        "es": "Adaptador requiere node.js √≥= 18 y js-controller 5 ahora\nSe han actualizado las dependencias",
+        "pl": "Adapter wymaga node.js > = 18 i kontroler js- > = 5 teraz\nZaktualizowano zależności",
+        "uk": "Адаптер вимагає node.js >= 18 і js-controller >= 5 тепер\nЗалежність було оновлено",
+        "zh-cn": "适配器需要节点.js QQ18和js控制器 QQ 现在5号\n依赖关系已更新"
+      },
+      "1.1.0": {
+        "en": "Bugfix: objects will be created only if necessary\nBugfix for excessive number of warnings has been added\nDistance calculation between ioBroker and tracker has been added",
+        "de": "Bugfix: Objekte werden nur bei Bedarf erstellt\nBugfix für übermäßige Anzahl von Warnungen wurde hinzugefügt\nEntfernungsberechnung zwischen ioBroker und Tracker wurde hinzugefügt",
+        "ru": "Bugfix: объекты будут созданы только при необходимости\nДобавлен Bugfix для чрезмерного количества предупреждений\nДобавлен расчёт расстояния между ioBroker и tracker",
+        "pt": "Bugfix: os objetos serão criados somente se necessário\nBugfix para o número excessivo de avisos foi adicionado\nCálculo de distância entre ioBroker e rastreador foi adicionado",
+        "nl": "Voorwerpen worden alleen gecreëerd indien nodig\nBugfix voor overmatig aantal waarschuwingen is toegevoegd\nVertaling:",
+        "fr": "Bugfix: les objets ne seront créés que si nécessaire\nBugfix for excessive number of warnings has been added\nCalcul de distance entre ioBroker et tracker a été ajouté",
+        "it": "Bugfix: gli oggetti verranno creati solo se necessario\nBugfix per un numero eccessivo di avvisi è stato aggiunto\nCalcolo a distanza tra ioBroker e tracker è stato aggiunto",
+        "es": "Bugfix: los objetos se crearán sólo si es necesario\nBugfix para el número excesivo de advertencias se ha añadido\nSe ha añadido el cálculo de distancia entre ioBroker y tracker",
+        "pl": "Bugfix: Obiekty będą tworzone tylko wtedy, gdy konieczne będzie koniecznie\nBugfix dla nadmiernej liczby ostrzeżeń został dodany\nObliczenia pomiędzy ioBrokerem i trackerem zostały dodane",
+        "uk": "Виправлення: об'єкти будуть створені тільки при необхідності\nПомилки для надмірної кількості попереджень\nДодано розрахунок дистанції ioBroker та трекер",
+        "zh-cn": "Bugfix:只有在必要情况下才能建立物体\n此外,还增加了过多的警告的力度。\n添加了气布罗克和轨道之间的试验。"
+      },
+      "1.0.0": {
+        "en": "Adapter has been moved into iobroker-community-adapters organisation\nDependencies have been updated",
+        "de": "Adapter wurde in iobroker-community-Adapter Organisation verschoben\nAbhängigkeiten wurden aktualisiert",
+        "ru": "Адаптер переехал в организацию iobroker-community-adapters\nВ зависимости были обновлены",
+        "pt": "Adapter foi transferido para a organização iobroker-community-adapters\nAs dependências foram atualizadas",
+        "nl": "Adapter is verplaatst naar iobroker-community-papters organisatie\nAfhankelijkheid",
+        "fr": "L'adaptateur a été déplacé dans l'organisation iobroker-community-adapters\nLes dépendances ont été mises à jour",
+        "it": "L'adattatore è stato spostato nell'organizzazione degli adattatori della comunità-iobroker\nLe dipendenze sono state aggiornate",
+        "es": "Adaptador ha sido trasladado a la organización de ibroker-community-adapters\nSe han actualizado las dependencias",
+        "pl": "Adapter został przeniesiony do iobrokerskiej organizacji\nZależności zostały zaktualizowane",
+        "uk": "Переміщено перехід на iobroker-community-adapters\nОновлено залежність",
+        "zh-cn": "现已进入加勒比采掘器组织\n已更新了属地"
+      }
+    },
+    "titleLang": {
+      "en": "Tractive GPS",
+      "de": "Tractive GPS",
+      "ru": "Tractive GPS",
+      "pt": "Tractive GPS",
+      "nl": "Tractive GPS",
+      "fr": "Tractive GPS",
+      "it": "Tractive GPS",
+      "es": "Tractive GPS",
+      "pl": "Tractive GPS",
+      "uk": "Tractive GPS",
+      "zh-cn": "Tractive GPS"
+    },
+    "desc": {
+      "en": "This adapter allows you to connect to the Tractive GPS service and retrieve the location of your pets.",
+      "de": "Mit diesem Adapter können Sie eine Verbindung zum Tractive-GPS-Dienst herstellen und den Standort Ihrer Haustiere abrufen.",
+      "ru": "Этот адаптер позволяет подключиться к службе Tractive GPS и получить данные о местонахождении ваших питомцев.",
+      "pt": "Este adaptador permite-lhe ligar-se ao serviço Tractive GPS e recuperar a localização dos seus animais de estimação.",
+      "nl": "Met deze adapter kunt u verbinding maken met de Tractive GPS service en de locatie van uw huisdieren opvragen.",
+      "fr": "Cet adaptateur vous permet de vous connecter au service GPS Tractive et de récupérer la localisation de vos animaux domestiques.",
+      "it": "Questo adattatore consente di connettersi al servizio Tractive GPS e recuperare la posizione dei tuoi animali domestici.",
+      "es": "Este adaptador le permite conectarse al servicio Tractive GPS y recuperar la ubicación de sus mascotas.",
+      "pl": "Ten adapter pozwala połączyć się z usługą Tractive GPS i otrzymać lokalizację swoich zwierząt.",
+      "uk": "Цей адаптер дозволяє підключитися до служби Tractive GPS і отримати місцезнаходження ваших тварин.",
+      "zh-cn": "此适配器允许您连接到Tractive GPS服务并检索您的宠物的位置。"
+    },
+    "authors": [
+      "xXBJXx <issi.dev.iobroker@gmail.com>",
+      "iobroker-community-adapters <mcm57@gmx.at>"
+    ],
+    "keywords": [
+      "tractive",
+      "gps",
+      "geoposition",
+      "geolocation",
+      "tracking",
+      "dog",
+      "cat",
+      "pet"
+    ],
+    "licenseInformation": {
+      "license": "MIT",
+      "type": "free"
+    },
+    "platform": "Javascript/Node.js",
+    "icon": "tractive-gps.png",
+    "enabled": true,
+    "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.tractive-gps/main/admin/tractive-gps.png",
+    "readme": "https://github.com/iobroker-community-adapters/ioBroker.tractive-gps/blob/main/README.md",
+    "loglevel": "info",
+    "tier": 2,
+    "mode": "daemon",
+    "type": "geoposition",
+    "compact": true,
+    "connectionType": "cloud",
+    "dataSource": "poll",
+    "plugins": {
+      "sentry": {
+        "dsn": "https://a3cc76cdce9f4e74b52390d60fd75278@o384969.ingest.sentry.io/4504555481530368"
+      }
+    },
+    "messagebox": true,
+    "singleton": true,
+    "materialize": true,
+    "stopBeforeUpdate": true,
+    "adminUI": {
+      "config": "materialize"
+    },
+    "visWidgets": {
+      "tractiveGpsWidgets": {
+        "i18n": "component",
+        "name": "tractiveGpsWidgets",
+        "url": "tractive-gps/customWidgets.js",
+        "bundlerType": "module",
+        "components": [
+          "PetTrackerCard"
         ]
+      }
     },
-    "protectedNative": ["password"],
-    "encryptedNative": ["password"],
-    "native": {
-        "interval": 120,
-        "email": "",
-        "password": "",
-        "reverseGeocoding": false
-    },
-    "objects": [],
-    "instanceObjects": [
-        {
-            "_id": "info",
-            "type": "channel",
-            "common": {
-                "name": "Information"
-            },
-            "native": {}
+    "restartAdapters": [
+      "vis-2"
+    ],
+    "eraseOnUpload": true,
+    "dependencies": [
+      {
+        "js-controller": ">=7.2.2",
+        "vis-2": ">=2.12.8"
+      }
+    ],
+    "globalDependencies": [
+      {
+        "admin": ">=8.0.0"
+      }
+    ],
+    "messages": [
+      {
+        "condition": {
+          "operand": "and",
+          "rules": [
+            "oldVersion<2.0.0",
+            "newVersion>=2.0.0"
+          ]
         },
-        {
-            "_id": "info.connection",
-            "type": "state",
-            "common": {
-                "role": "indicator.connected",
-                "name": "Device or service connected",
-                "type": "boolean",
-                "read": true,
-                "write": false,
-                "def": false
-            },
-            "native": {}
-        }
+        "title": {
+          "en": "Important notice!",
+          "de": "Wichtiger Hinweis!",
+          "ru": "Важное замечание!",
+          "pt": "Notícia importante!",
+          "nl": "Belangrijke mededeling!",
+          "fr": "Avis important!",
+          "it": "Avviso IMPORTANTE!",
+          "es": "Noticia importante!",
+          "pl": "Ważna uwaga!",
+          "zh-cn": "重要通知!",
+          "uk": "Важливе повідомлення!"
+        },
+        "text": {
+          "en": "Release 2.0.0 changes the encryption method for passwords. After migration user credentials must be entered again.",
+          "de": "Release 2.0.0 ändert die Verschlüsselungsmethode für Passwörter. Nach der Migration müssen Benutzerberechtigungen erneut eingegeben werden.",
+          "ru": "Выпуск 2.0.0 меняет метод шифрования для паролей. После миграции учетные данные пользователя должны быть введены снова.",
+          "pt": "O Release 2.0.0 muda o método de criptografia para senhas. Após a migração, as credenciais de usuário devem ser inseridas novamente.",
+          "nl": "Release 2.0.0 verandert de encryptiemethode voor wachtwoorden. Na migratie moeten gebruikersgegevens opnieuw worden ingevoerd.",
+          "fr": "La version 2.0.0 modifie la méthode de chiffrement des mots de passe. Après la migration, les identifiants d'utilisateur doivent être entrés à nouveau.",
+          "it": "Rilasciare 2.0.0 modifica il metodo di crittografia per le password. Dopo che le credenziali dell'utente di migrazione devono essere inserite di nuovo.",
+          "es": "La versión 2.0.0 cambia el método de cifrado para contraseñas. Después de que las credenciales de usuario de migración deben ser ingresadas de nuevo.",
+          "pl": "Release 2.0.0 zmienia metodę szyfrowania haseł. Po migracji należy ponownie wpisać dane uwierzytelniające użytkownika.",
+          "uk": "Release 2.0.0 змінює метод шифрування паролів. Після міграції облікових записів користувачів необхідно вводити знову.",
+          "zh-cn": "发布 2.0.0 更改密码的加密方法. 移民后,必须再次输入用户证书."
+        },
+        "link": "https://github.com/iobroker-community-adapters/ioBroker.tractive-gps#changelog",
+        "level": "warn",
+        "linkText": {
+          "en": "Changelog",
+          "de": "Änderungsprotokoll",
+          "ru": "Список изменений",
+          "pt": "Registro de alterações",
+          "nl": "Wijzigingslog",
+          "fr": "Journal des modifications",
+          "it": "Registro delle modifiche",
+          "es": "registro de cambios",
+          "pl": "Dziennik zmian",
+          "zh-cn": "变更日志",
+          "uk": "Журнал змін"
+        },
+        "buttons": [
+          "agree",
+          "cancel"
+        ]
+      }
     ]
+  },
+  "protectedNative": [
+    "password"
+  ],
+  "encryptedNative": [
+    "password"
+  ],
+  "native": {
+    "interval": 120,
+    "email": "",
+    "password": "",
+    "reverseGeocoding": false
+  },
+  "objects": [],
+  "instanceObjects": [
+    {
+      "_id": "info",
+      "type": "channel",
+      "common": {
+        "name": "Information"
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.connection",
+      "type": "state",
+      "common": {
+        "role": "indicator.connected",
+        "name": "Device or service connected",
+        "type": "boolean",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    }
+  ]
 }

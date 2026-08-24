@@ -1,4 +1,10 @@
 # Older changes
+## 1.1.0 (2023-11-05)
+
+- (Scrounger) Create objects only when necessary.
+- (Scrounger) Reduced excessive warnings.
+- (Scrounger) Added distance calculation between ioBroker and the tracker.
+
 ## 1.0.0 (2023-11-04)
 * (mcm1957) Adapter has been moved into iobroker-community-adapters organisation
 * (mcm1957) Dependencies have been updated

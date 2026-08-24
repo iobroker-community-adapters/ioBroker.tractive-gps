@@ -1,6 +1,10 @@
 {
   "$schema": "node_modules/lerna/schemas/lerna-schema.json",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "npmClient": "npm",
-  "packages": [".", "src-admin", "src-widgets"]
+  "packages": [
+    ".",
+    "src-admin",
+    "src-widgets"
+  ]
 }

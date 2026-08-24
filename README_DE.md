@@ -188,7 +188,7 @@ Informationen für Mitwirkende stehen in der [Entwicklerdokumentation](docs/DEVE
 
 ## Changelog
 
-### **IN ARBEIT**
+### 3.0.0 (2026-08-24)
 
 - (xXBJXx) BREAKING: vollständig für Node.js 22, js-controller 7.2.2 und Admin 8 neu geschrieben.
 - (xXBJXx) Sentry über die ioBroker-Adapterintegration eingerichtet (#4).
