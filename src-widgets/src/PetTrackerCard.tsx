@@ -25,6 +25,9 @@ interface PetTrackerCardData {
     staleOid: string;
     lastSeenOid: string;
     connectionTypeOid: string;
+    sensorUsedOid: string;
+    homeOid: string;
+    distanceOid: string;
     powerSavingOid: string;
     positionAccuracyOid: string;
     latitudeOid: string;
@@ -108,6 +111,9 @@ export default class PetTrackerCard extends (window.visRxWidget as typeof VisRxW
                         idField('staleOid', 'stale_state'),
                         idField('lastSeenOid', 'last_seen_state'),
                         idField('connectionTypeOid', 'connection_type_state'),
+                        idField('sensorUsedOid', 'sensor_used_state'),
+                        idField('homeOid', 'home_state'),
+                        idField('distanceOid', 'distance_state'),
                         idField('powerSavingOid', 'power_saving_state'),
                         idField('positionAccuracyOid', 'position_accuracy_state'),
                         idField('latitudeOid', 'latitude_state'),
@@ -195,6 +201,13 @@ export default class PetTrackerCard extends (window.visRxWidget as typeof VisRxW
         return String(Math.max(0, Math.floor((Date.now() - value) / 31_556_952_000)));
     }
 
+    private static formatDistance(value: number | undefined): string {
+        if (value === undefined) {
+            return '—';
+        }
+        return value >= 1000 ? `${(value / 1000).toFixed(1)} km` : `${Math.round(value)} m`;
+    }
+
     renderWidgetBody(props: RxRenderWidgetProps): React.JSX.Element {
         super.renderWidgetBody(props);
 
@@ -226,6 +239,19 @@ export default class PetTrackerCard extends (window.visRxWidget as typeof VisRxW
         const configuredRange = Number.isFinite(this.state.rxData.mapRange) ? this.state.rxData.mapRange : 0;
         const mapRange = configuredRange > 0 ? Math.min(1_000_000, configuredRange) : accuracy;
         const weight = this.numberValue('weightOid');
+        const sensorUsed = this.stringValue('sensorUsedOid');
+        const homeValue = this.value('homeOid');
+        const normalizedSensor = sensorUsed?.toUpperCase();
+        const home =
+            typeof homeValue === 'boolean'
+                ? homeValue
+                : normalizedSensor === 'KNOWN_WIFI'
+                  ? true
+                  : normalizedSensor === 'GPS'
+                    ? false
+                    : undefined;
+        const locationStatus = home === undefined ? '—' : PetTrackerCard.t(home ? 'home' : 'away');
+        const distance = this.numberValue('distanceOid');
 
         return (
             <ThemeProvider theme={this.props.context.theme}>
@@ -353,6 +379,16 @@ export default class PetTrackerCard extends (window.visRxWidget as typeof VisRxW
                                         />
                                         <InfoRow
                                             icon="🏠"
+                                            label={PetTrackerCard.t('location_status')}
+                                            value={sensorUsed ? `${locationStatus} · ${sensorUsed}` : locationStatus}
+                                        />
+                                        <InfoRow
+                                            icon="📏"
+                                            label={PetTrackerCard.t('distance')}
+                                            value={PetTrackerCard.formatDistance(distance)}
+                                        />
+                                        <InfoRow
+                                            icon="🔋"
                                             label={PetTrackerCard.t('power_saving')}
                                             value={PetTrackerCard.t(
                                                 this.value('powerSavingOid') === true ? 'yes' : 'no',
