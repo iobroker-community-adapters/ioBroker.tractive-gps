@@ -72,6 +72,20 @@ function asRecord(value: unknown): UnknownRecord | undefined {
     return value !== null && typeof value === 'object' && !Array.isArray(value) ? (value as UnknownRecord) : undefined;
 }
 
+function withoutKeys(value: UnknownRecord, keys: ReadonlySet<string>): UnknownRecord {
+    return Object.fromEntries(Object.entries(value).filter(([key]) => !keys.has(key)));
+}
+
+function withKeys(value: UnknownRecord, keys: ReadonlySet<string>): UnknownRecord {
+    return Object.fromEntries(Object.entries(value).filter(([key]) => keys.has(key)));
+}
+
+function resourcesById(values: readonly UnknownRecord[]): Record<string, UnknownRecord> {
+    return Object.fromEntries(
+        values.map((value, index) => [firstString(layers(value), '_id', 'id') ?? String(index), value]),
+    );
+}
+
 function layers(value: unknown): UnknownRecord[] {
     const result: UnknownRecord[] = [];
     let current = asRecord(value);
@@ -307,7 +321,6 @@ function normalizeTracker(
         online:
             state === undefined ? positionTime !== undefined : !['OFFLINE', 'DISABLED'].includes(state.toUpperCase()),
         lastSeen: positionTime,
-        connectionType: sensorUsed ?? stateReason,
         sensorUsed,
         home: normalizedSensor === 'KNOWN_WIFI' ? true : normalizedSensor === 'GPS' ? false : undefined,
         batteryLevel: firstNumber(hardware ? [hardware] : [], 'battery_level'),
@@ -486,7 +499,7 @@ async function synchronize(api: ITractiveApiEndpoints, fullSync: boolean): Promi
         cache.lastHardwareSync = Date.now();
     }
 
-    await writeApiData(stateDeps(api), {
+    const rawSnapshot = {
         updatedAt: Date.now(),
         userInfo: api.auth ? { user_id: api.auth.user_id, expires_at: api.auth.expires_at } : null,
         account: cache.account ?? null,
@@ -494,7 +507,70 @@ async function synchronize(api: ITractiveApiEndpoints, fullSync: boolean): Promi
         shares: cache.shares,
         pets: cache.petApiData,
         trackers: trackerApiData,
-    });
+    };
+
+    const petTree = Object.fromEntries(
+        Object.entries(cache.petApiData).map(([petId, source]) => {
+            const details = asRecord(source.details) ?? asRecord(source.list) ?? {};
+            const profile = asRecord(details.details) ?? {};
+            const assignmentKeys = new Set(['device_id', 'home_location']);
+            const properties = {
+                ...(asRecord(source.list) ?? {}),
+                ...withoutKeys(details, new Set(['details', ...assignmentKeys])),
+            };
+            return [
+                petId,
+                {
+                    profile,
+                    assignment: withKeys(details, assignmentKeys),
+                    properties,
+                    media: { profilePictureUrl: source.profilePictureUrl ?? null },
+                },
+            ];
+        }),
+    );
+    const trackerStatusKeys = new Set([
+        'state',
+        'state_reason',
+        'charging_state',
+        'battery_state',
+        'battery_save_mode',
+        'power_saving_zone_id',
+        'prioritized_zone_id',
+        'prioritized_zone_type',
+        'prioritized_zone_last_seen_at',
+        'prioritized_zone_entered_at',
+    ]);
+    const trackerTree = Object.fromEntries(
+        Object.entries(trackerApiData).map(([trackerId, source]) => {
+            const details = asRecord(source.details) ?? asRecord(source.list) ?? {};
+            return [
+                trackerId,
+                {
+                    info: { ...(asRecord(source.list) ?? {}), ...withoutKeys(details, trackerStatusKeys) },
+                    status: withKeys(details, trackerStatusKeys),
+                    location: source.location ?? {},
+                    hardware: source.hardware ?? {},
+                },
+            ];
+        }),
+    );
+    const subscriptions = {
+        ...resourcesById(cache.subscriptions.list),
+        ...cache.subscriptions.details,
+    };
+    const logicalTree = {
+        updatedAt: rawSnapshot.updatedAt,
+        account: {
+            ...(cache.account ?? {}),
+            session: rawSnapshot.userInfo,
+        },
+        subscriptions,
+        shares: resourcesById(cache.shares),
+        pets: petTree,
+        trackers: trackerTree,
+    };
+    await writeApiData(stateDeps(api), logicalTree, rawSnapshot);
 
     if (api.getDevicesAsync) {
         const devices = await api.getDevicesAsync();
@@ -502,7 +578,7 @@ async function synchronize(api: ITractiveApiEndpoints, fullSync: boolean): Promi
             const match = /(?:^|\.)trackers\.([^.]+)$/.exec(device._id);
             const trackerId = match?.[1];
             if (trackerId && !seenTrackerIds.has(trackerId)) {
-                await api.setState(`trackers.${trackerId}.health.missing`, true, true);
+                await api.setState(`trackers.${trackerId}.status.missing`, true, true);
             }
         }
     }

@@ -5,7 +5,7 @@ import type { ITractiveApiEndpoints } from './dataAggregation';
 import { updateAllData, updateTrackersOnly } from './dataAggregation';
 
 describe('data aggregation migration', () => {
-    it('uses the deeply nested pet detail name for the device and name state', async () => {
+    it('uses the API pet profile and exposes nested activity values', async () => {
         const objects = new Map<string, ioBroker.PartialObject>();
         const states = new Map<string, ioBroker.StateValue>();
         const api: ITractiveApiEndpoints = {
@@ -19,7 +19,7 @@ describe('data aggregation migration', () => {
                 states.set(id, value);
                 return Promise.resolve(undefined);
             }) as ITractiveApiEndpoints['setState'],
-            getObjectAsync: sinon.stub().resolves(null),
+            getObjectAsync: sinon.stub().callsFake((id: string) => Promise.resolve(objects.get(id) as ioBroker.Object)),
             getAccount: () => Promise.resolve({ success: true, data: { _id: 'account-1' } }),
             getSubscriptions: () => Promise.resolve({ success: true, data: [] }),
             getSubscription: () => Promise.resolve({ success: false, error: 'not called' }),
@@ -32,13 +32,13 @@ describe('data aggregation migration', () => {
                     data: {
                         _id: 'pet-1',
                         details: {
-                            details: {
-                                details: {
-                                    name: 'Bärli',
-                                    pet_type: 'CAT',
-                                    weight: 4900,
-                                    profile_picture_id: 'image-1',
-                                },
+                            name: 'Bärli',
+                            pet_type: 'CAT',
+                            weight: 4900,
+                            profile_picture_id: 'image-1',
+                            activity_settings: {
+                                daily_goal: 1000,
+                                daily_distance_goal: 2500,
                             },
                         },
                     },
@@ -56,9 +56,11 @@ describe('data aggregation migration', () => {
 
         expect(await updateAllData(api)).to.deep.equal({ success: true, data: true });
         expect(objects.get('pets.pet-1')?.common?.name).to.equal('Bärli');
-        expect(states.get('pets.pet-1.info.name')).to.equal('Bärli');
-        expect(states.get('pets.pet-1.info.weight')).to.equal(4.9);
-        expect(states.get('pets.pet-1.info.profilePictureUrl')).to.equal(
+        expect(states.get('pets.pet-1.profile.name')).to.equal('Bärli');
+        expect(states.get('pets.pet-1.profile.activity_settings.daily_goal')).to.equal(1000);
+        expect(states.get('pets.pet-1.profile.activity_settings.daily_distance_goal')).to.equal(2500);
+        expect(states.get('pets.pet-1.calculated.weight')).to.equal(4.9);
+        expect(states.get('pets.pet-1.media.profilePictureUrl')).to.equal(
             'https://cdn.tractive.com/3/media/resource/image-1.jpg',
         );
     });
@@ -97,7 +99,7 @@ describe('data aggregation migration', () => {
         const result = await updateAllData(api);
 
         expect(result).to.deep.equal({ success: true, data: true });
-        expect(setState.calledWithExactly('trackers.retained-tracker.health.missing', true, true)).to.equal(true);
+        expect(setState.calledWithExactly('trackers.retained-tracker.status.missing', true, true)).to.equal(true);
     });
 
     it('writes sensor, home status, and distance from the ioBroker system position', async () => {
@@ -127,23 +129,38 @@ describe('data aggregation migration', () => {
             getPet: () => Promise.resolve({ success: false, error: 'not called' }),
             getImage: () => Promise.resolve({ success: false, error: 'not called' }),
             getAllTrackers: () => Promise.resolve({ success: true, data: [{ _id: 'tracker-1' }] }),
-            getTracker: () => Promise.resolve({ success: true, data: { _id: 'tracker-1' } }),
+            getTracker: () =>
+                Promise.resolve({
+                    success: true,
+                    data: {
+                        _id: 'tracker-1',
+                        state: 'OPERATIONAL',
+                        state_reason: 'POWER_SAVING',
+                        capabilities: ['LT'],
+                    },
+                }),
             getTrackerLocation: () =>
                 Promise.resolve({
                     success: true,
                     data: { latlong: [48.21, 13.4], sensor_used: 'KNOWN_WIFI', time: 1_787_500_000 },
                 }),
-            getTrackerHardware: () => Promise.resolve({ success: true, data: {} }),
+            getTrackerHardware: () => Promise.resolve({ success: true, data: { battery_level: 95 } }),
         };
 
         expect((await updateAllData(api)).success).to.equal(true);
-        expect(states.get('trackers.tracker-1.status.sensorUsed')).to.equal('KNOWN_WIFI');
+        expect(states.get('trackers.tracker-1.location.sensor_used')).to.equal('KNOWN_WIFI');
         expect(states.get('trackers.tracker-1.status.home')).to.equal(true);
         expect(states.get('trackers.tracker-1.location.distance')).to.be.closeTo(1112, 2);
-        expect(states.get('tracker-1.device_pos_report.sensor_used')).to.equal('KNOWN_WIFI');
-        expect(states.get('api.data.account.email')).to.equal('local@example');
-        expect(states.get('api.data.subscriptions.details.sub-1.plan')).to.equal('premium');
-        expect(states.get('api.data.sharesItems.share-1._id')).to.equal('share-1');
+        expect(states.get('trackers.tracker-1.status.state')).to.equal('OPERATIONAL');
+        expect(states.get('trackers.tracker-1.status.state_reason')).to.equal('POWER_SAVING');
+        expect(states.get('trackers.tracker-1.hardware.battery_level')).to.equal(95);
+        expect(states.get('trackers.tracker-1.location.latlong')).to.equal('[48.21,13.4]');
+        expect(states.has('trackers.tracker-1.status.connectionType')).to.equal(false);
+        expect(states.has('api.data.account.email')).to.equal(false);
+        expect(states.has('tracker-1.device_pos_report.sensor_used')).to.equal(false);
+        expect(states.get('account.email')).to.equal('local@example');
+        expect(states.get('subscriptions.sub-1.plan')).to.equal('premium');
+        expect(states.get('shares.share-1._id')).to.equal('share-1');
         expect(String(states.get('info.currentApi'))).to.contain('local@example');
         expect(String(states.get('info.currentApi'))).not.to.contain('access_token');
     });

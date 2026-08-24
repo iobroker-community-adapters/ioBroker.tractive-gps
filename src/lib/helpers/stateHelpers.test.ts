@@ -54,16 +54,16 @@ describe('tracker state model', () => {
             user_id: 'private',
         });
 
-        expect(states.get('api.data.pets.pet1.details.name')).to.equal('Bärli');
-        expect(states.get('api.data.pets.pet1.details.breed_ids')).to.equal('["1G91"]');
-        expect(states.get('api.data.pets.pet1.details.breed_idsItems.0')).to.equal('1G91');
-        expect(states.get('api.data.access_token')).to.equal('secret');
-        expect(states.get('api.data.user_id')).to.equal('private');
+        expect(states.get('pets.pet1.details.name')).to.equal('Bärli');
+        expect(states.get('pets.pet1.details.breed_ids')).to.equal('["1G91"]');
+        expect(states.get('pets.pet1.details.breed_idsItems.0')).to.equal('1G91');
+        expect(states.get('access_token')).to.equal('secret');
+        expect(states.get('user_id')).to.equal('private');
         expect(String(states.get('info.currentApi'))).to.contain('secret');
         expect(String(states.get('info.currentApi'))).to.contain('private');
     });
 
-    it('updates existing legacy states without recreating removed raw objects', async () => {
+    it('does not recreate the removed legacy tracker hierarchy', async () => {
         const written = new Map<string, ioBroker.StateValue>();
         const existing = new Set(['tracker-1.device_hw_report.battery_level']);
         const deps: StateDeps = {
@@ -80,7 +80,7 @@ describe('tracker state model', () => {
 
         await writeTrackerStates(deps, { ...tracker([]), batteryLevel: 42 });
 
-        expect(written.get('tracker-1.device_hw_report.battery_level')).to.equal(42);
+        expect(written.has('tracker-1.device_hw_report.battery_level')).to.equal(false);
         expect(written.has('tracker-1.device_pos_report.latitude')).to.equal(false);
     });
 });
