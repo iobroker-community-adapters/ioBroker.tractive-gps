@@ -24,7 +24,7 @@ describe('data aggregation migration', () => {
             getSubscriptions: () => Promise.resolve({ success: true, data: [] }),
             getSubscription: () => Promise.resolve({ success: false, error: 'not called' }),
             getShares: () => Promise.resolve({ success: true, data: [] }),
-            getProfilePictureUrl: id => `https://cdn.tractive.com/3/media/resource/${id}.jpg`,
+            getProfilePictureUrl: id => `../tractive-gps.0.images/profile-images/${id}.jpg`,
             getPets: () => Promise.resolve({ success: true, data: [{ _id: 'pet-1' }] }),
             getPet: () =>
                 Promise.resolve({
@@ -61,7 +61,7 @@ describe('data aggregation migration', () => {
         expect(states.get('pets.pet-1.activity.dailyDistanceGoal')).to.equal(2500);
         expect(states.get('pets.pet-1.info.weight')).to.equal(4.9);
         expect(states.get('pets.pet-1.media.localProfilePictureUrl')).to.equal(
-            'https://cdn.tractive.com/3/media/resource/image-1.jpg',
+            '../tractive-gps.0.images/profile-images/image-1.jpg',
         );
     });
 

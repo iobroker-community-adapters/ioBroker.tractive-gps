@@ -148,6 +148,9 @@ function findImageSource(value: unknown, depth = 0): string | undefined {
         if (/^(?:https?:\/\/|data:image\/)/i.test(value)) {
             return value;
         }
+        if (value.startsWith('../') || value.startsWith('./')) {
+            return value;
+        }
         if (value.startsWith('//')) {
             return `https:${value}`;
         }

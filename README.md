@@ -199,6 +199,7 @@ Information for contributors is available in [Developer documentation](docs/DEVE
 - (xXBJXx) Cached Tractive profile pictures in ioBroker so VIS 2 can display CDN files delivered as binary downloads.
 - (xXBJXx) Fixed profile-picture storage by using a dedicated ioBroker `meta` file container.
 - (xXBJXx) Added the local profile-picture URL, textual charging state, speed, and altitude to the curated states and VIS 2 card.
+- (xXBJXx) Fixed recognition of relative ioBroker file URLs in `localProfilePictureUrl`.
 - (xXBJXx) Added live tracking, LED, and buzzer commands for supported trackers.
 - (xXBJXx) Rebuilt the adapter configuration for Admin 8 and removed the invalid jsonConfig configuration (#176).
 - (xXBJXx) Added the VIS 2 `PetTrackerCard` widget with pet image, Leaflet/OpenStreetMap map, range display, and tracker information.

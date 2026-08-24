@@ -199,6 +199,7 @@ Informationen für Mitwirkende stehen in der [Entwicklerdokumentation](docs/DEVE
 - (xXBJXx) Tractive-Profilbilder in ioBroker zwischengespeichert, damit VIS 2 die als Binärdownload ausgelieferten CDN-Dateien anzeigen kann.
 - (xXBJXx) Die Profilbildablage durch einen eigenen ioBroker-Dateicontainer vom Typ `meta` korrigiert.
 - (xXBJXx) Lokale Profilbild-URL, textuellen Ladezustand, Geschwindigkeit und Höhe in die ausgewählten Datenpunkte und die VIS-2-Karte aufgenommen.
+- (xXBJXx) Erkennung relativer ioBroker-Datei-URLs in `localProfilePictureUrl` korrigiert.
 - (xXBJXx) Live-Tracking-, LED- und Signalton-Befehle für unterstützte Tracker ergänzt.
 - (xXBJXx) Adapterkonfiguration für Admin 8 erneuert und die ungültige jsonConfig-Konfiguration entfernt (#176).
 - (xXBJXx) VIS-2-Widget `PetTrackerCard` mit Tierbild, Leaflet-/OpenStreetMap-Karte, Bereichsanzeige und Tracker-Informationen ergänzt.
