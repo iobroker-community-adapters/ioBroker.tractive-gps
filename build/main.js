@@ -26,6 +26,7 @@ var import_tractive_api = require("./lib/tractive-api");
 const MINIMUM_INTERVAL_SECONDS = 120;
 const MAXIMUM_INTERVAL_SECONDS = 3600;
 const FULL_SYNC_INTERVAL_MS = 24 * 60 * 60 * 1e3;
+const OBJECT_STRUCTURE_VERSION = 4;
 class TractiveGPS extends utils.Adapter {
   tractiveApi = null;
   pollTimer = null;
@@ -33,6 +34,7 @@ class TractiveGPS extends utils.Adapter {
   fullSyncPending = false;
   lastFullSync = 0;
   stopped = false;
+  structureMigrationPending = false;
   commandQueues = /* @__PURE__ */ new Map();
   constructor(options = {}) {
     super({
@@ -62,7 +64,10 @@ class TractiveGPS extends utils.Adapter {
       this.extendObjectAsync.bind(this),
       {
         reverseGeocoding: Boolean(this.config.reverseGeocoding),
-        getDevicesAsync: this.getDevicesAsync.bind(this)
+        getDevicesAsync: this.getDevicesAsync.bind(this),
+        getForeignObjectAsync: this.getForeignObjectAsync.bind(this),
+        writeFileAsync: this.writeFileAsync.bind(this),
+        fileNamespace: `${this.namespace}.images`
       }
     );
     if (!await this.tractiveApi.initialize(this.config.email, this.config.password)) {
@@ -70,12 +75,21 @@ class TractiveGPS extends utils.Adapter {
       this.log.error("Login to Tractive failed. Please check your credentials.");
       return;
     }
+    this.structureMigrationPending = await this.resetDataObjectsIfNeeded();
     this.subscribeStates("info.refresh");
     this.subscribeStates("trackers.*.commands.*");
     await this.queueSync(true);
     this.scheduleNextSync();
   }
   async ensureLifecycleObjects() {
+    await this.extendObjectAsync("images", {
+      type: "meta",
+      common: {
+        name: "Tractive profile images",
+        type: "meta.user"
+      },
+      native: {}
+    });
     await this.extendObjectAsync("info", {
       type: "channel",
       common: {
@@ -151,6 +165,43 @@ class TractiveGPS extends utils.Adapter {
       },
       native: {}
     });
+    await this.extendObjectAsync("info.structureVersion", {
+      type: "state",
+      common: {
+        name: "Object structure version",
+        type: "number",
+        role: "value.version",
+        read: true,
+        write: false,
+        def: 0
+      },
+      native: {}
+    });
+  }
+  async resetDataObjectsIfNeeded() {
+    var _a, _b;
+    const currentVersion = Number((_b = (_a = await this.getStateAsync("info.structureVersion")) == null ? void 0 : _a.val) != null ? _b : 0);
+    if (currentVersion === OBJECT_STRUCTURE_VERSION) {
+      return false;
+    }
+    const objects = await this.getAdapterObjectsAsync();
+    const namespacePrefix = `${this.namespace}.`;
+    const roots = /* @__PURE__ */ new Set();
+    for (const id of Object.keys(objects)) {
+      const relativeId = id.startsWith(namespacePrefix) ? id.slice(namespacePrefix.length) : id;
+      const root = relativeId.split(".")[0];
+      if (root && root !== "info" && root !== "images") {
+        roots.add(root);
+      }
+    }
+    for (const root of roots) {
+      await this.delObjectAsync(root, { recursive: true });
+    }
+    if (await this.getObjectAsync("info.currentApi")) {
+      await this.delObjectAsync("info.currentApi");
+    }
+    this.log.info("Removed the previous Tractive object structure; rebuilding it from current API data");
+    return true;
   }
   getPollIntervalMs() {
     const configured = Number(this.config.interval) || 300;
@@ -211,6 +262,10 @@ class TractiveGPS extends utils.Adapter {
       const now = Date.now();
       if (fullSync) {
         this.lastFullSync = now;
+      }
+      if (this.structureMigrationPending) {
+        await this.setState("info.structureVersion", OBJECT_STRUCTURE_VERSION, true);
+        this.structureMigrationPending = false;
       }
       await this.setState("info.connection", true, true);
       await this.setState("info.dataFresh", true, true);

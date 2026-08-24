@@ -30,7 +30,12 @@ function response<T>(config: InternalAxiosRequestConfig, data: T): AxiosResponse
 
 function createClient(
     adapter: NonNullable<AxiosRequestConfig['adapter']>,
-    options: { sleep?: (milliseconds: number) => Promise<void>; reverseGeocoding?: boolean } = {},
+    options: {
+        sleep?: (milliseconds: number) => Promise<void>;
+        reverseGeocoding?: boolean;
+        writeFileAsync?: NonNullable<TractiveAPIConstructor[4]>['writeFileAsync'];
+        fileNamespace?: string;
+    } = {},
 ): TractiveAPI {
     const httpClient = axios.create({ adapter });
     const getObject = (() => Promise.resolve(null)) as TractiveAPIConstructor[1];
@@ -44,6 +49,8 @@ function createClient(
         retryDelaysMs: [0],
         sleep: options.sleep ?? (() => Promise.resolve()),
         reverseGeocoding: options.reverseGeocoding,
+        writeFileAsync: options.writeFileAsync,
+        fileNamespace: options.fileNamespace,
     });
 }
 
@@ -281,6 +288,69 @@ describe('TractiveAPI authentication', () => {
         expect(await client.initialize('user@example.invalid', 'test-password')).to.equal(true);
         expect((await client.getPet('pet/id')).success).to.equal(true);
         expect(requests[1].url).to.equal('/trackable_object/pet%2Fid');
+    });
+
+    it('retrieves account, subscription, and share resources', async () => {
+        const requests: AxiosRequestConfig[] = [];
+        const client = createClient(config => {
+            requests.push(config);
+            if (config.url === '/auth/token') {
+                return Promise.resolve(
+                    response(config, {
+                        access_token: 'test-token',
+                        expires_at: Math.floor(Date.now() / 1000) + 3600,
+                        user_id: 'test/user',
+                    }),
+                );
+            }
+            if (config.url?.endsWith('/subscriptions') || config.url?.endsWith('/shares')) {
+                return Promise.resolve(response(config, []));
+            }
+            return Promise.resolve(response(config, { _id: 'resource-1' }));
+        });
+
+        expect(await client.initialize('user@example.invalid', 'test-password')).to.equal(true);
+        expect((await client.getAccount()).success).to.equal(true);
+        expect((await client.getSubscriptions()).success).to.equal(true);
+        expect((await client.getSubscription('subscription/id')).success).to.equal(true);
+        expect((await client.getShares()).success).to.equal(true);
+        expect(requests.slice(1).map(request => request.url)).to.deep.equal([
+            '/user/test%2Fuser',
+            '/user/test%2Fuser/subscriptions',
+            '/subscription/subscription%2Fid',
+            '/user/test%2Fuser/shares',
+        ]);
+    });
+
+    it('builds the public Tractive CDN profile-picture URL', () => {
+        const client = createClient(config => Promise.resolve(response(config, {})));
+        expect(client.getProfilePictureUrl('image/id')).to.equal(
+            'https://cdn.tractive.com/3/media/resource/image%2Fid.jpg',
+        );
+    });
+
+    it('stores CDN profile pictures locally with an ioBroker file URL', async () => {
+        const requests: AxiosRequestConfig[] = [];
+        const writeFileAsync = sinon.stub().resolves(undefined);
+        const client = createClient(
+            config => {
+                requests.push(config);
+                return Promise.resolve(response(config, Buffer.from([0xff, 0xd8, 0xff, 0x00])));
+            },
+            { writeFileAsync, fileNamespace: 'tractive-gps.0.images' },
+        );
+        client.auth = { access_token: 'private-token', expires_at: 1_900_000_000, user_id: 'user-1' };
+
+        const pictureUrl = await client.getProfilePictureUrl('image/id');
+
+        expect(pictureUrl).to.equal('../tractive-gps.0.images/profile-images/image_id.jpg');
+        expect(requests[0].url).to.equal('https://cdn.tractive.com/3/media/resource/image%2Fid.jpg');
+        expect(requests[0].headers?.Authorization).to.equal(undefined);
+        expect(writeFileAsync.calledOnce).to.equal(true);
+        expect(writeFileAsync.firstCall.args.slice(0, 2)).to.deep.equal([
+            'tractive-gps.0.images',
+            'profile-images/image_id.jpg',
+        ]);
     });
 
     it('resolves pet image references through the v3 bulk endpoint', async () => {

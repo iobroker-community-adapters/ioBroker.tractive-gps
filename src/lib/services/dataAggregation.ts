@@ -1,6 +1,9 @@
 import type {
+    TractiveAccount,
     TractiveAPIResponse,
     TractivePet,
+    TractiveShare,
+    TractiveSubscription,
     TractiveTracker,
     TractiveTrackerHardware,
     TractiveTrackerLocation,
@@ -17,9 +20,15 @@ export interface ITractiveApiEndpoints {
     setState: StateDeps['setState'];
     getObjectAsync: NonNullable<StateDeps['getObjectAsync']>;
     getDevicesAsync?: () => Promise<readonly ioBroker.Object[]>;
+    getForeignObjectAsync?: (id: string) => Promise<ioBroker.Object | null | undefined>;
+    getAccount(): Promise<TractiveAPIResponse<TractiveAccount>>;
+    getSubscriptions(): Promise<TractiveAPIResponse<TractiveSubscription[]>>;
+    getSubscription(subscriptionID: string): Promise<TractiveAPIResponse<TractiveSubscription>>;
+    getShares(): Promise<TractiveAPIResponse<TractiveShare[]>>;
     getPets(): Promise<TractiveAPIResponse<TractivePet[]>>;
     getPet(petID: string): Promise<TractiveAPIResponse<TractivePet>>;
     getImage(imageID: string): Promise<TractiveAPIResponse<Record<string, unknown>>>;
+    getProfilePictureUrl(imageID: string): string | Promise<string>;
     getAllTrackers(): Promise<TractiveAPIResponse<TractiveTracker[]>>;
     getTracker(trackerID: string): Promise<TractiveAPIResponse<TractiveTracker>>;
     getTrackerLocation(trackerID: string): Promise<TractiveAPIResponse<TractiveTrackerLocation>>;
@@ -29,7 +38,10 @@ export interface ITractiveApiEndpoints {
 type UnknownRecord = Record<string, unknown>;
 
 interface AggregationCache {
-    petApiData: Record<string, { list: TractivePet; details?: TractivePet; profilePicture?: Record<string, unknown> }>;
+    account?: TractiveAccount;
+    subscriptions: { list: TractiveSubscription[]; details: Record<string, TractiveSubscription> };
+    shares: TractiveShare[];
+    petApiData: Record<string, { list: TractivePet; details?: TractivePet; profilePictureUrl?: string }>;
     petIdByTracker: Map<string, string>;
     trackerDetails: Map<string, TractiveTracker>;
     trackerHardware: Map<string, TractiveTrackerHardware>;
@@ -44,6 +56,8 @@ function getAggregationCache(api: ITractiveApiEndpoints): AggregationCache {
         return cached;
     }
     const created: AggregationCache = {
+        subscriptions: { list: [], details: {} },
+        shares: [],
         petApiData: {},
         petIdByTracker: new Map(),
         trackerDetails: new Map(),
@@ -56,6 +70,16 @@ function getAggregationCache(api: ITractiveApiEndpoints): AggregationCache {
 
 function asRecord(value: unknown): UnknownRecord | undefined {
     return value !== null && typeof value === 'object' && !Array.isArray(value) ? (value as UnknownRecord) : undefined;
+}
+
+function compactRecord(value: UnknownRecord): UnknownRecord {
+    return Object.fromEntries(Object.entries(value).filter(([, child]) => child !== null && child !== undefined));
+}
+
+function resourcesById(values: readonly UnknownRecord[]): Record<string, UnknownRecord> {
+    return Object.fromEntries(
+        values.map((value, index) => [firstString(layers(value), '_id', 'id') ?? String(index), value]),
+    );
 }
 
 function layers(value: unknown): UnknownRecord[] {
@@ -124,6 +148,9 @@ function findImageSource(value: unknown, depth = 0): string | undefined {
         if (/^(?:https?:\/\/|data:image\/)/i.test(value)) {
             return value;
         }
+        if (value.startsWith('../') || value.startsWith('./')) {
+            return value;
+        }
         if (value.startsWith('//')) {
             return `https:${value}`;
         }
@@ -178,8 +205,34 @@ function timestampToMilliseconds(value: number | undefined): number | undefined 
     return value < 1_000_000_000_000 ? value * 1000 : value;
 }
 
+function distanceInMeters(latitude1: number, longitude1: number, latitude2: number, longitude2: number): number {
+    const toRadians = (degrees: number): number => (degrees * Math.PI) / 180;
+    const latitudeDelta = toRadians(latitude2 - latitude1);
+    const longitudeDelta = toRadians(longitude2 - longitude1);
+    const a =
+        Math.sin(latitudeDelta / 2) ** 2 +
+        Math.cos(toRadians(latitude1)) * Math.cos(toRadians(latitude2)) * Math.sin(longitudeDelta / 2) ** 2;
+    return Math.round(6_371_000 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+}
+
+async function getSystemCoordinates(api: ITractiveApiEndpoints): Promise<[number, number] | undefined> {
+    const systemConfig = await api.getForeignObjectAsync?.('system.config');
+    const common = systemConfig?.common as Record<string, unknown> | undefined;
+    const parseCoordinate = (value: unknown): number | undefined => {
+        if (typeof value !== 'number' && (typeof value !== 'string' || value.trim() === '')) {
+            return undefined;
+        }
+        const coordinate = Number(value);
+        return Number.isFinite(coordinate) ? coordinate : undefined;
+    };
+    const latitude = parseCoordinate(common?.latitude);
+    const longitude = parseCoordinate(common?.longitude);
+    return latitude !== undefined && longitude !== undefined ? [latitude, longitude] : undefined;
+}
+
 function normalizePet(value: unknown, imageValue?: unknown): PetStateModel | undefined {
     const records = layers(value);
+    const activitySettings = records.map(record => asRecord(record.activity_settings)).find(Boolean);
     const id = firstString(records, '_id', 'id');
     if (!id) {
         return undefined;
@@ -204,9 +257,9 @@ function normalizePet(value: unknown, imageValue?: unknown): PetStateModel | und
             firstString(records, 'profile_picture_url', 'picture_url', 'image_url') ?? findImageSource(imageValue),
         galleryPictureIds: firstStringArray(records, 'gallery_picture_ids'),
         createdAt: timestampToMilliseconds(firstNumber(records, 'created_at')),
-        dailyGoal: firstNumber(records, 'daily_goal'),
-        dailyDistanceGoal: firstNumber(records, 'daily_distance_goal'),
-        dailyActiveMinutesGoal: firstNumber(records, 'daily_active_minutes_goal'),
+        dailyGoal: firstNumber(activitySettings ? [activitySettings] : [], 'daily_goal'),
+        dailyDistanceGoal: firstNumber(activitySettings ? [activitySettings] : [], 'daily_distance_goal'),
+        dailyActiveMinutesGoal: firstNumber(activitySettings ? [activitySettings] : [], 'daily_active_minutes_goal'),
     };
 }
 
@@ -238,6 +291,7 @@ function normalizeTracker(
     locationValue: unknown,
     hardwareValue: unknown,
     petIdByTracker: ReadonlyMap<string, string>,
+    systemCoordinates?: readonly [number, number],
 ): TrackerStateModel | undefined {
     const records = [...layers(detailsValue), ...layers(listValue)];
     const id = firstString(records, '_id', 'id');
@@ -252,6 +306,10 @@ function normalizeTracker(
     const stateReason = firstString(records, 'state_reason');
     const positionTime = timestampToMilliseconds(firstNumber(location ? [location] : [], 'time', 'time_rcvd'));
     const hardwareTime = timestampToMilliseconds(firstNumber(hardware ? [hardware] : [], 'time'));
+    const sensorUsed = firstString(location ? [location] : [], 'sensor_used', 'connection_type');
+    const normalizedSensor = sensorUsed?.toUpperCase();
+    const latitude = typeof latlong[0] === 'number' ? latlong[0] : undefined;
+    const longitude = typeof latlong[1] === 'number' ? latlong[1] : undefined;
 
     return {
         id,
@@ -263,18 +321,24 @@ function normalizeTracker(
         online:
             state === undefined ? positionTime !== undefined : !['OFFLINE', 'DISABLED'].includes(state.toUpperCase()),
         lastSeen: positionTime,
-        connectionType: firstString(location ? [location] : [], 'connection_type') ?? stateReason,
+        sensorUsed,
+        home: normalizedSensor === 'KNOWN_WIFI' ? true : normalizedSensor === 'GPS' ? false : undefined,
         batteryLevel: firstNumber(hardware ? [hardware] : [], 'battery_level'),
         charging: chargingState === undefined ? undefined : chargingState.toUpperCase() === 'CHARGING',
+        chargingState,
         powerSaving:
             firstBoolean(records, 'battery_save_mode', 'power_saving') ??
             (stateReason === undefined ? undefined : stateReason.toUpperCase().includes('POWER')),
         positionAccuracy: firstNumber(location ? [location] : [], 'pos_uncertainty', 'accuracy'),
-        latitude: typeof latlong[0] === 'number' ? latlong[0] : undefined,
-        longitude: typeof latlong[1] === 'number' ? latlong[1] : undefined,
+        latitude,
+        longitude,
         altitude: firstNumber(location ? [location] : [], 'altitude', 'alt'),
         speed: firstNumber(location ? [location] : [], 'speed'),
         address: addressText(location?.address),
+        distance:
+            systemCoordinates && latitude !== undefined && longitude !== undefined
+                ? distanceInMeters(systemCoordinates[0], systemCoordinates[1], latitude, longitude)
+                : undefined,
         capabilities: firstStringArray(records, 'capabilities'),
         operationalState: state,
         stateReason,
@@ -297,6 +361,38 @@ async function synchronize(api: ITractiveApiEndpoints, fullSync: boolean): Promi
     const hardwareSyncDue = fullSync || Date.now() - cache.lastHardwareSync >= HARDWARE_SYNC_INTERVAL_MS;
 
     if (fullSync) {
+        const account = await api.getAccount();
+        if (account.success) {
+            cache.account = account.data;
+        } else {
+            api.log.warn('Could not retrieve complete Tractive account data');
+        }
+
+        const subscriptions = await api.getSubscriptions();
+        if (subscriptions.success) {
+            const details: Record<string, TractiveSubscription> = {};
+            for (const subscription of subscriptions.data) {
+                const subscriptionId = firstString(layers(subscription), '_id', 'id');
+                if (!subscriptionId) {
+                    continue;
+                }
+                const detail = await api.getSubscription(subscriptionId);
+                if (detail.success) {
+                    details[subscriptionId] = detail.data;
+                }
+            }
+            cache.subscriptions = { list: subscriptions.data, details };
+        } else {
+            api.log.warn('Could not retrieve Tractive subscription data');
+        }
+
+        const shares = await api.getShares();
+        if (shares.success) {
+            cache.shares = shares.data;
+        } else {
+            api.log.warn('Could not retrieve Tractive share data');
+        }
+
         const petsResult = await api.getPets();
         if (!petsResult.success || !petsResult.data) {
             return { success: false, error: 'Could not retrieve pets' };
@@ -317,8 +413,8 @@ async function synchronize(api: ITractiveApiEndpoints, fullSync: boolean): Promi
             }
             const detailValue = details.data ?? petListItem;
             const profilePictureId = firstString(layers(detailValue), 'profile_picture_id');
-            const profilePicture = profilePictureId ? await api.getImage(profilePictureId) : undefined;
-            const pet = normalizePet(detailValue, profilePicture?.data);
+            const profilePictureUrl = profilePictureId ? await api.getProfilePictureUrl(profilePictureId) : undefined;
+            const pet = normalizePet(detailValue, profilePictureUrl);
             if (!pet) {
                 api.log.warn('Skipping pet data that does not match the expected schema');
                 continue;
@@ -326,7 +422,7 @@ async function synchronize(api: ITractiveApiEndpoints, fullSync: boolean): Promi
             petApiData[petId] = {
                 list: petListItem,
                 ...(details.data ? { details: details.data } : {}),
-                ...(profilePicture?.data ? { profilePicture: profilePicture.data } : {}),
+                ...(profilePictureUrl ? { profilePictureUrl } : {}),
             };
             if (pet.trackerId) {
                 petIdByTracker.set(pet.trackerId, pet.id);
@@ -343,6 +439,7 @@ async function synchronize(api: ITractiveApiEndpoints, fullSync: boolean): Promi
     }
 
     let writtenTrackers = 0;
+    const systemCoordinates = await getSystemCoordinates(api);
     const trackerApiData: Record<
         string,
         {
@@ -388,6 +485,7 @@ async function synchronize(api: ITractiveApiEndpoints, fullSync: boolean): Promi
             location.data,
             hardware.data,
             cache.petIdByTracker,
+            systemCoordinates,
         );
         if (!tracker) {
             api.log.warn('Skipping tracker data that does not match the expected schema');
@@ -402,11 +500,59 @@ async function synchronize(api: ITractiveApiEndpoints, fullSync: boolean): Promi
         cache.lastHardwareSync = Date.now();
     }
 
-    await writeApiData(stateDeps(api), {
+    const rawSnapshot = {
         updatedAt: Date.now(),
+        userInfo: api.auth ? { user_id: api.auth.user_id, expires_at: api.auth.expires_at } : null,
+        account: cache.account ?? null,
+        subscriptions: cache.subscriptions,
+        shares: cache.shares,
         pets: cache.petApiData,
         trackers: trackerApiData,
-    });
+    };
+
+    const account = asRecord(cache.account) ?? {};
+    const accountDetails = asRecord(account.details) ?? {};
+    const accountDemographics = asRecord(account.demographics) ?? {};
+    const accountSettings = asRecord(account.settings) ?? {};
+    const subscriptions = Object.fromEntries(
+        Object.entries({ ...resourcesById(cache.subscriptions.list), ...cache.subscriptions.details }).map(
+            ([subscriptionId, source]) => {
+                const subscription = asRecord(source) ?? {};
+                const renewal = asRecord(subscription.renewal_information) ?? {};
+                return [
+                    subscriptionId,
+                    compactRecord({
+                        status: subscription.status,
+                        validFrom: subscription.valid_from,
+                        validTo: subscription.valid_to,
+                        recurring: subscription.recurring,
+                        planType: subscription.plan_type_used,
+                        trackerId: subscription.tracker_id,
+                        billingInterval: subscription.billing_interval,
+                        insuranceActive: subscription.insurance_active,
+                        renewalCurrency: renewal.currency,
+                        renewalTotal: renewal.total,
+                    }),
+                ];
+            },
+        ),
+    );
+    const logicalTree = {
+        updatedAt: rawSnapshot.updatedAt,
+        account: compactRecord({
+            email: account.email,
+            firstName: accountDetails.first_name,
+            lastName: accountDetails.last_name,
+            activatedAt: account.activated_at,
+            country: accountDemographics.country,
+            language: accountDemographics.language,
+            metricSystem: accountSettings.metric_system,
+            distanceUnit: accountSettings.distance_unit,
+            weightUnit: accountSettings.weight_unit,
+        }),
+        subscriptions,
+    };
+    await writeApiData(stateDeps(api), logicalTree, rawSnapshot);
 
     if (api.getDevicesAsync) {
         const devices = await api.getDevicesAsync();
@@ -414,7 +560,7 @@ async function synchronize(api: ITractiveApiEndpoints, fullSync: boolean): Promi
             const match = /(?:^|\.)trackers\.([^.]+)$/.exec(device._id);
             const trackerId = match?.[1];
             if (trackerId && !seenTrackerIds.has(trackerId)) {
-                await api.setState(`trackers.${trackerId}.health.missing`, true, true);
+                await api.setState(`trackers.${trackerId}.status.missing`, true, true);
             }
         }
     }

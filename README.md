@@ -46,12 +46,12 @@ The adapter uses an unofficial Tractive service interface. A working Tractive ac
 ## Features
 
 - Retrieves the actual names and details of pets associated with the account.
-- Provides current GPS coordinates, altitude, speed, position accuracy, and last update time.
+- Provides current GPS coordinates, altitude, speed, position accuracy, distance from the configured ioBroker location, and last update time.
 - Optionally resolves coordinates to a readable address.
-- Provides battery level, charging state, connection type, online state, and power-saving status.
+- Provides battery level, charging state, used position source (`KNOWN_WIFI`/`GPS`), home/away status, online state, and power-saving status.
 - Provides model, firmware, hardware version, capabilities, gender, birthday, height, weight, and other available information.
 - Supports live tracking, LED, and buzzer commands when the tracker reports the corresponding capability.
-- Stores a sanitized snapshot of all currently retrieved API data.
+- Stores all retrieved account, subscription, share, pet, tracker, position, and hardware data as a logical local state tree and as one complete JSON snapshot.
 - Includes a responsive VIS 2 card with pet image, interactive map, range display, and tracker status.
 - Supports an image supplied by Tractive or a custom image uploaded to ioBroker.
 - Detects missing or stale tracker data without automatically deleting existing objects.
@@ -60,12 +60,12 @@ The adapter uses an unofficial Tractive service interface. A working Tractive ac
 
 Open the adapter instance and configure the following settings:
 
-| Setting | Description |
-| --- | --- |
-| Email | Email address of the Tractive account. |
-| Password | Password of the Tractive account. It is stored using ioBroker's standard encrypted configuration format. |
-| Update interval | Time between regular position updates. Values between 2 and 60 minutes are available. |
-| Resolve coordinates to an address | Requests a readable address for the current coordinates. Disable this option if no address is needed. |
+| Setting                           | Description                                                                                              |
+| --------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Email                             | Email address of the Tractive account.                                                                   |
+| Password                          | Password of the Tractive account. It is stored using ioBroker's standard encrypted configuration format. |
+| Update interval                   | Time between regular position updates. Values between 2 and 60 minutes are available.                    |
+| Resolve coordinates to an address | Requests a readable address for the current coordinates. Disable this option if no address is needed.    |
 
 Use **Test connection** to verify the entered credentials. Save all settings with the normal ioBroker **Save** button at the bottom of the configuration page.
 
@@ -94,14 +94,18 @@ tractive-gps.0
 │   ├── currentApi
 │   ├── refresh
 │   └── status
-├── pets.<pet-id>.info.*
+├── account.*
+├── subscriptions.<subscription-id>.*
+├── pets.<pet-id>
+│   ├── info.*
+│   ├── activity.*
+│   └── media.*
 ├── trackers.<tracker-id>
 │   ├── info.*
 │   ├── status.*
 │   ├── location.*
-│   ├── health.*
+│   ├── hardware.*
 │   └── commands.*
-└── api.data.*
 ```
 
 ### Adapter information
@@ -112,19 +116,19 @@ tractive-gps.0
 - `info.lastSuccessfulSync`: Time of the last successful synchronization.
 - `info.refresh`: Button for manually starting a complete synchronization.
 - `info.status`: Current adapter status.
-- `info.currentApi`: Sanitized JSON snapshot of the currently available Tractive data.
+- `info.currentApi`: Complete JSON snapshot of the currently available Tractive data.
 
 ### Pets
 
-The states below `pets.<pet-id>.info.*` contain the pet name and all available profile information, including type, gender, birthday, height, weight, tracker assignment, and image information.
+The states below `pets.<pet-id>.*` contain useful pet profile information, tracker assignment, activity goals, and the profile picture. Empty and internal API fields are omitted.
 
 ### Trackers
 
-The states below `trackers.<tracker-id>.*` contain tracker identification, battery, online and connection status, position, address, health information, and supported commands.
+The states below `trackers.<tracker-id>.*` contain tracker identification, operational and online status, position, position source, distance from the ioBroker system location, address, battery information, and supported commands. `location.sensorUsed` contains the Tractive position source. `status.home` is derived from `KNOWN_WIFI` or `GPS`. There is no duplicate `connectionType` state. The ioBroker latitude and longitude are configured in the system settings.
 
 ### Complete API data
 
-The sanitized API response is additionally represented below `api.data.*`. Passwords, access tokens, authorization data, email addresses, and account user IDs are removed before data is written to ioBroker.
+Only values useful for scripts, automations, and visualizations are created as individual states. Empty values, API metadata, internal version fields, and duplicate representations are omitted. The complete unmodified combined response remains available as one JSON value in `info.currentApi`. Login passwords and access tokens are never added to it.
 
 ## Tracker commands
 
@@ -144,24 +148,29 @@ The card can display:
 
 - pet name, type, gender, age, and weight,
 - tracker name and online state,
-- pet image,
+- pet image from the local `media.localProfilePictureUrl` state,
 - interactive Leaflet/OpenStreetMap map,
 - reported or manually configured position radius,
-- battery level and connection type,
-- last update, address, power-saving state, and position accuracy.
+- battery level, position source, home/away status, and distance from ioBroker,
+- last update, address, power-saving state, charging state, speed, altitude, and position accuracy,
+- switches for buzzer, LED, and live tracking on supported trackers.
 
-For the Tractive image, select `pets.<pet-id>.info.profilePictureUrl` as the API image state. If no image is returned or it cannot be loaded, select or upload a custom image in the widget's **Appearance** section.
+For the Tractive image, select `pets.<pet-id>.media.localProfilePictureUrl` as the image state. It contains the URL of the copy stored in the local ioBroker file storage. If no image is returned or it cannot be loaded, select or upload a custom image in the widget's **Appearance** section.
 
 The map can automatically fit the complete accuracy or range circle. Minimum and maximum zoom, interaction, range source, and a manual radius can be configured in the widget. Displaying the map downloads map tiles from OpenStreetMap.
+
+To use the command switches, assign the corresponding `trackers.<tracker-id>.commands.*` states in the widget's **Commands** section. Commands are disabled while editing the VIS view and become active in runtime mode.
 
 ## Privacy and security
 
 - The password is stored using ioBroker's encrypted configuration mechanism.
 - Access tokens are kept in memory and are refreshed automatically.
-- Passwords, tokens, email addresses, and account user IDs are removed from the stored API snapshot.
+- Selected account and subscription information is stored in the logical object tree. The complete retrieved API data is stored locally in `info.currentApi`. Protect access to the ioBroker object tree accordingly.
+- Passwords and access tokens are never added to the API state tree and remain protected by the encrypted configuration or in memory.
 - Precise positions are stored locally in ioBroker states because they are required for the adapter's purpose.
 - Reverse geocoding is optional and sends coordinates to Tractive's address service when enabled.
 - Sentry error reporting follows the global ioBroker Sentry configuration.
+- API response bodies and the complete local snapshot are not written to the adapter log or explicitly submitted to Sentry.
 
 ## Troubleshooting
 
@@ -171,7 +180,7 @@ The map can automatically fit the complete accuracy or range circle. Minimum and
 - **HTTP 429 is reported:** Leave the instance running. The adapter pauses requests and retries automatically after the Tractive limit expires.
 - **No address is shown:** Enable reverse geocoding in the adapter configuration.
 - **A command is missing:** The tracker did not report the required capability.
-- **The pet image is missing:** Assign `profilePictureUrl` to the widget or select a custom image.
+- **The pet image is missing:** Assign `localProfilePictureUrl` to the widget or select a custom image.
 
 ## Developer documentation
 
@@ -187,8 +196,17 @@ Information for contributors is available in [Developer documentation](docs/DEVE
 - (xXBJXx) Added the `pets.*`, `trackers.*`, and health object structures.
 - (xXBJXx) Fixed pet names and added all available pet profile states with corrected height and weight units.
 - (xXBJXx) Fixed missing state definitions for API fields that were not known in advance (#81, #113, #305; supersedes #114 and #175).
-- (xXBJXx) Added the sanitized `api.data.*` state tree and `info.currentApi` snapshot.
+- (xXBJXx) Replaced the duplicate API hierarchy with a curated account, subscription, pet, tracker, position, and hardware state tree while retaining the complete JSON snapshot.
+- (xXBJXx) Restored `sensor_used` and distance-from-ioBroker information based on PR #3, added home/away information, and removed the duplicate `connectionType` state.
+- (xXBJXx) Fixed Tractive CDN profile-picture URLs and added home/away status and distance to the VIS 2 card.
+- (xXBJXx) Cached Tractive profile pictures in ioBroker so VIS 2 can display CDN files delivered as binary downloads.
+- (xXBJXx) Fixed profile-picture storage by using a dedicated ioBroker `meta` file container.
+- (xXBJXx) Added the local profile-picture URL, textual charging state, speed, and altitude to the curated states and VIS 2 card.
+- (xXBJXx) Fixed recognition of relative ioBroker file URLs in `localProfilePictureUrl`.
 - (xXBJXx) Added live tracking, LED, and buzzer commands for supported trackers.
+- (xXBJXx) Added buzzer, LED, and live-tracking controls to the VIS 2 card.
+- (xXBJXx) Reorganized the VIS 2 card into compact command, location, tracker, and pet sections.
+- (xXBJXx) Updated the release tooling and added fixed-version Lerna support for the private npm workspaces.
 - (xXBJXx) Rebuilt the adapter configuration for Admin 8 and removed the invalid jsonConfig configuration (#176).
 - (xXBJXx) Added the VIS 2 `PetTrackerCard` widget with pet image, Leaflet/OpenStreetMap map, range display, and tracker information.
 - (xXBJXx) Added support for Tractive profile images and custom ioBroker images.

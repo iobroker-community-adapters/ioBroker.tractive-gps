@@ -134,6 +134,21 @@ npm run build:admin
 npm run build:widgets
 ```
 
+## Release process
+
+The root adapter package and the private Admin and VIS workspaces use fixed Lerna versioning. Keep the versions in `package.json`,
+`src-admin/package.json`, `src-widgets/package.json`, `io-package.json`, and `lerna.json` synchronized.
+
+Releases must be prepared from a clean and current `main` branch. First run a dry run with the appropriate semantic version bump:
+
+```bash
+npm run release -- major --dryRun --noPush --yes
+```
+
+Use `major` for breaking changes, `minor` for backward-compatible features, and `patch` for backward-compatible fixes. After reviewing the dry-run
+output, run the same command without `--dryRun` and `--noPush`. The release script updates the changelog and ioBroker news, builds the project,
+creates the release commit and annotated tag, and pushes them. The tag then triggers the Trusted Publishing workflow.
+
 ## Local ioBroker development server
 
 The project uses `@iobroker/dev-server` for local integration testing:
