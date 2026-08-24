@@ -94,14 +94,21 @@ tractive-gps.0
 │   ├── currentApi
 │   ├── refresh
 │   └── status
-├── pets.<pet-id>.info.*
+├── account.*
+├── subscriptions.<subscription-id>.*
+├── shares.<share-id>.*
+├── pets.<pet-id>
+│   ├── profile.*
+│   ├── assignment.*
+│   ├── properties.*
+│   ├── media.*
+│   └── calculated.*
 ├── trackers.<tracker-id>
 │   ├── info.*
 │   ├── status.*
 │   ├── location.*
-│   ├── health.*
+│   ├── hardware.*
 │   └── commands.*
-└── api.data.*
 ```
 
 ### Adapter information
@@ -116,17 +123,15 @@ tractive-gps.0
 
 ### Pets
 
-The states below `pets.<pet-id>.info.*` contain the pet name and all available profile information, including type, gender, birthday, height, weight, tracker assignment, and image information.
+The states below `pets.<pet-id>.*` contain the complete pet response. Profile data, tracker assignment, resource properties, media, and normalized calculated values are separated into logical channels.
 
 ### Trackers
 
-The states below `trackers.<tracker-id>.*` contain tracker identification, battery, online and connection status, used position sensor, home/away status, position, distance from the ioBroker system location, address, health information, and supported commands. The ioBroker latitude and longitude are configured in the system settings.
-
-The compatibility states `<tracker-id>.device_pos_report.sensor_used` and `<tracker-id>.device_pos_report.distance` are also provided for scripts and visualizations that used the former adapter structure.
+The states below `trackers.<tracker-id>.*` contain tracker identification, status, complete position and hardware reports, distance from the ioBroker system location, address, and supported commands. The real API field `location.sensor_used` identifies the position source. `status.home` is derived from `KNOWN_WIFI` or `GPS`. There is no duplicate `connectionType` state. The ioBroker latitude and longitude are configured in the system settings.
 
 ### Complete API data
 
-The complete retrieved API response is additionally represented below `api.data.*`. Arrays are stored as JSON and also have matching `Length` and individually addressable `Items` objects. This includes locally retrieved account, subscription, share, pet, tracker, position, and hardware information. Login passwords and access tokens are not part of this snapshot because they are never added to the state data.
+The complete response is represented directly by the logical top-level `account`, `subscriptions`, `shares`, `pets`, and `trackers` folders. No additional `api.*` duplicate is created. Newly returned object fields are added automatically. Arrays are stored as JSON and also have matching `Length` states and individually addressable `Items` objects. The unmodified combined response remains available in `info.currentApi`. Login passwords and access tokens are never added to the state data.
 
 ## Tracker commands
 
@@ -152,7 +157,7 @@ The card can display:
 - battery level, connection type, home/away status, and distance from ioBroker,
 - last update, address, power-saving state, and position accuracy.
 
-For the Tractive image, select `pets.<pet-id>.info.profilePictureUrl` as the API image state. If no image is returned or it cannot be loaded, select or upload a custom image in the widget's **Appearance** section.
+For the Tractive image, select `pets.<pet-id>.media.profilePictureUrl` as the API image state. If no image is returned or it cannot be loaded, select or upload a custom image in the widget's **Appearance** section.
 
 The map can automatically fit the complete accuracy or range circle. Minimum and maximum zoom, interaction, range source, and a manual radius can be configured in the widget. Displaying the map downloads map tiles from OpenStreetMap.
 
@@ -160,7 +165,7 @@ The map can automatically fit the complete accuracy or range circle. Minimum and
 
 - The password is stored using ioBroker's encrypted configuration mechanism.
 - Access tokens are kept in memory and are refreshed automatically.
-- The complete retrieved API data, including personal account and subscription information, is stored locally below `api.data.*` and in `info.currentApi`. Protect access to the ioBroker object tree accordingly.
+- The complete retrieved API data, including personal account and subscription information, is stored locally in the logical object tree and in `info.currentApi`. Protect access to the ioBroker object tree accordingly.
 - Passwords and access tokens are never added to the API state tree and remain protected by the encrypted configuration or in memory.
 - Precise positions are stored locally in ioBroker states because they are required for the adapter's purpose.
 - Reverse geocoding is optional and sends coordinates to Tractive's address service when enabled.
@@ -191,8 +196,8 @@ Information for contributors is available in [Developer documentation](docs/DEVE
 - (xXBJXx) Added the `pets.*`, `trackers.*`, and health object structures.
 - (xXBJXx) Fixed pet names and added all available pet profile states with corrected height and weight units.
 - (xXBJXx) Fixed missing state definitions for API fields that were not known in advance (#81, #113, #305; supersedes #114 and #175).
-- (xXBJXx) Added the complete local `api.data.*` state tree and `info.currentApi` snapshot, including account, subscription, share, pet, tracker, position, and hardware data.
-- (xXBJXx) Restored `sensor_used` and distance-from-ioBroker states based on PR #3 and added home/away information.
+- (xXBJXx) Replaced the duplicate `api.data.*` hierarchy with one automatically extensible, logical account, subscription, share, pet, tracker, position, and hardware state tree.
+- (xXBJXx) Restored `sensor_used` and distance-from-ioBroker information based on PR #3, added home/away information, and removed the duplicate `connectionType` state.
 - (xXBJXx) Fixed Tractive CDN profile-picture URLs and added home/away status and distance to the VIS 2 card.
 - (xXBJXx) Added live tracking, LED, and buzzer commands for supported trackers.
 - (xXBJXx) Rebuilt the adapter configuration for Admin 8 and removed the invalid jsonConfig configuration (#176).
