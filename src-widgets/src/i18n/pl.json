@@ -58,5 +58,9 @@
     "years": "lat",
     "weight": "Waga",
     "yes": "Tak",
-    "no": "Nie"
+    "no": "Nie",
+    "commands": "Polecenia",
+    "buzzer": "Brzęczyk",
+    "led": "LED",
+    "live_tracking": "Śledzenie na żywo"
 }

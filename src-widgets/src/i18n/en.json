@@ -58,5 +58,9 @@
     "years": "years",
     "weight": "Weight",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "commands": "Commands",
+    "buzzer": "Buzzer",
+    "led": "LED",
+    "live_tracking": "Live tracking"
 }

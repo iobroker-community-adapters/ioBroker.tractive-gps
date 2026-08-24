@@ -152,11 +152,14 @@ Die Karte kann Folgendes anzeigen:
 - interaktive Leaflet-/OpenStreetMap-Karte,
 - gemeldeter oder manuell eingestellter Positionsradius,
 - Batteriestand, Positionsquelle, Zuhause-/Unterwegs-Status und Entfernung zu ioBroker,
-- letzte Aktualisierung, Adresse, Energiesparzustand, Ladezustand, Geschwindigkeit, Höhe und Positionsgenauigkeit.
+- letzte Aktualisierung, Adresse, Energiesparzustand, Ladezustand, Geschwindigkeit, Höhe und Positionsgenauigkeit,
+- Schalter für Signalton, LED und Live-Tracking bei unterstützten Trackern.
 
 Für das Tractive-Bild wird `pets.<pet-id>.media.localProfilePictureUrl` als Bilddatenpunkt ausgewählt. Er enthält die URL der im lokalen ioBroker-Dateispeicher abgelegten Kopie. Wird kein Bild geliefert oder kann es nicht geladen werden, lässt sich im Widget-Bereich **Darstellung** ein eigenes Bild auswählen oder hochladen.
 
 Die Karte kann den vollständigen Genauigkeits- oder Bereichskreis automatisch einpassen. Minimaler und maximaler Zoom, Bedienung, Bereichsquelle und ein manueller Radius sind in den Widget-Einstellungen konfigurierbar. Zur Anzeige der Karte werden Kartenkacheln von OpenStreetMap geladen.
+
+Für die Befehlsschalter werden die zugehörigen Datenpunkte unter `trackers.<tracker-id>.commands.*` im Widget-Bereich **Befehle** zugeordnet. Während der Bearbeitung der VIS-Ansicht sind die Befehle gesperrt; im Laufzeitmodus lassen sie sich bedienen.
 
 ## Datenschutz und Sicherheit
 
@@ -201,6 +204,7 @@ Informationen für Mitwirkende stehen in der [Entwicklerdokumentation](docs/DEVE
 - (xXBJXx) Lokale Profilbild-URL, textuellen Ladezustand, Geschwindigkeit und Höhe in die ausgewählten Datenpunkte und die VIS-2-Karte aufgenommen.
 - (xXBJXx) Erkennung relativer ioBroker-Datei-URLs in `localProfilePictureUrl` korrigiert.
 - (xXBJXx) Live-Tracking-, LED- und Signalton-Befehle für unterstützte Tracker ergänzt.
+- (xXBJXx) Bedienelemente für Signalton, LED und Live-Tracking in die VIS-2-Karte aufgenommen.
 - (xXBJXx) Adapterkonfiguration für Admin 8 erneuert und die ungültige jsonConfig-Konfiguration entfernt (#176).
 - (xXBJXx) VIS-2-Widget `PetTrackerCard` mit Tierbild, Leaflet-/OpenStreetMap-Karte, Bereichsanzeige und Tracker-Informationen ergänzt.
 - (xXBJXx) Unterstützung für Tractive-Profilbilder und eigene ioBroker-Bilder ergänzt.

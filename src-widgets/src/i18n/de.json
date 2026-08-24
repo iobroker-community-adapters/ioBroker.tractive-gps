@@ -58,5 +58,9 @@
     "years": "Jahre",
     "weight": "Gewicht",
     "yes": "Ja",
-    "no": "Nein"
+    "no": "Nein",
+    "commands": "Befehle",
+    "buzzer": "Signalton",
+    "led": "LED",
+    "live_tracking": "Live-Tracking"
 }

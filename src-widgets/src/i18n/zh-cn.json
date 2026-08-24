@@ -58,5 +58,9 @@
     "years": "岁",
     "weight": "体重",
     "yes": "是",
-    "no": "否"
+    "no": "否",
+    "commands": "命令",
+    "buzzer": "蜂鸣器",
+    "led": "LED",
+    "live_tracking": "实时跟踪"
 }

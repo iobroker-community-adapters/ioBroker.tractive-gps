@@ -152,11 +152,14 @@ The card can display:
 - interactive Leaflet/OpenStreetMap map,
 - reported or manually configured position radius,
 - battery level, position source, home/away status, and distance from ioBroker,
-- last update, address, power-saving state, charging state, speed, altitude, and position accuracy.
+- last update, address, power-saving state, charging state, speed, altitude, and position accuracy,
+- switches for buzzer, LED, and live tracking on supported trackers.
 
 For the Tractive image, select `pets.<pet-id>.media.localProfilePictureUrl` as the image state. It contains the URL of the copy stored in the local ioBroker file storage. If no image is returned or it cannot be loaded, select or upload a custom image in the widget's **Appearance** section.
 
 The map can automatically fit the complete accuracy or range circle. Minimum and maximum zoom, interaction, range source, and a manual radius can be configured in the widget. Displaying the map downloads map tiles from OpenStreetMap.
+
+To use the command switches, assign the corresponding `trackers.<tracker-id>.commands.*` states in the widget's **Commands** section. Commands are disabled while editing the VIS view and become active in runtime mode.
 
 ## Privacy and security
 
@@ -201,6 +204,7 @@ Information for contributors is available in [Developer documentation](docs/DEVE
 - (xXBJXx) Added the local profile-picture URL, textual charging state, speed, and altitude to the curated states and VIS 2 card.
 - (xXBJXx) Fixed recognition of relative ioBroker file URLs in `localProfilePictureUrl`.
 - (xXBJXx) Added live tracking, LED, and buzzer commands for supported trackers.
+- (xXBJXx) Added buzzer, LED, and live-tracking controls to the VIS 2 card.
 - (xXBJXx) Rebuilt the adapter configuration for Admin 8 and removed the invalid jsonConfig configuration (#176).
 - (xXBJXx) Added the VIS 2 `PetTrackerCard` widget with pet image, Leaflet/OpenStreetMap map, range display, and tracker information.
 - (xXBJXx) Added support for Tractive profile images and custom ioBroker images.

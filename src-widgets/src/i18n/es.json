@@ -58,5 +58,9 @@
     "years": "años",
     "weight": "Peso",
     "yes": "Sí",
-    "no": "No"
+    "no": "No",
+    "commands": "Comandos",
+    "buzzer": "Zumbador",
+    "led": "LED",
+    "live_tracking": "Seguimiento en vivo"
 }

@@ -2,8 +2,10 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import LinearProgress from '@mui/material/LinearProgress';
 import Stack from '@mui/material/Stack';
+import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
 import { ThemeProvider } from '@mui/material/styles';
 import type { RxRenderWidgetProps, RxWidgetInfo, RxWidgetInfoAttributesField } from '@iobroker/types-vis-2';
@@ -36,6 +38,9 @@ interface PetTrackerCardData {
     longitudeOid: string;
     addressOid: string;
     imageOid: string;
+    buzzerCommandOid: string;
+    ledCommandOid: string;
+    liveTrackingCommandOid: string;
     customImage: string;
     mapZoom: number;
     mapRange: number;
@@ -83,6 +88,8 @@ function InfoRow({ icon, label, value }: InfoRowProps): React.JSX.Element {
 }
 
 export default class PetTrackerCard extends (window.visRxWidget as typeof VisRxWidget)<PetTrackerCardData> {
+    private readonly pendingCommands = new Set<string>();
+
     static getWidgetInfo(): RxWidgetInfo {
         const idField = (name: keyof PetTrackerCardData, label: string): RxWidgetInfoAttributesField => ({
             name,
@@ -158,6 +165,15 @@ export default class PetTrackerCard extends (window.visRxWidget as typeof VisRxW
                         { name: 'accuracyColor', label: 'accuracy_color', type: 'color' },
                     ],
                 },
+                {
+                    name: 'commands',
+                    label: 'commands',
+                    fields: [
+                        idField('buzzerCommandOid', 'buzzer'),
+                        idField('ledCommandOid', 'led'),
+                        idField('liveTrackingCommandOid', 'live_tracking'),
+                    ],
+                },
             ],
         };
     }
@@ -184,6 +200,27 @@ export default class PetTrackerCard extends (window.visRxWidget as typeof VisRxW
     private numberValue(name: keyof PetTrackerCardData): number | undefined {
         const value = this.value(name);
         return typeof value === 'number' && Number.isFinite(value) ? value : undefined;
+    }
+
+    private writeCommand(name: keyof PetTrackerCardData, value: boolean): void {
+        const objectId = this.state.rxData[name];
+        if (
+            typeof objectId !== 'string' ||
+            !objectId ||
+            this.props.context.disableInteraction ||
+            this.pendingCommands.has(objectId)
+        ) {
+            return;
+        }
+        this.pendingCommands.add(objectId);
+        this.forceUpdate();
+        void this.props.context.socket
+            .setState(objectId, value)
+            .catch(() => undefined)
+            .finally(() => {
+                this.pendingCommands.delete(objectId);
+                this.forceUpdate();
+            });
     }
 
     private resolveImagePath(value: string | undefined): string | undefined {
@@ -259,6 +296,10 @@ export default class PetTrackerCard extends (window.visRxWidget as typeof VisRxW
                     : undefined;
         const locationStatus = home === undefined ? '—' : PetTrackerCard.t(home ? 'home' : 'away');
         const distance = this.numberValue('distanceOid');
+        const buzzerCommandOid = this.state.rxData.buzzerCommandOid;
+        const ledCommandOid = this.state.rxData.ledCommandOid;
+        const liveTrackingCommandOid = this.state.rxData.liveTrackingCommandOid;
+        const hasCommands = Boolean(buzzerCommandOid || ledCommandOid || liveTrackingCommandOid);
 
         return (
             <ThemeProvider theme={this.props.context.theme}>
@@ -362,6 +403,73 @@ export default class PetTrackerCard extends (window.visRxWidget as typeof VisRxW
                                         title={`${PetTrackerCard.t('location')}: ${title}`}
                                     />
                                 </Box>
+                                {hasCommands ? (
+                                    <Box>
+                                        <Divider sx={{ my: 2 }} />
+                                        <Typography
+                                            variant="subtitle2"
+                                            sx={{ mb: 0.5 }}
+                                        >
+                                            {PetTrackerCard.t('commands')}
+                                        </Typography>
+                                        <Stack
+                                            direction={{ xs: 'column', sm: 'row' }}
+                                            spacing={{ xs: 0, sm: 2 }}
+                                        >
+                                            {buzzerCommandOid ? (
+                                                <FormControlLabel
+                                                    control={
+                                                        <Switch
+                                                            checked={this.value('buzzerCommandOid') === true}
+                                                            disabled={
+                                                                this.props.context.disableInteraction ||
+                                                                this.pendingCommands.has(buzzerCommandOid)
+                                                            }
+                                                            onChange={(_event, checked) =>
+                                                                this.writeCommand('buzzerCommandOid', checked)
+                                                            }
+                                                        />
+                                                    }
+                                                    label={PetTrackerCard.t('buzzer')}
+                                                />
+                                            ) : null}
+                                            {ledCommandOid ? (
+                                                <FormControlLabel
+                                                    control={
+                                                        <Switch
+                                                            checked={this.value('ledCommandOid') === true}
+                                                            disabled={
+                                                                this.props.context.disableInteraction ||
+                                                                this.pendingCommands.has(ledCommandOid)
+                                                            }
+                                                            onChange={(_event, checked) =>
+                                                                this.writeCommand('ledCommandOid', checked)
+                                                            }
+                                                        />
+                                                    }
+                                                    label={PetTrackerCard.t('led')}
+                                                />
+                                            ) : null}
+                                            {liveTrackingCommandOid ? (
+                                                <FormControlLabel
+                                                    control={
+                                                        <Switch
+                                                            checked={this.value('liveTrackingCommandOid') === true}
+                                                            disabled={
+                                                                this.props.context.disableInteraction ||
+                                                                this.pendingCommands.has(liveTrackingCommandOid)
+                                                            }
+                                                            onChange={(_event, checked) =>
+                                                                this.writeCommand('liveTrackingCommandOid', checked)
+                                                            }
+                                                        />
+                                                    }
+                                                    label={PetTrackerCard.t('live_tracking')}
+                                                />
+                                            ) : null}
+                                        </Stack>
+                                    </Box>
+                                ) : null}
                             </Box>
 
                             <Box sx={{ p: 2 }}>

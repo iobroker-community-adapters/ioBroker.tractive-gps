@@ -58,5 +58,9 @@
     "years": "jaar",
     "weight": "Gewicht",
     "yes": "Ja",
-    "no": "Nee"
+    "no": "Nee",
+    "commands": "Opdrachten",
+    "buzzer": "Zoemer",
+    "led": "LED",
+    "live_tracking": "Live-tracking"
 }
