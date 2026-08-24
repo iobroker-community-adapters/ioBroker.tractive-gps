@@ -60,7 +60,7 @@ describe('data aggregation migration', () => {
         expect(states.get('pets.pet-1.activity.dailyGoal')).to.equal(1000);
         expect(states.get('pets.pet-1.activity.dailyDistanceGoal')).to.equal(2500);
         expect(states.get('pets.pet-1.info.weight')).to.equal(4.9);
-        expect(states.get('pets.pet-1.media.profilePictureUrl')).to.equal(
+        expect(states.get('pets.pet-1.media.localProfilePictureUrl')).to.equal(
             'https://cdn.tractive.com/3/media/resource/image-1.jpg',
         );
     });
@@ -137,13 +137,20 @@ describe('data aggregation migration', () => {
                         _id: 'tracker-1',
                         state: 'OPERATIONAL',
                         state_reason: 'POWER_SAVING',
+                        charging_state: 'NOT_CHARGING',
                         capabilities: ['LT'],
                     },
                 }),
             getTrackerLocation: () =>
                 Promise.resolve({
                     success: true,
-                    data: { latlong: [48.21, 13.4], sensor_used: 'KNOWN_WIFI', time: 1_787_500_000 },
+                    data: {
+                        latlong: [48.21, 13.4],
+                        sensor_used: 'KNOWN_WIFI',
+                        time: 1_787_500_000,
+                        speed: 0.2,
+                        altitude: 465,
+                    },
                 }),
             getTrackerHardware: () => Promise.resolve({ success: true, data: { battery_level: 95 } }),
         };
@@ -155,6 +162,9 @@ describe('data aggregation migration', () => {
         expect(states.get('trackers.tracker-1.status.state')).to.equal('OPERATIONAL');
         expect(states.get('trackers.tracker-1.status.stateReason')).to.equal('POWER_SAVING');
         expect(states.get('trackers.tracker-1.hardware.batteryLevel')).to.equal(95);
+        expect(states.get('trackers.tracker-1.hardware.chargingState')).to.equal('NOT_CHARGING');
+        expect(states.get('trackers.tracker-1.location.speed')).to.equal(0.2);
+        expect(states.get('trackers.tracker-1.location.altitude')).to.equal(465);
         expect(states.has('trackers.tracker-1.location.latlong')).to.equal(false);
         expect(states.has('trackers.tracker-1.status.connectionType')).to.equal(false);
         expect(states.has('api.data.account.email')).to.equal(false);

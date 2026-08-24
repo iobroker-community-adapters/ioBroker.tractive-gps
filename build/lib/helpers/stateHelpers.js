@@ -267,8 +267,8 @@ async function writePetStates(deps, pet) {
   }
   if (pet.profilePictureUrl !== void 0) {
     mediaStates.push({
-      id: `${media}.profilePictureUrl`,
-      name: "Profile picture URL",
+      id: `${media}.localProfilePictureUrl`,
+      name: "Local profile picture URL",
       type: "string",
       role: "text.url",
       value: pet.profilePictureUrl
@@ -497,6 +497,15 @@ async function writeTrackerStates(deps, tracker) {
       type: "boolean",
       role: "indicator",
       value: tracker.charging
+    });
+  }
+  if (tracker.chargingState !== void 0) {
+    hardwareStates.push({
+      id: `${hardware}.chargingState`,
+      name: "Charging state",
+      type: "string",
+      role: "text",
+      value: tracker.chargingState
     });
   }
   if (tracker.batteryState !== void 0) {

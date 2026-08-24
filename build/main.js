@@ -26,7 +26,7 @@ var import_tractive_api = require("./lib/tractive-api");
 const MINIMUM_INTERVAL_SECONDS = 120;
 const MAXIMUM_INTERVAL_SECONDS = 3600;
 const FULL_SYNC_INTERVAL_MS = 24 * 60 * 60 * 1e3;
-const OBJECT_STRUCTURE_VERSION = 3;
+const OBJECT_STRUCTURE_VERSION = 4;
 class TractiveGPS extends utils.Adapter {
   tractiveApi = null;
   pollTimer = null;

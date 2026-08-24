@@ -148,13 +148,13 @@ The card can display:
 
 - pet name, type, gender, age, and weight,
 - tracker name and online state,
-- pet image,
+- pet image from the local `media.localProfilePictureUrl` state,
 - interactive Leaflet/OpenStreetMap map,
 - reported or manually configured position radius,
 - battery level, position source, home/away status, and distance from ioBroker,
-- last update, address, power-saving state, and position accuracy.
+- last update, address, power-saving state, charging state, speed, altitude, and position accuracy.
 
-For the Tractive image, select `pets.<pet-id>.media.profilePictureUrl` as the API image state. The adapter downloads the Tractive picture into the local ioBroker file storage because the Tractive CDN declares JPEG files as downloads. If no image is returned or it cannot be loaded, select or upload a custom image in the widget's **Appearance** section.
+For the Tractive image, select `pets.<pet-id>.media.localProfilePictureUrl` as the image state. It contains the URL of the copy stored in the local ioBroker file storage. If no image is returned or it cannot be loaded, select or upload a custom image in the widget's **Appearance** section.
 
 The map can automatically fit the complete accuracy or range circle. Minimum and maximum zoom, interaction, range source, and a manual radius can be configured in the widget. Displaying the map downloads map tiles from OpenStreetMap.
 
@@ -177,7 +177,7 @@ The map can automatically fit the complete accuracy or range circle. Minimum and
 - **HTTP 429 is reported:** Leave the instance running. The adapter pauses requests and retries automatically after the Tractive limit expires.
 - **No address is shown:** Enable reverse geocoding in the adapter configuration.
 - **A command is missing:** The tracker did not report the required capability.
-- **The pet image is missing:** Assign `profilePictureUrl` to the widget or select a custom image.
+- **The pet image is missing:** Assign `localProfilePictureUrl` to the widget or select a custom image.
 
 ## Developer documentation
 
@@ -198,6 +198,7 @@ Information for contributors is available in [Developer documentation](docs/DEVE
 - (xXBJXx) Fixed Tractive CDN profile-picture URLs and added home/away status and distance to the VIS 2 card.
 - (xXBJXx) Cached Tractive profile pictures in ioBroker so VIS 2 can display CDN files delivered as binary downloads.
 - (xXBJXx) Fixed profile-picture storage by using a dedicated ioBroker `meta` file container.
+- (xXBJXx) Added the local profile-picture URL, textual charging state, speed, and altitude to the curated states and VIS 2 card.
 - (xXBJXx) Added live tracking, LED, and buzzer commands for supported trackers.
 - (xXBJXx) Rebuilt the adapter configuration for Admin 8 and removed the invalid jsonConfig configuration (#176).
 - (xXBJXx) Added the VIS 2 `PetTrackerCard` widget with pet image, Leaflet/OpenStreetMap map, range display, and tracker information.

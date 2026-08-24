@@ -322,6 +322,7 @@ function normalizeTracker(
         home: normalizedSensor === 'KNOWN_WIFI' ? true : normalizedSensor === 'GPS' ? false : undefined,
         batteryLevel: firstNumber(hardware ? [hardware] : [], 'battery_level'),
         charging: chargingState === undefined ? undefined : chargingState.toUpperCase() === 'CHARGING',
+        chargingState,
         powerSaving:
             firstBoolean(records, 'battery_save_mode', 'power_saving') ??
             (stateReason === undefined ? undefined : stateReason.toUpperCase().includes('POWER')),

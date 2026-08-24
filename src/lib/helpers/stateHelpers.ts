@@ -49,6 +49,7 @@ export interface TrackerStateModel {
     home?: boolean;
     batteryLevel?: number;
     charging?: boolean;
+    chargingState?: string;
     powerSaving?: boolean;
     positionAccuracy?: number;
     latitude?: number;
@@ -336,8 +337,8 @@ export async function writePetStates(deps: StateDeps, pet: PetStateModel): Promi
     }
     if (pet.profilePictureUrl !== undefined) {
         mediaStates.push({
-            id: `${media}.profilePictureUrl`,
-            name: 'Profile picture URL',
+            id: `${media}.localProfilePictureUrl`,
+            name: 'Local profile picture URL',
             type: 'string',
             role: 'text.url',
             value: pet.profilePictureUrl,
@@ -567,6 +568,15 @@ export async function writeTrackerStates(deps: StateDeps, tracker: TrackerStateM
             type: 'boolean',
             role: 'indicator',
             value: tracker.charging,
+        });
+    }
+    if (tracker.chargingState !== undefined) {
+        hardwareStates.push({
+            id: `${hardware}.chargingState`,
+            name: 'Charging state',
+            type: 'string',
+            role: 'text',
+            value: tracker.chargingState,
         });
     }
     if (tracker.batteryState !== undefined) {

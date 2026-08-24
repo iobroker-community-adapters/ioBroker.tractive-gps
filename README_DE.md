@@ -148,13 +148,13 @@ Die Karte kann Folgendes anzeigen:
 
 - Tiername, Tierart, Geschlecht, Alter und Gewicht,
 - Tracker-Name und Online-Status,
-- Tierbild,
+- Tierbild aus dem lokalen Datenpunkt `media.localProfilePictureUrl`,
 - interaktive Leaflet-/OpenStreetMap-Karte,
 - gemeldeter oder manuell eingestellter Positionsradius,
 - Batteriestand, Positionsquelle, Zuhause-/Unterwegs-Status und Entfernung zu ioBroker,
-- letzte Aktualisierung, Adresse, Energiesparzustand und Positionsgenauigkeit.
+- letzte Aktualisierung, Adresse, Energiesparzustand, Ladezustand, Geschwindigkeit, Höhe und Positionsgenauigkeit.
 
-Für das Tractive-Bild wird `pets.<pet-id>.media.profilePictureUrl` als API-Bilddatenpunkt ausgewählt. Der Adapter lädt das Tractive-Bild in den lokalen ioBroker-Dateispeicher, da das Tractive-CDN JPEG-Dateien als Download ausliefert. Wird kein Bild geliefert oder kann es nicht geladen werden, lässt sich im Widget-Bereich **Darstellung** ein eigenes Bild auswählen oder hochladen.
+Für das Tractive-Bild wird `pets.<pet-id>.media.localProfilePictureUrl` als Bilddatenpunkt ausgewählt. Er enthält die URL der im lokalen ioBroker-Dateispeicher abgelegten Kopie. Wird kein Bild geliefert oder kann es nicht geladen werden, lässt sich im Widget-Bereich **Darstellung** ein eigenes Bild auswählen oder hochladen.
 
 Die Karte kann den vollständigen Genauigkeits- oder Bereichskreis automatisch einpassen. Minimaler und maximaler Zoom, Bedienung, Bereichsquelle und ein manueller Radius sind in den Widget-Einstellungen konfigurierbar. Zur Anzeige der Karte werden Kartenkacheln von OpenStreetMap geladen.
 
@@ -177,7 +177,7 @@ Die Karte kann den vollständigen Genauigkeits- oder Bereichskreis automatisch e
 - **HTTP 429 wird gemeldet:** Die Instanz weiterlaufen lassen. Der Adapter pausiert seine Anfragen und wiederholt sie automatisch nach Ablauf der Tractive-Begrenzung.
 - **Keine Adresse sichtbar:** Rückwärts-Geokodierung in der Adapterkonfiguration aktivieren.
 - **Ein Befehl fehlt:** Der Tracker meldet die dafür notwendige Fähigkeit nicht.
-- **Tierbild fehlt:** `profilePictureUrl` im Widget zuordnen oder ein eigenes Bild auswählen.
+- **Tierbild fehlt:** `localProfilePictureUrl` im Widget zuordnen oder ein eigenes Bild auswählen.
 
 ## Entwicklerdokumentation
 
@@ -198,6 +198,7 @@ Informationen für Mitwirkende stehen in der [Entwicklerdokumentation](docs/DEVE
 - (xXBJXx) Tractive-CDN-URLs für Profilbilder korrigiert und Zuhause-/Unterwegs-Status sowie Entfernung zur VIS-2-Karte hinzugefügt.
 - (xXBJXx) Tractive-Profilbilder in ioBroker zwischengespeichert, damit VIS 2 die als Binärdownload ausgelieferten CDN-Dateien anzeigen kann.
 - (xXBJXx) Die Profilbildablage durch einen eigenen ioBroker-Dateicontainer vom Typ `meta` korrigiert.
+- (xXBJXx) Lokale Profilbild-URL, textuellen Ladezustand, Geschwindigkeit und Höhe in die ausgewählten Datenpunkte und die VIS-2-Karte aufgenommen.
 - (xXBJXx) Live-Tracking-, LED- und Signalton-Befehle für unterstützte Tracker ergänzt.
 - (xXBJXx) Adapterkonfiguration für Admin 8 erneuert und die ungültige jsonConfig-Konfiguration entfernt (#176).
 - (xXBJXx) VIS-2-Widget `PetTrackerCard` mit Tierbild, Leaflet-/OpenStreetMap-Karte, Bereichsanzeige und Tracker-Informationen ergänzt.

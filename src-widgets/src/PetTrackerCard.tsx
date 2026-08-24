@@ -21,6 +21,7 @@ interface PetTrackerCardData {
     birthdayOid: string;
     weightOid: string;
     batteryOid: string;
+    chargingStateOid: string;
     onlineOid: string;
     staleOid: string;
     lastSeenOid: string;
@@ -29,6 +30,8 @@ interface PetTrackerCardData {
     distanceOid: string;
     powerSavingOid: string;
     positionAccuracyOid: string;
+    speedOid: string;
+    altitudeOid: string;
     latitudeOid: string;
     longitudeOid: string;
     addressOid: string;
@@ -106,6 +109,7 @@ export default class PetTrackerCard extends (window.visRxWidget as typeof VisRxW
                         idField('birthdayOid', 'birthday_state'),
                         idField('weightOid', 'weight_state'),
                         idField('batteryOid', 'battery_state'),
+                        idField('chargingStateOid', 'charging_state'),
                         idField('onlineOid', 'online_state'),
                         idField('staleOid', 'stale_state'),
                         idField('lastSeenOid', 'last_seen_state'),
@@ -114,6 +118,8 @@ export default class PetTrackerCard extends (window.visRxWidget as typeof VisRxW
                         idField('distanceOid', 'distance_state'),
                         idField('powerSavingOid', 'power_saving_state'),
                         idField('positionAccuracyOid', 'position_accuracy_state'),
+                        idField('speedOid', 'speed'),
+                        idField('altitudeOid', 'altitude'),
                         idField('latitudeOid', 'latitude_state'),
                         idField('longitudeOid', 'longitude_state'),
                         idField('addressOid', 'address_state'),
@@ -237,6 +243,9 @@ export default class PetTrackerCard extends (window.visRxWidget as typeof VisRxW
         const configuredRange = Number.isFinite(this.state.rxData.mapRange) ? this.state.rxData.mapRange : 0;
         const mapRange = configuredRange > 0 ? Math.min(1_000_000, configuredRange) : accuracy;
         const weight = this.numberValue('weightOid');
+        const chargingState = this.stringValue('chargingStateOid');
+        const speed = this.numberValue('speedOid');
+        const altitude = this.numberValue('altitudeOid');
         const sensorUsed = this.stringValue('sensorUsedOid');
         const homeValue = this.value('homeOid');
         const normalizedSensor = sensorUsed?.toUpperCase();
@@ -414,9 +423,24 @@ export default class PetTrackerCard extends (window.visRxWidget as typeof VisRxW
                                             />
                                         </Box>
                                         <InfoRow
+                                            icon="🔌"
+                                            label={PetTrackerCard.t('charging_state')}
+                                            value={chargingState ?? '—'}
+                                        />
+                                        <InfoRow
                                             icon="🎯"
                                             label={PetTrackerCard.t('position_accuracy')}
                                             value={accuracy === undefined ? '—' : `±${accuracy} m`}
+                                        />
+                                        <InfoRow
+                                            icon="💨"
+                                            label={PetTrackerCard.t('speed')}
+                                            value={speed === undefined ? '—' : `${speed} km/h`}
+                                        />
+                                        <InfoRow
+                                            icon="⛰️"
+                                            label={PetTrackerCard.t('altitude')}
+                                            value={altitude === undefined ? '—' : `${altitude} m`}
                                         />
                                         <InfoRow
                                             icon="⚥"
