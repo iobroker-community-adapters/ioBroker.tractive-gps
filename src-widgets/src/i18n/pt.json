@@ -62,5 +62,7 @@
     "commands": "Comandos",
     "buzzer": "Sinal sonoro",
     "led": "LED",
-    "live_tracking": "Rastreamento ao vivo"
+    "live_tracking": "Rastreamento ao vivo",
+    "tracker_status": "Rastreador",
+    "pet_details": "Dados do animal"
 }

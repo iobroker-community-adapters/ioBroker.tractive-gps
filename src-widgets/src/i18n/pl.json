@@ -62,5 +62,7 @@
     "commands": "Polecenia",
     "buzzer": "Brzęczyk",
     "led": "LED",
-    "live_tracking": "Śledzenie na żywo"
+    "live_tracking": "Śledzenie na żywo",
+    "tracker_status": "Lokalizator",
+    "pet_details": "Dane zwierzęcia"
 }

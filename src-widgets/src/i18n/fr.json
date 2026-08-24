@@ -62,5 +62,7 @@
     "commands": "Commandes",
     "buzzer": "Signal sonore",
     "led": "LED",
-    "live_tracking": "Suivi en direct"
+    "live_tracking": "Suivi en direct",
+    "tracker_status": "Traceur",
+    "pet_details": "Détails de l’animal"
 }

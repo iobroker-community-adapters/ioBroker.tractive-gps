@@ -62,5 +62,7 @@
     "commands": "Comandos",
     "buzzer": "Zumbador",
     "led": "LED",
-    "live_tracking": "Seguimiento en vivo"
+    "live_tracking": "Seguimiento en vivo",
+    "tracker_status": "Rastreador",
+    "pet_details": "Datos de la mascota"
 }

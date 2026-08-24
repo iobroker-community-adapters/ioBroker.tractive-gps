@@ -62,5 +62,7 @@
     "commands": "Befehle",
     "buzzer": "Signalton",
     "led": "LED",
-    "live_tracking": "Live-Tracking"
+    "live_tracking": "Live-Tracking",
+    "tracker_status": "Tracker",
+    "pet_details": "Tierdaten"
 }

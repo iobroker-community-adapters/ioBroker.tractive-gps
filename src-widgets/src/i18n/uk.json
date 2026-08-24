@@ -62,5 +62,7 @@
     "commands": "Команди",
     "buzzer": "Зумер",
     "led": "LED",
-    "live_tracking": "Відстеження наживо"
+    "live_tracking": "Відстеження наживо",
+    "tracker_status": "Трекер",
+    "pet_details": "Дані тварини"
 }

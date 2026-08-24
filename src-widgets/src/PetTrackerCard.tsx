@@ -1,7 +1,6 @@
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Chip from '@mui/material/Chip';
-import Divider from '@mui/material/Divider';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import LinearProgress from '@mui/material/LinearProgress';
 import Stack from '@mui/material/Stack';
@@ -404,22 +403,52 @@ export default class PetTrackerCard extends (window.visRxWidget as typeof VisRxW
                                     />
                                 </Box>
                                 {hasCommands ? (
-                                    <Box>
-                                        <Divider sx={{ my: 2 }} />
+                                    <Box
+                                        sx={{
+                                            mt: 2,
+                                            p: 1.5,
+                                            borderRadius: 2,
+                                            bgcolor: 'action.hover',
+                                            border: 1,
+                                            borderColor: 'divider',
+                                        }}
+                                    >
                                         <Typography
                                             variant="subtitle2"
-                                            sx={{ mb: 0.5 }}
+                                            color="text.secondary"
+                                            sx={{ mb: 1, fontWeight: 700 }}
                                         >
                                             {PetTrackerCard.t('commands')}
                                         </Typography>
-                                        <Stack
-                                            direction={{ xs: 'column', sm: 'row' }}
-                                            spacing={{ xs: 0, sm: 2 }}
+                                        <Box
+                                            sx={{
+                                                display: 'grid',
+                                                gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+                                                gap: 1,
+                                            }}
                                         >
                                             {buzzerCommandOid ? (
                                                 <FormControlLabel
+                                                    sx={{
+                                                        m: 0,
+                                                        px: 1,
+                                                        py: 0.5,
+                                                        minWidth: 0,
+                                                        borderRadius: 1.5,
+                                                        bgcolor:
+                                                            this.value('buzzerCommandOid') === true
+                                                                ? 'action.selected'
+                                                                : 'background.paper',
+                                                        justifyContent: 'center',
+                                                        '& .MuiFormControlLabel-label': {
+                                                            fontSize: '0.8rem',
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis',
+                                                        },
+                                                    }}
                                                     control={
                                                         <Switch
+                                                            size="small"
                                                             checked={this.value('buzzerCommandOid') === true}
                                                             disabled={
                                                                 this.props.context.disableInteraction ||
@@ -435,8 +464,22 @@ export default class PetTrackerCard extends (window.visRxWidget as typeof VisRxW
                                             ) : null}
                                             {ledCommandOid ? (
                                                 <FormControlLabel
+                                                    sx={{
+                                                        m: 0,
+                                                        px: 1,
+                                                        py: 0.5,
+                                                        minWidth: 0,
+                                                        borderRadius: 1.5,
+                                                        bgcolor:
+                                                            this.value('ledCommandOid') === true
+                                                                ? 'action.selected'
+                                                                : 'background.paper',
+                                                        justifyContent: 'center',
+                                                        '& .MuiFormControlLabel-label': { fontSize: '0.8rem' },
+                                                    }}
                                                     control={
                                                         <Switch
+                                                            size="small"
                                                             checked={this.value('ledCommandOid') === true}
                                                             disabled={
                                                                 this.props.context.disableInteraction ||
@@ -452,8 +495,26 @@ export default class PetTrackerCard extends (window.visRxWidget as typeof VisRxW
                                             ) : null}
                                             {liveTrackingCommandOid ? (
                                                 <FormControlLabel
+                                                    sx={{
+                                                        m: 0,
+                                                        px: 1,
+                                                        py: 0.5,
+                                                        minWidth: 0,
+                                                        borderRadius: 1.5,
+                                                        bgcolor:
+                                                            this.value('liveTrackingCommandOid') === true
+                                                                ? 'action.selected'
+                                                                : 'background.paper',
+                                                        justifyContent: 'center',
+                                                        '& .MuiFormControlLabel-label': {
+                                                            fontSize: '0.8rem',
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis',
+                                                        },
+                                                    }}
                                                     control={
                                                         <Switch
+                                                            size="small"
                                                             checked={this.value('liveTrackingCommandOid') === true}
                                                             disabled={
                                                                 this.props.context.disableInteraction ||
@@ -467,105 +528,148 @@ export default class PetTrackerCard extends (window.visRxWidget as typeof VisRxW
                                                     label={PetTrackerCard.t('live_tracking')}
                                                 />
                                             ) : null}
-                                        </Stack>
+                                        </Box>
                                     </Box>
                                 ) : null}
                             </Box>
 
                             <Box sx={{ p: 2 }}>
-                                <Divider sx={{ mb: 2 }} />
                                 <Box
                                     sx={{
                                         display: 'grid',
-                                        gridTemplateColumns: { xs: '1fr', sm: 'minmax(0, 1fr) minmax(0, 1fr)' },
-                                        gap: 2.5,
+                                        gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))',
+                                        gap: 1.5,
                                     }}
                                 >
-                                    <Stack spacing={1.5}>
-                                        <InfoRow
-                                            icon="📶"
-                                            label={PetTrackerCard.t('position_source')}
-                                            value={sensorUsed ?? '—'}
-                                        />
-                                        <InfoRow
-                                            icon="🕒"
-                                            label={PetTrackerCard.t('last_update')}
-                                            value={PetTrackerCard.formatDate(this.value('lastSeenOid'))}
-                                        />
-                                        <InfoRow
-                                            icon="🏠"
-                                            label={PetTrackerCard.t('location_status')}
-                                            value={sensorUsed ? `${locationStatus} · ${sensorUsed}` : locationStatus}
-                                        />
-                                        <InfoRow
-                                            icon="📏"
-                                            label={PetTrackerCard.t('distance')}
-                                            value={PetTrackerCard.formatDistance(distance)}
-                                        />
-                                        <InfoRow
-                                            icon="🔋"
-                                            label={PetTrackerCard.t('power_saving')}
-                                            value={PetTrackerCard.t(
-                                                this.value('powerSavingOid') === true ? 'yes' : 'no',
-                                            )}
-                                        />
-                                        <InfoRow
-                                            icon="📍"
-                                            label={PetTrackerCard.t('address')}
-                                            value={address ?? '—'}
-                                        />
-                                    </Stack>
-                                    <Stack spacing={1.5}>
-                                        <Box>
+                                    <Box sx={{ p: 1.5, borderRadius: 2, bgcolor: 'action.hover', minWidth: 0 }}>
+                                        <Typography
+                                            variant="subtitle2"
+                                            color="text.secondary"
+                                            sx={{ mb: 1.5, fontWeight: 700 }}
+                                        >
+                                            {PetTrackerCard.t('location')}
+                                        </Typography>
+                                        <Stack spacing={1.35}>
+                                            <InfoRow
+                                                icon="📶"
+                                                label={PetTrackerCard.t('position_source')}
+                                                value={sensorUsed ?? '—'}
+                                            />
+                                            <InfoRow
+                                                icon="🕒"
+                                                label={PetTrackerCard.t('last_update')}
+                                                value={PetTrackerCard.formatDate(this.value('lastSeenOid'))}
+                                            />
+                                            <InfoRow
+                                                icon="🏠"
+                                                label={PetTrackerCard.t('location_status')}
+                                                value={
+                                                    sensorUsed ? `${locationStatus} · ${sensorUsed}` : locationStatus
+                                                }
+                                            />
+                                            <InfoRow
+                                                icon="📏"
+                                                label={PetTrackerCard.t('distance')}
+                                                value={PetTrackerCard.formatDistance(distance)}
+                                            />
+                                            <InfoRow
+                                                icon="📍"
+                                                label={PetTrackerCard.t('address')}
+                                                value={address ?? '—'}
+                                            />
+                                        </Stack>
+                                    </Box>
+                                    <Box sx={{ p: 1.5, borderRadius: 2, bgcolor: 'action.hover', minWidth: 0 }}>
+                                        <Typography
+                                            variant="subtitle2"
+                                            color="text.secondary"
+                                            sx={{ mb: 1.5, fontWeight: 700 }}
+                                        >
+                                            {PetTrackerCard.t('tracker_status')}
+                                        </Typography>
+                                        <Stack spacing={1.35}>
+                                            <Box>
+                                                <InfoRow
+                                                    icon="🔋"
+                                                    label={PetTrackerCard.t('battery')}
+                                                    value={battery === undefined ? '—' : `${battery}%`}
+                                                />
+                                                <LinearProgress
+                                                    variant="determinate"
+                                                    value={battery ?? 0}
+                                                    color={battery !== undefined && battery < 20 ? 'error' : 'success'}
+                                                    aria-label={PetTrackerCard.t('battery')}
+                                                    sx={{ mt: 0.75, ml: 4, height: 7, borderRadius: 2 }}
+                                                />
+                                            </Box>
+                                            <InfoRow
+                                                icon="🔌"
+                                                label={PetTrackerCard.t('charging_state')}
+                                                value={chargingState ?? '—'}
+                                            />
+                                            <InfoRow
+                                                icon="🎯"
+                                                label={PetTrackerCard.t('position_accuracy')}
+                                                value={accuracy === undefined ? '—' : `±${accuracy} m`}
+                                            />
+                                            <InfoRow
+                                                icon="💨"
+                                                label={PetTrackerCard.t('speed')}
+                                                value={speed === undefined ? '—' : `${speed} km/h`}
+                                            />
+                                            <InfoRow
+                                                icon="⛰️"
+                                                label={PetTrackerCard.t('altitude')}
+                                                value={altitude === undefined ? '—' : `${altitude} m`}
+                                            />
                                             <InfoRow
                                                 icon="🔋"
-                                                label={PetTrackerCard.t('battery')}
-                                                value={battery === undefined ? '—' : `${battery}%`}
+                                                label={PetTrackerCard.t('power_saving')}
+                                                value={PetTrackerCard.t(
+                                                    this.value('powerSavingOid') === true ? 'yes' : 'no',
+                                                )}
                                             />
-                                            <LinearProgress
-                                                variant="determinate"
-                                                value={battery ?? 0}
-                                                color={battery !== undefined && battery < 20 ? 'error' : 'success'}
-                                                aria-label={PetTrackerCard.t('battery')}
-                                                sx={{ mt: 0.75, height: 7, borderRadius: 2 }}
+                                        </Stack>
+                                    </Box>
+                                    <Box
+                                        sx={{
+                                            gridColumn: '1 / -1',
+                                            p: 1.5,
+                                            borderRadius: 2,
+                                            bgcolor: 'action.hover',
+                                        }}
+                                    >
+                                        <Typography
+                                            variant="subtitle2"
+                                            color="text.secondary"
+                                            sx={{ mb: 1.25, fontWeight: 700 }}
+                                        >
+                                            {PetTrackerCard.t('pet_details')}
+                                        </Typography>
+                                        <Box
+                                            sx={{
+                                                display: 'grid',
+                                                gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+                                                gap: 1.5,
+                                            }}
+                                        >
+                                            <InfoRow
+                                                icon="⚥"
+                                                label={PetTrackerCard.t('gender')}
+                                                value={this.stringValue('genderOid') ?? '—'}
+                                            />
+                                            <InfoRow
+                                                icon="ℹ️"
+                                                label={PetTrackerCard.t('age')}
+                                                value={`${PetTrackerCard.formatAge(this.value('birthdayOid'))} ${PetTrackerCard.t('years')}`}
+                                            />
+                                            <InfoRow
+                                                icon="⚖️"
+                                                label={PetTrackerCard.t('weight')}
+                                                value={weight === undefined ? '—' : `${weight} kg`}
                                             />
                                         </Box>
-                                        <InfoRow
-                                            icon="🔌"
-                                            label={PetTrackerCard.t('charging_state')}
-                                            value={chargingState ?? '—'}
-                                        />
-                                        <InfoRow
-                                            icon="🎯"
-                                            label={PetTrackerCard.t('position_accuracy')}
-                                            value={accuracy === undefined ? '—' : `±${accuracy} m`}
-                                        />
-                                        <InfoRow
-                                            icon="💨"
-                                            label={PetTrackerCard.t('speed')}
-                                            value={speed === undefined ? '—' : `${speed} km/h`}
-                                        />
-                                        <InfoRow
-                                            icon="⛰️"
-                                            label={PetTrackerCard.t('altitude')}
-                                            value={altitude === undefined ? '—' : `${altitude} m`}
-                                        />
-                                        <InfoRow
-                                            icon="⚥"
-                                            label={PetTrackerCard.t('gender')}
-                                            value={this.stringValue('genderOid') ?? '—'}
-                                        />
-                                        <InfoRow
-                                            icon="ℹ️"
-                                            label={PetTrackerCard.t('age')}
-                                            value={`${PetTrackerCard.formatAge(this.value('birthdayOid'))} ${PetTrackerCard.t('years')}`}
-                                        />
-                                        <InfoRow
-                                            icon="⚖️"
-                                            label={PetTrackerCard.t('weight')}
-                                            value={weight === undefined ? '—' : `${weight} kg`}
-                                        />
-                                    </Stack>
+                                    </Box>
                                 </Box>
                             </Box>
                         </Stack>

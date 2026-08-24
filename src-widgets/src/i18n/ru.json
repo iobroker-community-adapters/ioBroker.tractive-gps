@@ -62,5 +62,7 @@
     "commands": "Команды",
     "buzzer": "Зуммер",
     "led": "LED",
-    "live_tracking": "Отслеживание в реальном времени"
+    "live_tracking": "Отслеживание в реальном времени",
+    "tracker_status": "Трекер",
+    "pet_details": "Данные питомца"
 }

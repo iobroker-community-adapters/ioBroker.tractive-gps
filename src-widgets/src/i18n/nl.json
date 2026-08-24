@@ -62,5 +62,7 @@
     "commands": "Opdrachten",
     "buzzer": "Zoemer",
     "led": "LED",
-    "live_tracking": "Live-tracking"
+    "live_tracking": "Live-tracking",
+    "tracker_status": "Tracker",
+    "pet_details": "Huisdiergegevens"
 }

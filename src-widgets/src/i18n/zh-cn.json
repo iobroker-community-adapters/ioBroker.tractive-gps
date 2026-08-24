@@ -62,5 +62,7 @@
     "commands": "命令",
     "buzzer": "蜂鸣器",
     "led": "LED",
-    "live_tracking": "实时跟踪"
+    "live_tracking": "实时跟踪",
+    "tracker_status": "追踪器",
+    "pet_details": "宠物详情"
 }
