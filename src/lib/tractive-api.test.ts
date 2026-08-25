@@ -31,7 +31,7 @@ function response<T>(config: InternalAxiosRequestConfig, data: T): AxiosResponse
 function createClient(
     adapter: NonNullable<AxiosRequestConfig['adapter']>,
     options: {
-        sleep?: (milliseconds: number) => Promise<void>;
+        delay?: (milliseconds: number) => Promise<void>;
         reverseGeocoding?: boolean;
         writeFileAsync?: NonNullable<TractiveAPIConstructor[4]>['writeFileAsync'];
         fileNamespace?: string;
@@ -47,7 +47,7 @@ function createClient(
         random: () => 0,
         requestIntervalMs: 0,
         retryDelaysMs: [0],
-        sleep: options.sleep ?? (() => Promise.resolve()),
+        delay: options.delay ?? (() => Promise.resolve()),
         reverseGeocoding: options.reverseGeocoding,
         writeFileAsync: options.writeFileAsync,
         fileNamespace: options.fileNamespace,
@@ -185,7 +185,7 @@ describe('TractiveAPI authentication', () => {
                 return Promise.reject(new Error('Unexpected test request'));
             },
             {
-                sleep: milliseconds => {
+                delay: milliseconds => {
                     waits.push(milliseconds);
                     return Promise.resolve();
                 },

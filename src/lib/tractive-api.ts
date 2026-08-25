@@ -22,7 +22,7 @@ export interface TractiveAPIOptions {
     httpClient?: AxiosInstance;
     requestIntervalMs?: number;
     retryDelaysMs?: readonly number[];
-    sleep: (milliseconds: number) => Promise<void>;
+    delay: (milliseconds: number) => Promise<void>;
     random?: () => number;
     reverseGeocoding?: boolean;
     getDevicesAsync?: () => Promise<readonly ioBroker.Object[]>;
@@ -60,7 +60,7 @@ export class TractiveAPI implements ITractiveApiEndpoints {
     private rateLimitedUntil = 0;
     private rateLimitQueue: Promise<void> = Promise.resolve();
     private readonly retryDelays: readonly number[];
-    private readonly sleep: (milliseconds: number) => Promise<void>;
+    private readonly delay: (milliseconds: number) => Promise<void>;
     private readonly random: () => number;
     private readonly reverseGeocoding: boolean;
     private readonly writeFileAsync?: TractiveAPIOptions['writeFileAsync'];
@@ -100,7 +100,7 @@ export class TractiveAPI implements ITractiveApiEndpoints {
 
         this.requestDelay = options.requestIntervalMs ?? 5000;
         this.retryDelays = options.retryDelaysMs ?? [60000, 120000, 300000, 600000];
-        this.sleep = options.sleep;
+        this.delay = options.delay;
         this.random = options.random ?? Math.random;
         this.reverseGeocoding = options.reverseGeocoding ?? false;
 
@@ -219,9 +219,9 @@ export class TractiveAPI implements ITractiveApiEndpoints {
         await previous;
         try {
             const now = Date.now();
-            const wait = Math.max(0, this.requestDelay - (now - this.lastRequestTime), this.rateLimitedUntil - now);
-            if (wait > 0) {
-                await this.sleep(wait);
+            const delayMs = Math.max(0, this.requestDelay - (now - this.lastRequestTime), this.rateLimitedUntil - now);
+            if (delayMs > 0) {
+                await this.delay(delayMs);
             }
             this.lastRequestTime = Date.now();
         } finally {
@@ -301,18 +301,18 @@ export class TractiveAPI implements ITractiveApiEndpoints {
 
             if ((status === 429 || (status && status >= 500)) && retryCount < this.retryDelays.length) {
                 const fallback = this.retryDelays[retryCount] + Math.floor(this.random() * 1000);
-                const wait = status === 429 ? TractiveAPI.getRetryAfterMs(error, fallback) : fallback;
+                const delayMs = status === 429 ? TractiveAPI.getRetryAfterMs(error, fallback) : fallback;
                 if (status === 429) {
                     this.requestDelay = Math.min(Math.max(this.requestDelay * 2, 30000), 300000);
-                    this.rateLimitedUntil = Math.max(this.rateLimitedUntil, Date.now() + wait);
+                    this.rateLimitedUntil = Math.max(this.rateLimitedUntil, Date.now() + delayMs);
                 }
-                const retryMessage = `Tractive API returned HTTP ${status}; retry ${retryCount + 1}/${this.retryDelays.length} in ${wait}ms`;
+                const retryMessage = `Tractive API returned HTTP ${status}; retry ${retryCount + 1}/${this.retryDelays.length} in ${delayMs}ms`;
                 if (status === 429) {
                     this.log.debug(retryMessage);
                 } else {
                     this.log.warn(retryMessage);
                 }
-                await this.sleep(wait);
+                await this.delay(delayMs);
                 return this.apiCall(method, endpoint, data, config, retryCount + 1, authRetried);
             }
 

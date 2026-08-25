@@ -23,9 +23,7 @@ Alle in diesem Projekt genannten Produkt- und Firmennamen, Logos und Marken geh�
 
 ## Sentry
 
-Dieser Adapter verwendet die von ioBroker bereitgestellte Sentry-Integration, um unerwartete Ausnahmen und Programmfehler automatisch an die Entwickler zu melden. Die Fehlerberichterstattung steht seit js-controller Version 3.0 zur Verfügung und hilft dabei, Fehler zu erkennen und zu beheben, die andernfalls möglicherweise unbemerkt blieben.
-
-Details zu den übertragenen Informationen sowie eine Anleitung zum Deaktivieren der Fehlerberichterstattung enthält die [offizielle ioBroker-Sentry-Dokumentation](https://github.com/ioBroker/ioBroker.js-controller#error-reporting-via-iobroker-sentry).
+**Dieser Adapter verwendet Sentry-Bibliotheken, um Ausnahmen und Programmfehler automatisch an die Entwickler zu melden.** Weitere Einzelheiten und eine Anleitung zum Deaktivieren der Fehlerberichterstattung enthält die [Dokumentation des Sentry-Plugins](https://github.com/ioBroker/plugin-sentry#plugin-sentry). Die Sentry-Fehlerberichterstattung wird ab js-controller 3.0 verwendet.
 
 ## Beschreibung
 
@@ -264,7 +262,7 @@ Ursprünglich erstellt von [xXBJXx](https://github.com/xXBJXx) und gepflegt durc
 
 ## Lizenz
 
-Copyright (c) 2023-2026 ioBroker Community Developers <iobroker-community-adapters@gmx.de>
+Copyright (c) 2023-2026 ioBroker Community Developers <iobroker-community-adapters@gmx.de>  
 Copyright (c) 2023 xXBJXx <issi.dev.iobroker@gmail.com>
 
 MIT-Lizenz. Siehe [LICENSE](LICENSE).

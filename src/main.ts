@@ -52,7 +52,7 @@ class TractiveGPS extends utils.Adapter {
                 getForeignObjectAsync: this.getForeignObjectAsync.bind(this),
                 writeFileAsync: this.writeFileAsync.bind(this),
                 fileNamespace: `${this.namespace}.images`,
-                sleep: this.delay.bind(this),
+                delay: this.delay.bind(this),
             },
         );
 
@@ -346,7 +346,7 @@ class TractiveGPS extends utils.Adapter {
             this.getObjectAsync.bind(this),
             this.setState.bind(this),
             this.extendObjectAsync.bind(this),
-            { requestIntervalMs: 0, sleep: this.delay.bind(this) },
+            { requestIntervalMs: 0, delay: this.delay.bind(this) },
         );
         try {
             const success = await testApi.initialize(credentials.email, credentials.password);
