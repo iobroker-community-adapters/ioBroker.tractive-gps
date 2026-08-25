@@ -1,0 +1,26 @@
+<!-- ioBroker.tractive-gps classic VIS 1 widgets -->
+<link rel="stylesheet" href="widgets/tractive-gps/vis1/vendor/leaflet/leaflet.css" />
+<link rel="stylesheet" href="widgets/tractive-gps/vis1/tractive-gps-vis1.css" />
+<script src="widgets/tractive-gps/vis1/vendor/leaflet/leaflet.js"></script>
+<script src="widgets/tractive-gps/vis1/tractive-gps-vis1.js"></script>
+
+<script
+    id="tplTractiveGpsPetTrackerCard"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-set="tractive-gps"
+    data-vis-name="Pet tracker card (VIS 1)"
+    data-vis-type="state,gps,location,control"
+    data-vis-prev='<div style="width:100px;height:100px;display:grid;place-items:center;border-radius:12px;background:#0098d8;color:#fff;font-size:46px">🐾</div>'
+    data-vis-attrs="trackerNameOid/id;petNameOid/id;petTypeOid/id;genderOid/id;birthdayOid/id;weightOid/id;batteryOid/id;chargingStateOid/id;onlineOid/id;staleOid/id;lastSeenOid/id;sensorUsedOid/id;homeOid/id;distanceOid/id;powerSavingOid/id;positionAccuracyOid/id;speedOid/id;altitudeOid/id;latitudeOid/id;longitudeOid/id;addressOid/id;imageOid/id;"
+    data-vis-attrs0="group.appearance;customImage/image;mapZoom[16]/number;mapRange[0]/number;mapMinZoom[3]/number;mapMaxZoom[19]/number;mapInteractive[true]/checkbox;showAccuracyCircle[true]/checkbox;fitAccuracyRange[true]/checkbox;accuracyColor[#0098d8]/color;"
+    data-vis-attrs1="group.commands;buzzerCommandOid/id;ledCommandOid/id;liveTrackingCommandOid/id;"
+>
+    <div
+        id="<%= this.data.attr('wid') %>"
+        class="vis-widget tractive-gps-vis1-widget <%= this.data.attr('class') %>"
+        style="width:540px;height:920px;overflow:hidden"
+    ><%
+        vis.binds['tractive-gps'].init(this.data.wid, this.view, this.data, this.style);
+    %></div>
+</script>

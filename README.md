@@ -40,7 +40,7 @@ The adapter uses an unofficial Tractive service interface. A working Tractive ac
 - Node.js 22.13 or newer
 - js-controller 7.2.2 or newer
 - Admin 8 or newer
-- VIS 2 version 2.12.8 or newer when using the included widget
+- VIS 1, or VIS 2 version 2.12.8 or newer, when using an included widget
 - A Tractive account with at least one associated tracker
 
 ## Features
@@ -52,7 +52,7 @@ The adapter uses an unofficial Tractive service interface. A working Tractive ac
 - Provides model, firmware, hardware version, capabilities, gender, birthday, height, weight, and other available information.
 - Supports live tracking, LED, and buzzer commands when the tracker reports the corresponding capability.
 - Stores all retrieved account, subscription, share, pet, tracker, position, and hardware data as a logical local state tree and as one complete JSON snapshot.
-- Includes a responsive VIS 2 card with pet image, interactive map, range display, and tracker status.
+- Includes responsive cards for VIS 1 and VIS 2 with a pet image, interactive map, range display, tracker status, and command controls.
 - Supports an image supplied by Tractive or a custom image uploaded to ioBroker.
 - Detects missing or stale tracker data without automatically deleting existing objects.
 
@@ -140,9 +140,9 @@ The following writable states are created only when supported by the selected tr
 
 Set the desired state to `true` or `false`. The state is acknowledged after Tractive accepts the command.
 
-## VIS 2 widget
+## VIS widgets
 
-The adapter includes the `PetTrackerCard` widget for VIS 2. Add one widget for each pet or tracker and assign the requested states in the widget settings.
+The adapter includes a classic `PetTrackerCard` for VIS 1 and a native React `PetTrackerCard` for VIS 2. Add one widget for each pet or tracker and assign the requested states in the widget settings.
 
 The card can display:
 
@@ -187,6 +187,11 @@ To use the command switches, assign the corresponding `trackers.<tracker-id>.com
 Information for contributors is available in [Developer documentation](docs/DEVELOPMENT.md).
 
 ## Changelog
+
+### **WORK IN PROGRESS**
+
+- (xXBJXx) Added and correctly registered a classic VIS 1 pet tracker card alongside the native VIS 2 widget, including the pet image, Leaflet map, location and tracker details, automatic theme colors, and tracker command controls.
+
 ### 3.0.0 (2026-08-24)
 
 - (xXBJXx) BREAKING: rewritten for Node.js 22, js-controller 7.2.2, and Admin 8.

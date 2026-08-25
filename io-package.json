@@ -175,13 +175,13 @@
       }
     },
     "restartAdapters": [
+      "vis",
       "vis-2"
     ],
     "eraseOnUpload": true,
     "dependencies": [
       {
-        "js-controller": ">=7.2.2",
-        "vis-2": ">=2.12.8"
+        "js-controller": ">=7.2.2"
       }
     ],
     "globalDependencies": [

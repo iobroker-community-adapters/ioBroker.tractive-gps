@@ -40,7 +40,7 @@ Der Adapter verwendet eine inoffizielle Tractive-Service-Schnittstelle. Ein funk
 - Node.js 22.13 oder neuer
 - js-controller 7.2.2 oder neuer
 - Admin 8 oder neuer
-- VIS 2 ab Version 2.12.8 für das mitgelieferte Widget
+- VIS 1 oder VIS 2 ab Version 2.12.8 für eines der mitgelieferten Widgets; die Versionsanforderung gilt nur für VIS 2
 - Tractive-Konto mit mindestens einem zugeordneten Tracker
 
 ## Funktionen
@@ -52,7 +52,7 @@ Der Adapter verwendet eine inoffizielle Tractive-Service-Schnittstelle. Ein funk
 - Liefert Modell, Firmware, Hardwareversion, Fähigkeiten, Geschlecht, Geburtstag, Größe, Gewicht und weitere verfügbare Informationen.
 - Unterstützt Live-Tracking, LED und Signalton, sofern der Tracker die jeweilige Funktion meldet.
 - Speichert alle abgerufenen Konto-, Abonnement-, Freigabe-, Tier-, Tracker-, Positions- und Hardwaredaten als logischen lokalen Datenbaum sowie als vollständigen JSON-Schnappschuss.
-- Enthält eine responsive VIS-2-Karte mit Tierbild, interaktiver Karte, Bereichsanzeige und Tracker-Status.
+- Enthält responsive Karten für VIS 1 und VIS 2 mit Tierbild, interaktiver Karte, Bereichsanzeige, Tracker-Status und Befehlssteuerung.
 - Unterstützt ein von Tractive bereitgestelltes Bild oder ein eigenes, in ioBroker hochgeladenes Bild.
 - Erkennt fehlende oder veraltete Tracker-Daten, ohne vorhandene Objekte automatisch zu löschen.
 
@@ -140,9 +140,9 @@ Folgende schreibbare Datenpunkte werden nur angelegt, wenn der gewählte Tracker
 
 Der gewünschte Datenpunkt wird auf `true` oder `false` gesetzt. Er wird bestätigt, nachdem Tractive den Befehl angenommen hat.
 
-## VIS-2-Widget
+## VIS-Widgets
 
-Der Adapter enthält das Widget `PetTrackerCard` für VIS 2. Für jedes Tier beziehungsweise jeden Tracker wird ein eigenes Widget eingefügt und in den Widget-Einstellungen mit den gewünschten Datenpunkten verbunden.
+Der Adapter enthält eine klassische `PetTrackerCard` für VIS 1 sowie eine native React-`PetTrackerCard` für VIS 2. Für jedes Tier beziehungsweise jeden Tracker wird ein eigenes Widget eingefügt und in den Widget-Einstellungen mit den gewünschten Datenpunkten verbunden.
 
 Die Karte kann Folgendes anzeigen:
 
@@ -187,6 +187,10 @@ Für die Befehlsschalter werden die zugehörigen Datenpunkte unter `trackers.<tr
 Informationen für Mitwirkende stehen in der [Entwicklerdokumentation](docs/DEVELOPMENT.md).
 
 ## Changelog
+
+### **WORK IN PROGRESS**
+
+- (xXBJXx) Eine klassische VIS-1-Tierkarte zusätzlich zum nativen VIS-2-Widget ergänzt und korrekt registriert, einschließlich Tierbild, Leaflet-Karte, Positions- und Tracker-Details, automatischer Theme-Farben und Tracker-Befehlssteuerung.
 
 ### 3.0.0 (2026-08-24)
 

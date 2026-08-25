@@ -31,7 +31,7 @@ src/
 src-admin/                          React-based Admin 8 configuration
 src-widgets/                        VIS 2 PetTrackerCard widget
 admin/                              Built Admin files and translations
-widgets/                            Built VIS 2 widget files
+widgets/                            Built VIS 2 files and classic VIS 1 widget sources
 build/                              Compiled adapter backend
 test/                               Package and integration tests
 ```
@@ -99,9 +99,11 @@ The Admin 8 application is located in `src-admin/` and uses React, TypeScript, M
 The configuration is saved exclusively through the standard ioBroker Save workflow. Translations must be updated for every locale in
 `src-admin/src/i18n/` and rebuilt into `admin/i18n/`.
 
-## VIS 2 widget
+## VIS widgets
 
 The widget source is located in `src-widgets/`. `PetTrackerCard` uses the VIS 2 component API and Leaflet/OpenStreetMap.
+
+The classic VIS 1 implementation is registered through `widgets/tractive-gps.html`, as required by VIS 1. Its source resources live in `src-widgets/public/vis1/`; Vite copies them to `widgets/tractive-gps/vis1/` alongside the VIS 2 build. It uses the VIS 1 EJS and `vis.binds` APIs. The vendored Leaflet files must remain synchronized with the `leaflet` version in `src-widgets/package.json`.
 
 Widget changes must preserve:
 
