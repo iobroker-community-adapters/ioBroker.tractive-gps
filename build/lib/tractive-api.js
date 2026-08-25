@@ -62,8 +62,8 @@ class TractiveAPI {
   /**
    *
    */
-  constructor(log, getObjectAsync, setState, extendObjectAsync, options = {}) {
-    var _a, _b, _c, _d, _e, _f;
+  constructor(log, getObjectAsync, setState, extendObjectAsync, options) {
+    var _a, _b, _c, _d, _e;
     this.log = log;
     this.getObjectAsync = getObjectAsync;
     this.getDevicesAsync = options.getDevicesAsync;
@@ -74,10 +74,10 @@ class TractiveAPI {
     this.extendObjectAsync = extendObjectAsync;
     this.requestDelay = (_a = options.requestIntervalMs) != null ? _a : 5e3;
     this.retryDelays = (_b = options.retryDelaysMs) != null ? _b : [6e4, 12e4, 3e5, 6e5];
-    this.sleep = (_c = options.sleep) != null ? _c : TractiveAPI.delay;
-    this.random = (_d = options.random) != null ? _d : Math.random;
-    this.reverseGeocoding = (_e = options.reverseGeocoding) != null ? _e : false;
-    this.api = (_f = options.httpClient) != null ? _f : import_axios.default.create({
+    this.sleep = options.sleep;
+    this.random = (_c = options.random) != null ? _c : Math.random;
+    this.reverseGeocoding = (_d = options.reverseGeocoding) != null ? _d : false;
+    this.api = (_e = options.httpClient) != null ? _e : import_axios.default.create({
       baseURL: "https://graph.tractive.com/4",
       headers: {
         "Content-Type": "application/json",
@@ -163,9 +163,6 @@ class TractiveAPI {
     return ["street", "house_number", "zip_code", "city", "country", "full_address"].every(
       (key) => typeof address[key] === "string"
     );
-  }
-  static async delay(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
   }
   async waitForRequestSlot() {
     const previous = this.rateLimitQueue;

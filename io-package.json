@@ -157,8 +157,6 @@
       }
     },
     "messagebox": true,
-    "singleton": true,
-    "materialize": true,
     "stopBeforeUpdate": true,
     "adminUI": {
       "config": "materialize"
@@ -186,7 +184,7 @@
     ],
     "globalDependencies": [
       {
-        "admin": ">=8.0.0"
+        "admin": ">=7.8.23"
       }
     ],
     "messages": [

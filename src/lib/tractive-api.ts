@@ -22,7 +22,7 @@ export interface TractiveAPIOptions {
     httpClient?: AxiosInstance;
     requestIntervalMs?: number;
     retryDelaysMs?: readonly number[];
-    sleep?: (milliseconds: number) => Promise<void>;
+    sleep: (milliseconds: number) => Promise<void>;
     random?: () => number;
     reverseGeocoding?: boolean;
     getDevicesAsync?: () => Promise<readonly ioBroker.Object[]>;
@@ -87,7 +87,7 @@ export class TractiveAPI implements ITractiveApiEndpoints {
             obj: ioBroker.PartialObject,
             options?: ioBroker.ExtendObjectOptions,
         ) => ioBroker.SetObjectPromise,
-        options: TractiveAPIOptions = {},
+        options: TractiveAPIOptions,
     ) {
         this.log = log;
         this.getObjectAsync = getObjectAsync;
@@ -100,7 +100,7 @@ export class TractiveAPI implements ITractiveApiEndpoints {
 
         this.requestDelay = options.requestIntervalMs ?? 5000;
         this.retryDelays = options.retryDelaysMs ?? [60000, 120000, 300000, 600000];
-        this.sleep = options.sleep ?? TractiveAPI.delay;
+        this.sleep = options.sleep;
         this.random = options.random ?? Math.random;
         this.reverseGeocoding = options.reverseGeocoding ?? false;
 
@@ -208,10 +208,6 @@ export class TractiveAPI implements ITractiveApiEndpoints {
         return ['street', 'house_number', 'zip_code', 'city', 'country', 'full_address'].every(
             key => typeof address[key as keyof TractiveAddress] === 'string',
         );
-    }
-
-    private static async delay(ms: number): Promise<void> {
-        return new Promise(resolve => setTimeout(resolve, ms));
     }
 
     private async waitForRequestSlot(): Promise<void> {

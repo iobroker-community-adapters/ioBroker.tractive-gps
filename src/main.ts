@@ -9,7 +9,7 @@ const OBJECT_STRUCTURE_VERSION = 4;
 
 class TractiveGPS extends utils.Adapter {
     private tractiveApi: TractiveAPI | null = null;
-    private pollTimer: NodeJS.Timeout | null = null;
+    private pollTimer: ioBroker.Timeout | undefined;
     private syncPromise: Promise<void> | null = null;
     private fullSyncPending = false;
     private lastFullSync = 0;
@@ -52,6 +52,7 @@ class TractiveGPS extends utils.Adapter {
                 getForeignObjectAsync: this.getForeignObjectAsync.bind(this),
                 writeFileAsync: this.writeFileAsync.bind(this),
                 fileNamespace: `${this.namespace}.images`,
+                sleep: this.delay.bind(this),
             },
         );
 
@@ -208,11 +209,11 @@ class TractiveGPS extends utils.Adapter {
         if (this.stopped) {
             return;
         }
-        if (this.pollTimer) {
-            clearTimeout(this.pollTimer);
+        if (this.pollTimer !== undefined) {
+            this.clearTimeout(this.pollTimer);
         }
-        this.pollTimer = setTimeout(() => {
-            this.pollTimer = null;
+        this.pollTimer = this.setTimeout(() => {
+            this.pollTimer = undefined;
             const fullSyncDue = Date.now() - this.lastFullSync >= FULL_SYNC_INTERVAL_MS;
             void this.queueSync(fullSyncDue).finally(() => this.scheduleNextSync());
         }, this.getPollIntervalMs());
@@ -345,7 +346,7 @@ class TractiveGPS extends utils.Adapter {
             this.getObjectAsync.bind(this),
             this.setState.bind(this),
             this.extendObjectAsync.bind(this),
-            { requestIntervalMs: 0 },
+            { requestIntervalMs: 0, sleep: this.delay.bind(this) },
         );
         try {
             const success = await testApi.initialize(credentials.email, credentials.password);
@@ -405,9 +406,9 @@ class TractiveGPS extends utils.Adapter {
 
     private async onUnload(callback: () => void): Promise<void> {
         this.stopped = true;
-        if (this.pollTimer) {
-            clearTimeout(this.pollTimer);
-            this.pollTimer = null;
+        if (this.pollTimer !== undefined) {
+            this.clearTimeout(this.pollTimer);
+            this.pollTimer = undefined;
         }
         this.tractiveApi?.dispose();
         this.commandQueues.clear();

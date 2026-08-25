@@ -21,7 +21,7 @@
 
 Alle in diesem Projekt genannten Produkt- und Firmennamen, Logos und Marken gehören ihren jeweiligen Eigentümern. Tractive und die damit verbundenen Namen, Logos und Marken sind Eigentum der Tractive GmbH beziehungsweise ihrer jeweiligen Rechteinhaber. Ihre Verwendung dient ausschließlich der Identifikation und bedeutet weder eine Verbindung mit noch ein Sponsoring oder eine Unterstützung durch die Tractive GmbH oder mit ihr verbundene Unternehmen. Dies ist ein privates, nicht kommerzielles Projekt, das zu Freizeitzwecken entwickelt wird.
 
-## Fehlerberichterstattung mit Sentry
+## Sentry
 
 Dieser Adapter verwendet die von ioBroker bereitgestellte Sentry-Integration, um unerwartete Ausnahmen und Programmfehler automatisch an die Entwickler zu melden. Die Fehlerberichterstattung steht seit js-controller Version 3.0 zur Verfügung und hilft dabei, Fehler zu erkennen und zu beheben, die andernfalls möglicherweise unbemerkt blieben.
 
@@ -39,7 +39,7 @@ Der Adapter verwendet eine inoffizielle Tractive-Service-Schnittstelle. Ein funk
 
 - Node.js 22.13 oder neuer
 - js-controller 7.2.2 oder neuer
-- Admin 8 oder neuer
+- Admin 7.8.23 oder neuer
 - VIS 1 oder VIS 2 ab Version 2.12.8 für eines der mitgelieferten Widgets; die Versionsanforderung gilt nur für VIS 2
 - Tractive-Konto mit mindestens einem zugeordneten Tracker
 
@@ -190,6 +190,7 @@ Informationen für Mitwirkende stehen in der [Entwicklerdokumentation](docs/DEVE
 
 ### **WORK IN PROGRESS**
 
+- (xXBJXx) Hinweise des Repository-Checkers zu Abhängigkeiten, Metadaten, Dokumentation und adapterverwalteten Timern behoben (#319).
 - (xXBJXx) Eine klassische VIS-1-Tierkarte zusätzlich zum nativen VIS-2-Widget ergänzt und korrekt registriert, einschließlich Tierbild, Leaflet-Karte, Positions- und Tracker-Details, automatischer Theme-Farben und Tracker-Befehlssteuerung.
 
 ### 3.0.0 (2026-08-24)
@@ -255,10 +256,15 @@ Informationen für Mitwirkende stehen in der [Entwicklerdokumentation](docs/DEVE
 - (Scrounger) Übermäßig viele Warnungen reduziert.
 - (Scrounger) Entfernungsberechnung zwischen ioBroker und Tracker ergänzt.
 
+Frühere Änderungen sind in [CHANGELOG_OLD.md](CHANGELOG_OLD.md) dokumentiert.
+
 ## Credits
 
 Ursprünglich erstellt von [xXBJXx](https://github.com/xXBJXx) und gepflegt durch die Organisation ioBroker Community Adapters.
 
 ## Lizenz
+
+Copyright (c) 2023-2026 ioBroker Community Developers <iobroker-community-adapters@gmx.de>
+Copyright (c) 2023 xXBJXx <issi.dev.iobroker@gmail.com>
 
 MIT-Lizenz. Siehe [LICENSE](LICENSE).

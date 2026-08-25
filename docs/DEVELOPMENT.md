@@ -8,7 +8,7 @@ main [README](../README.md) and [German README](../README_DE.md).
 - Node.js 22.13 or newer
 - npm 10 or newer
 - js-controller 7.2.2 or newer for local integration testing
-- Admin 8 or newer
+- Admin 7.8.23 or newer
 - VIS 2 version 2.12.8 or newer for widget testing
 
 Install all workspace dependencies from the repository root:

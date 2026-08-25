@@ -21,7 +21,7 @@
 
 All product and company names, logos, and trademarks mentioned in this project belong to their respective owners. Tractive and its associated names, logos, and trademarks are the property of Tractive GmbH or their respective owners. Their use is solely for identification and does not imply any affiliation with, sponsorship by, or endorsement from Tractive GmbH or its associated companies. This is a private, non-commercial project developed for recreational purposes.
 
-## Error reporting with Sentry
+## Sentry
 
 This adapter uses the Sentry integration provided by ioBroker to automatically report unexpected exceptions and code errors to the developers. Error reporting has been available through js-controller since version 3.0 and helps identify and resolve defects that might otherwise go unnoticed.
 
@@ -39,7 +39,7 @@ The adapter uses an unofficial Tractive service interface. A working Tractive ac
 
 - Node.js 22.13 or newer
 - js-controller 7.2.2 or newer
-- Admin 8 or newer
+- Admin 7.8.23 or newer
 - VIS 1, or VIS 2 version 2.12.8 or newer, when using an included widget
 - A Tractive account with at least one associated tracker
 
@@ -190,6 +190,7 @@ Information for contributors is available in [Developer documentation](docs/DEVE
 
 ### **WORK IN PROGRESS**
 
+- (xXBJXx) Addressed repository-checker findings for dependencies, metadata, documentation, and adapter-managed timers (#319).
 - (xXBJXx) Added and correctly registered a classic VIS 1 pet tracker card alongside the native VIS 2 widget, including the pet image, Leaflet map, location and tracker details, automatic theme colors, and tracker command controls.
 
 ### 3.0.0 (2026-08-24)
@@ -249,10 +250,15 @@ Information for contributors is available in [Developer documentation](docs/DEVE
 - (mcm1957) Adapter requires Node.js 18 and js-controller 5 or newer.
 - (mcm1957) Updated dependencies.
 
+Earlier changes are documented in [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
+
 ## Credits
 
 Originally created by [xXBJXx](https://github.com/xXBJXx) and maintained by the ioBroker community adapters organization.
 
 ## License
+
+Copyright (c) 2023-2026 ioBroker Community Developers <iobroker-community-adapters@gmx.de>
+Copyright (c) 2023 xXBJXx <issi.dev.iobroker@gmail.com>
 
 MIT License. See [LICENSE](LICENSE).
