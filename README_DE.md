@@ -186,7 +186,7 @@ Informationen für Mitwirkende stehen in der [Entwicklerdokumentation](docs/DEVE
 
 ## Changelog
 
-### **WORK IN PROGRESS**
+### 3.1.0 (2026-08-25)
 
 - (xXBJXx) Hinweise des Repository-Checkers zu Abhängigkeiten, Metadaten, Dokumentation und adapterverwalteten Timern behoben (#319).
 - (xXBJXx) Eine klassische VIS-1-Tierkarte zusätzlich zum nativen VIS-2-Widget ergänzt und korrekt registriert, einschließlich Tierbild, Leaflet-Karte, Positions- und Tracker-Details, automatischer Theme-Farben und Tracker-Befehlssteuerung.

@@ -185,8 +185,7 @@ To use the command switches, assign the corresponding `trackers.<tracker-id>.com
 Information for contributors is available in [Developer documentation](docs/DEVELOPMENT.md).
 
 ## Changelog
-
-### **WORK IN PROGRESS**
+### 3.1.0 (2026-08-25)
 
 - (xXBJXx) Addressed repository-checker findings for dependencies, metadata, documentation, and adapter-managed timers (#319).
 - (xXBJXx) Added and correctly registered a classic VIS 1 pet tracker card alongside the native VIS 2 widget, including the pet image, Leaflet map, location and tracker details, automatic theme colors, and tracker command controls.
@@ -242,11 +241,6 @@ Information for contributors is available in [Developer documentation](docs/DEVE
 - (bluefox) BREAKING: credentials must be entered again.
 - (bluefox) Removed old code and rewrote the GUI.
 - (bluefox) Updated dependencies.
-
-### 1.2.0 (2024-04-28)
-
-- (mcm1957) Adapter requires Node.js 18 and js-controller 5 or newer.
-- (mcm1957) Updated dependencies.
 
 Earlier changes are documented in [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 
