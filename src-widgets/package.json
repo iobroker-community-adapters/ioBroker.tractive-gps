@@ -14,7 +14,7 @@
         "@iobroker/eslint-config": "^2.3.4",
         "@iobroker/types-vis-2": "^2.13.17",
         "@module-federation/vite": "^1.14.5",
-        "@mui/material": "^6.5.0",
+        "@mui/material": "^9.3.1",
         "@types/leaflet": "^1.9.22",
         "@vitejs/plugin-react": "^5.2.0",
         "leaflet": "^1.9.4",
