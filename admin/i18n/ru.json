@@ -5,7 +5,7 @@
     "Leave the protected value unchanged unless you want to replace the password.": "Оставьте защищенное значение без изменений, если не требуется заменить пароль.",
     "Polling interval": "Интервал обновления",
     "How often tracker data is refreshed. Allowed range: 120 to 3600 seconds.": "Частота обновления данных трекера. Допустимый диапазон: от 120 до 3600 секунд.",
-    "seconds": "секунды",
+    "seconds": "секунд",
     "Resolve coordinates to an address": "Преобразовать координаты в адрес",
     "Optional: sends precise coordinates to Tractive's address service. Disabled by default.": "Необязательно: отправляет точные координаты в адресную службу Tractive. По умолчанию отключено.",
     "Tractive GPS settings": "Настройки Tractive GPS",

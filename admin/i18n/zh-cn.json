@@ -5,7 +5,7 @@
     "Leave the protected value unchanged unless you want to replace the password.": "除非要替换密码，否则请保持受保护的值不变。",
     "Polling interval": "轮询间隔",
     "How often tracker data is refreshed. Allowed range: 120 to 3600 seconds.": "追踪器数据的刷新频率。允许范围：120 至 3600 秒。",
-    "seconds": "秒",
+    "seconds": "秒数",
     "Resolve coordinates to an address": "将坐标转换为地址",
     "Optional: sends precise coordinates to Tractive's address service. Disabled by default.": "可选：将精确坐标发送到 Tractive 地址服务。默认禁用。",
     "Tractive GPS settings": "Tractive GPS 设置",
