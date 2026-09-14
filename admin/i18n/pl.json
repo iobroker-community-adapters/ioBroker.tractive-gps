@@ -5,7 +5,7 @@
     "Leave the protected value unchanged unless you want to replace the password.": "Pozostaw chronioną wartość bez zmian, chyba że chcesz zastąpić hasło.",
     "Polling interval": "Interwał odpytywania",
     "How often tracker data is refreshed. Allowed range: 120 to 3600 seconds.": "Częstotliwość odświeżania danych lokalizatora. Dozwolony zakres: od 120 do 3600 sekund.",
-    "seconds": "sekundy",
+    "seconds": "sekund",
     "Resolve coordinates to an address": "Zamień współrzędne na adres",
     "Optional: sends precise coordinates to Tractive's address service. Disabled by default.": "Opcjonalnie: wysyła dokładne współrzędne do usługi adresowej Tractive. Domyślnie wyłączone.",
     "Tractive GPS settings": "Ustawienia Tractive GPS",
