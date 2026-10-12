@@ -1,9 +1,15 @@
 # Older changes
+## 2.0.0 (2024-08-18)
+
+- (bluefox) BREAKING: credentials must be entered again.
+- (bluefox) Removed old code and rewrote the GUI.
+- (bluefox) Updated dependencies.
+
+
 ## 1.2.0 (2024-04-28)
 
 - (mcm1957) Adapter requires Node.js 18 and js-controller 5 or newer.
 - (mcm1957) Updated dependencies.
-
 
 ## 1.1.0 (2023-11-05)
 

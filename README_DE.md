@@ -198,7 +198,7 @@ Informationen für Mitwirkende stehen in der [Entwicklerdokumentation](docs/DEVE
 
 ## Changelog
 
-### **WORK IN PROGRESS**
+### 4.0.0 (2026-10-12)
 
 - (xXBJXx) BREAKING: Das native VIS-2-Widget benötigt jetzt VIS 2 >=2.15.2 für React 19/MUI 9; reine Adapter- und klassische VIS-1-Installationen bleiben unterstützt.
 - (xXBJXx) Tiermarker und Genauigkeitskreis bleiben beim Ändern der Zoomgrenzen oder Kartenbedienung korrekt sichtbar.

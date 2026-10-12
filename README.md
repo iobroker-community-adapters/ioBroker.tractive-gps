@@ -197,8 +197,7 @@ To use the command switches, assign the corresponding `trackers.<tracker-id>.com
 Information for contributors is available in [Developer documentation](docs/DEVELOPMENT.md).
 
 ## Changelog
-
-### **WORK IN PROGRESS**
+### 4.0.0 (2026-10-12)
 
 - (xXBJXx) BREAKING: the native VIS 2 widget now requires VIS 2 >=2.15.2 for React 19/MUI 9 support; backend-only and classic VIS 1 installations remain supported.
 - (xXBJXx) Kept the pet marker and accuracy circle visible when changing map zoom limits or interaction settings.
@@ -259,12 +258,6 @@ Information for contributors is available in [Developer documentation](docs/DEVE
 ### 2.0.1 (2024-08-20)
 
 - (bluefox) Fixed encryption of the access token.
-
-### 2.0.0 (2024-08-18)
-
-- (bluefox) BREAKING: credentials must be entered again.
-- (bluefox) Removed old code and rewrote the GUI.
-- (bluefox) Updated dependencies.
 
 Earlier changes are documented in [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 

@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "tractive-gps",
-    "version": "3.1.0",
+    "version": "4.0.0",
     "news": {
+      "4.0.0": {
+        "en": "BREAKING: the native VIS 2 widget requires VIS 2 >=2.15.2 (React 19/MUI 9); backend-only and classic VIS 1 remain supported. Fixed theme compatibility and map marker/range updates. Updated dependencies, tests and documentation (#387, #355); the pinned dev-server fork is retained. Updated locked Moment to 2.31.0 (GHSA-4p3w-j4w9-5jqw).",
+        "de": "BREAKING: Das native VIS-2-Widget benötigt VIS 2 >=2.15.2 (React 19/MUI 9); reine Adapter- und klassische VIS-1-Installationen bleiben unterstützt. Theme-Kompatibilität sowie Aktualisierung von Kartenmarker und Radius korrigiert. Abhängigkeiten, Tests und Dokumentation aktualisiert (#387, #355); der festgelegte Dev-Server-Fork bleibt erhalten. Moment im Lockfile auf 2.31.0 aktualisiert (GHSA-4p3w-j4w9-5jqw).",
+        "ru": "BREAKING: для нативного виджета VIS 2 требуется VIS 2 >=2.15.2 (React 19/MUI 9); работа без VIS и классический VIS 1 по-прежнему поддерживаются. Исправлены совместимость тем и обновление маркера и радиуса на карте. Обновлены зависимости, тесты и документация (#387, #355); закреплённый форк dev-server сохранён. Moment в lockfile обновлён до 2.31.0 (GHSA-4p3w-j4w9-5jqw).",
+        "pt": "BREAKING: o widget nativo VIS 2 requer VIS 2 >=2.15.2 (React 19/MUI 9); instalações sem VIS e o VIS 1 clássico continuam suportados. Corrigidas a compatibilidade dos temas e a atualização do marcador e do raio no mapa. Dependências, testes e documentação atualizados (#387, #355); mantido o fork fixado do dev-server. Moment no lockfile atualizado para 2.31.0 (GHSA-4p3w-j4w9-5jqw).",
+        "nl": "BREAKING: de native VIS 2-widget vereist VIS 2 >=2.15.2 (React 19/MUI 9); installaties zonder VIS en klassiek VIS 1 blijven ondersteund. Themacompatibiliteit en updates van kaartmarkering en straal hersteld. Afhankelijkheden, tests en documentatie bijgewerkt (#387, #355); de vastgezette dev-server-fork blijft behouden. Moment in het lockfile bijgewerkt naar 2.31.0 (GHSA-4p3w-j4w9-5jqw).",
+        "fr": "BREAKING : le widget natif VIS 2 nécessite VIS 2 >=2.15.2 (React 19/MUI 9) ; les installations sans VIS et VIS 1 classique restent pris en charge. Compatibilité des thèmes et mise à jour du marqueur et du rayon corrigées. Dépendances, tests et documentation mis à jour (#387, #355) ; fork dev-server conservé. Moment dans le fichier de verrouillage mis à jour vers 2.31.0 (GHSA-4p3w-j4w9-5jqw).",
+        "it": "BREAKING: il widget nativo VIS 2 richiede VIS 2 >=2.15.2 (React 19/MUI 9); restano supportati l'adattatore senza VIS e VIS 1 classico. Corretti la compatibilità dei temi e gli aggiornamenti del marcatore e del raggio sulla mappa. Aggiornati dipendenze, test e documentazione (#387, #355); mantenuto il fork dev-server fissato. Moment nel lockfile aggiornato a 2.31.0 (GHSA-4p3w-j4w9-5jqw).",
+        "es": "BREAKING: el widget nativo de VIS 2 requiere VIS 2 >=2.15.2 (React 19/MUI 9); las instalaciones sin VIS y VIS 1 clásico siguen siendo compatibles. Corregidas la compatibilidad de temas y la actualización del marcador y del radio del mapa. Dependencias, pruebas y documentación actualizadas (#387, #355); se mantiene el fork fijado de dev-server. Moment en el lockfile actualizado a 2.31.0 (GHSA-4p3w-j4w9-5jqw).",
+        "pl": "BREAKING: natywny widżet VIS 2 wymaga VIS 2 >=2.15.2 (React 19/MUI 9); instalacje bez VIS oraz klasyczny VIS 1 są nadal obsługiwane. Poprawiono zgodność motywów oraz aktualizację znacznika i promienia na mapie. Zaktualizowano zależności, testy i dokumentację (#387, #355); zachowano przypięty fork dev-server. Moment w pliku lockfile zaktualizowano do 2.31.0 (GHSA-4p3w-j4w9-5jqw).",
+        "uk": "BREAKING: нативний віджет VIS 2 потребує VIS 2 >=2.15.2 (React 19/MUI 9); інсталяції без VIS і класичний VIS 1 залишаються підтримуваними. Виправлено сумісність тем та оновлення маркера й радіуса на карті. Оновлено залежності, тести й документацію (#387, #355); закріплений форк dev-server збережено. Moment у lockfile оновлено до 2.31.0 (GHSA-4p3w-j4w9-5jqw).",
+        "zh-cn": "BREAKING：原生 VIS 2 控件需要 VIS 2 >=2.15.2（React 19/MUI 9）；仍支持不使用 VIS 的适配器安装和经典 VIS 1。修复主题兼容性以及地图标记和半径的更新。更新依赖项、测试和文档（#387、#355）；保留固定版本的 dev-server 分支。将 lockfile 中的 Moment 更新至 2.31.0（GHSA-4p3w-j4w9-5jqw）。"
+      },
       "3.1.0": {
         "en": "Addressed repository-checker findings for dependencies, metadata, documentation, and adapter-managed timers (#319).\nAdded and correctly registered a classic VIS 1 pet tracker card alongside the native VIS 2 widget, including the pet image, Leaflet map, location and tracker details, automatic theme colors, and tracker command controls.",
         "de": "Die Ergebnisse der Repository-Prüfung bezüglich Abhängigkeiten, Metadaten, Dokumentation und vom Adapter verwalteten Timern wurden behoben (#319).\nEine klassische VIS 1 Haustier-Trackerkarte wurde zusammen mit dem nativen VIS 2 Widget hinzugefügt und korrekt registriert, einschließlich Haustierbild, Leaflet-Karte, Standort- und Tracker-Details, automatischen Designfarben und Tracker-Befehlssteuerung.",
@@ -80,19 +93,6 @@
         "pl": "Adapter wymaga node.js > = 18 i kontroler js- > = 5 teraz\nZaktualizowano zależności",
         "uk": "Адаптер вимагає node.js >= 18 і js-controller >= 5 тепер\nЗалежність було оновлено",
         "zh-cn": "适配器需要节点.js QQ18和js控制器 QQ 现在5号\n依赖关系已更新"
-      },
-      "1.1.0": {
-        "en": "Bugfix: objects will be created only if necessary\nBugfix for excessive number of warnings has been added\nDistance calculation between ioBroker and tracker has been added",
-        "de": "Bugfix: Objekte werden nur bei Bedarf erstellt\nBugfix für übermäßige Anzahl von Warnungen wurde hinzugefügt\nEntfernungsberechnung zwischen ioBroker und Tracker wurde hinzugefügt",
-        "ru": "Bugfix: объекты будут созданы только при необходимости\nДобавлен Bugfix для чрезмерного количества предупреждений\nДобавлен расчёт расстояния между ioBroker и tracker",
-        "pt": "Bugfix: os objetos serão criados somente se necessário\nBugfix para o número excessivo de avisos foi adicionado\nCálculo de distância entre ioBroker e rastreador foi adicionado",
-        "nl": "Voorwerpen worden alleen gecreëerd indien nodig\nBugfix voor overmatig aantal waarschuwingen is toegevoegd\nVertaling:",
-        "fr": "Bugfix: les objets ne seront créés que si nécessaire\nBugfix for excessive number of warnings has been added\nCalcul de distance entre ioBroker et tracker a été ajouté",
-        "it": "Bugfix: gli oggetti verranno creati solo se necessario\nBugfix per un numero eccessivo di avvisi è stato aggiunto\nCalcolo a distanza tra ioBroker e tracker è stato aggiunto",
-        "es": "Bugfix: los objetos se crearán sólo si es necesario\nBugfix para el número excesivo de advertencias se ha añadido\nSe ha añadido el cálculo de distancia entre ioBroker y tracker",
-        "pl": "Bugfix: Obiekty będą tworzone tylko wtedy, gdy konieczne będzie koniecznie\nBugfix dla nadmiernej liczby ostrzeżeń został dodany\nObliczenia pomiędzy ioBrokerem i trackerem zostały dodane",
-        "uk": "Виправлення: об'єкти будуть створені тільки при необхідності\nПомилки для надмірної кількості попереджень\nДодано розрахунок дистанції ioBroker та трекер",
-        "zh-cn": "Bugfix:只有在必要情况下才能建立物体\n此外,还增加了过多的警告的力度。\n添加了气布罗克和轨道之间的试验。"
       }
     },
     "titleLang": {
