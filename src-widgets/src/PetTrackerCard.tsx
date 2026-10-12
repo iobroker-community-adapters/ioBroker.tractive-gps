@@ -6,7 +6,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
-import { ThemeProvider } from '@mui/material/styles';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import type { RxRenderWidgetProps, RxWidgetInfo, RxWidgetInfoAttributesField } from '@iobroker/types-vis-2';
 import type VisRxWidget from '@iobroker/types-vis-2/visRxWidget';
 import React from 'react';
@@ -64,14 +64,14 @@ function InfoRow({ icon, label, value }: InfoRowProps): React.JSX.Element {
         <Stack
             direction="row"
             spacing={1}
-            alignItems="flex-start"
+            sx={{ alignItems: 'flex-start' }}
         >
             <Typography aria-hidden="true">{icon}</Typography>
-            <Box minWidth={0}>
+            <Box sx={{ minWidth: 0 }}>
                 <Typography
                     variant="caption"
                     color="text.secondary"
-                    display="block"
+                    sx={{ display: 'block' }}
                 >
                     {label}
                 </Typography>
@@ -251,6 +251,7 @@ export default class PetTrackerCard extends (window.visRxWidget as typeof VisRxW
     renderWidgetBody(props: RxRenderWidgetProps): React.JSX.Element {
         super.renderWidgetBody(props);
 
+        const widgetTheme = createTheme(this.props.context.theme);
         const trackerName = this.stringValue('trackerNameOid');
         const petName = this.stringValue('petNameOid');
         const title = petName ?? trackerName ?? '—';
@@ -273,7 +274,7 @@ export default class PetTrackerCard extends (window.visRxWidget as typeof VisRxW
         const mapInteractive = this.state.rxData.mapInteractive !== false;
         const showAccuracyCircle = this.state.rxData.showAccuracyCircle !== false;
         const fitAccuracyRange = this.state.rxData.fitAccuracyRange !== false;
-        const accuracyColor = this.state.rxData.accuracyColor || this.props.context.theme.palette.primary.main;
+        const accuracyColor = this.state.rxData.accuracyColor || widgetTheme.palette.primary.main;
         const configured = Boolean(this.state.rxData.petNameOid || this.state.rxData.trackerNameOid);
         const accuracy = this.numberValue('positionAccuracyOid');
         const configuredRange = Number.isFinite(this.state.rxData.mapRange) ? this.state.rxData.mapRange : 0;
@@ -301,7 +302,7 @@ export default class PetTrackerCard extends (window.visRxWidget as typeof VisRxW
         const hasCommands = Boolean(buzzerCommandOid || ledCommandOid || liveTrackingCommandOid);
 
         return (
-            <ThemeProvider theme={this.props.context.theme}>
+            <ThemeProvider theme={widgetTheme}>
                 <Card
                     style={cardStyle}
                     aria-label={PetTrackerCard.t('pet_tracker_card')}
@@ -313,15 +314,12 @@ export default class PetTrackerCard extends (window.visRxWidget as typeof VisRxW
                             <Stack
                                 direction="row"
                                 spacing={1.5}
-                                alignItems="center"
-                                justifyContent="space-between"
-                                sx={{ p: 2 }}
+                                sx={{ p: 2, alignItems: 'center', justifyContent: 'space-between' }}
                             >
                                 <Stack
                                     direction="row"
                                     spacing={1.25}
-                                    alignItems="center"
-                                    minWidth={0}
+                                    sx={{ alignItems: 'center', minWidth: 0 }}
                                 >
                                     <Box
                                         sx={{
@@ -338,7 +336,7 @@ export default class PetTrackerCard extends (window.visRxWidget as typeof VisRxW
                                     >
                                         🐾
                                     </Box>
-                                    <Box minWidth={0}>
+                                    <Box sx={{ minWidth: 0 }}>
                                         <Typography
                                             variant="h6"
                                             noWrap
@@ -359,7 +357,7 @@ export default class PetTrackerCard extends (window.visRxWidget as typeof VisRxW
                                 <Stack
                                     direction="row"
                                     spacing={0.75}
-                                    alignItems="center"
+                                    sx={{ alignItems: 'center' }}
                                 >
                                     {petType ? (
                                         <Chip
@@ -675,15 +673,13 @@ export default class PetTrackerCard extends (window.visRxWidget as typeof VisRxW
                         </Stack>
                     ) : (
                         <Stack
-                            sx={{ height: '100%', minHeight: 260 }}
-                            alignItems="center"
-                            justifyContent="center"
+                            sx={{ height: '100%', minHeight: 260, alignItems: 'center', justifyContent: 'center' }}
                             spacing={1}
                         >
                             <Typography
                                 aria-hidden="true"
                                 color="text.disabled"
-                                fontSize="3rem"
+                                sx={{ fontSize: '3rem' }}
                             >
                                 🐾
                             </Typography>

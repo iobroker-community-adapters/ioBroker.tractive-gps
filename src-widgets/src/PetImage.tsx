@@ -28,7 +28,7 @@ function PetImage({ apiImage, customImage, alt, placeholder }: PetImageProps): R
                 <Box sx={{ textAlign: 'center', color: 'text.secondary' }}>
                     <Typography
                         aria-hidden="true"
-                        fontSize="3.5rem"
+                        sx={{ fontSize: '3.5rem' }}
                     >
                         🐾
                     </Typography>

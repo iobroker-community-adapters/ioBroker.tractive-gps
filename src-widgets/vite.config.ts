@@ -3,7 +3,6 @@ import { federation } from '@module-federation/vite';
 import react from '@vitejs/plugin-react';
 import { readFileSync } from 'node:fs';
 import commonjs from 'vite-plugin-commonjs';
-import tsconfigPaths from 'vite-tsconfig-paths';
 
 const packageJson = JSON.parse(readFileSync('./package.json', 'utf8'));
 
@@ -22,10 +21,12 @@ export default {
             dts: false,
         }),
         react(),
-        tsconfigPaths({ projects: ['./tsconfig.json'], ignoreConfigErrors: true }),
         commonjs(),
     ],
     base: './',
+    resolve: {
+        tsconfigPaths: true,
+    },
     build: {
         target: 'chrome89',
         outDir: '../widgets/tractive-gps',

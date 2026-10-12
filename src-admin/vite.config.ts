@@ -1,16 +1,18 @@
 import react from '@vitejs/plugin-react';
-import { resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
 
 export default {
     plugins: [react()],
     base: './',
     resolve: {
-        // The repository also contains a React 18 VIS-2 workspace. Always resolve
-        // the Admin bundle against its own React 19 installation so Emotion and
-        // MUI cannot pick up the hoisted React 18 peer dependency.
+        // Resolve React from the Admin workspace even when npm hoists it to the
+        // repository root. Emotion, MUI, and the entry point must use one copy.
         alias: {
-            react: resolve(import.meta.dirname, 'node_modules/react'),
-            'react-dom': resolve(import.meta.dirname, 'node_modules/react-dom'),
+            react: dirname(require.resolve('react/package.json')),
+            'react-dom': dirname(require.resolve('react-dom/package.json')),
         },
     },
     build: {

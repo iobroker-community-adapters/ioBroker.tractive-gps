@@ -1,9 +1,16 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import type { Map as LeafletMap } from 'leaflet';
-import { latLng } from 'leaflet';
-import React, { memo, useEffect } from 'react';
-import { Circle, CircleMarker, MapContainer, Popup, TileLayer, useMap } from 'react-leaflet';
+import {
+    circle,
+    circleMarker,
+    latLng,
+    map as createMap,
+    tileLayer,
+    type Circle,
+    type CircleMarker,
+    type Map as LeafletMap,
+} from 'leaflet';
+import React, { memo, useEffect, useRef } from 'react';
 
 import 'leaflet/dist/leaflet.css';
 
@@ -24,7 +31,12 @@ interface PetMapProps {
     title: string;
 }
 
-interface MapControllerProps {
+interface LeafletMapViewProps extends Omit<PetMapProps, 'latitude' | 'longitude' | 'noLocationText'> {
+    latitude: number;
+    longitude: number;
+}
+
+interface MapViewState {
     latitude: number;
     longitude: number;
     range?: number;
@@ -33,15 +45,8 @@ interface MapControllerProps {
     fitAccuracyRange: boolean;
 }
 
-function updateMapView(
-    map: LeafletMap,
-    latitude: number,
-    longitude: number,
-    range: number | undefined,
-    zoom: number,
-    showAccuracyCircle: boolean,
-    fitAccuracyRange: boolean,
-): void {
+function updateMapView(map: LeafletMap, state: MapViewState): void {
+    const { latitude, longitude, range, zoom, showAccuracyCircle, fitAccuracyRange } = state;
     if (fitAccuracyRange && showAccuracyCircle && range !== undefined && range > 0) {
         map.fitBounds(latLng(latitude, longitude).toBounds(range * 2), {
             animate: false,
@@ -53,32 +58,153 @@ function updateMapView(
     }
 }
 
-function MapController({
+function createPopupContent(title: string, accuracyText: string, accuracy?: number): HTMLElement {
+    const content = document.createElement('div');
+    const heading = document.createElement('strong');
+    heading.textContent = title;
+    content.appendChild(heading);
+    if (accuracy !== undefined) {
+        content.appendChild(document.createElement('br'));
+        content.appendChild(document.createTextNode(`${accuracyText}: ±${accuracy} m`));
+    }
+    return content;
+}
+
+function LeafletMapView({
     latitude,
     longitude,
+    accuracy,
     range,
     zoom,
+    minZoom,
+    maxZoom,
+    interactive,
     showAccuracyCircle,
     fitAccuracyRange,
-}: MapControllerProps): null {
-    const map = useMap();
+    accuracyColor,
+    accuracyText,
+    title,
+}: LeafletMapViewProps): React.JSX.Element {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const mapRef = useRef<LeafletMap | null>(null);
+    const markerRef = useRef<CircleMarker | null>(null);
+    const accuracyCircleRef = useRef<Circle | null>(null);
+    const viewStateRef = useRef<MapViewState>({
+        latitude,
+        longitude,
+        range,
+        zoom,
+        showAccuracyCircle,
+        fitAccuracyRange,
+    });
+    useEffect(() => {
+        viewStateRef.current = { latitude, longitude, range, zoom, showAccuracyCircle, fitAccuracyRange };
+    }, [fitAccuracyRange, latitude, longitude, range, showAccuracyCircle, zoom]);
 
     useEffect(() => {
-        updateMapView(map, latitude, longitude, range, zoom, showAccuracyCircle, fitAccuracyRange);
-    }, [fitAccuracyRange, latitude, longitude, map, range, showAccuracyCircle, zoom]);
+        const container = containerRef.current;
+        if (!container) {
+            return undefined;
+        }
 
-    useEffect(() => {
-        const container = map.getContainer();
+        const map = createMap(container, {
+            center: [0, 0],
+            zoom: minZoom,
+            minZoom,
+            maxZoom,
+            zoomControl: interactive,
+            dragging: interactive,
+            scrollWheelZoom: interactive,
+            doubleClickZoom: interactive,
+            touchZoom: interactive,
+            boxZoom: interactive,
+            keyboard: interactive,
+        });
+        tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            minZoom,
+            maxZoom,
+        }).addTo(map);
+        const marker = circleMarker([0, 0], {
+            color: '#ffffff',
+            fillColor: '#3388ff',
+            fillOpacity: 1,
+            radius: 9,
+            weight: 3,
+        }).addTo(map);
+
+        mapRef.current = map;
+        markerRef.current = marker;
+        updateMapView(map, viewStateRef.current);
+
         const resizeObserver = new ResizeObserver(() => {
             map.invalidateSize({ animate: false, pan: false });
-            updateMapView(map, latitude, longitude, range, zoom, showAccuracyCircle, fitAccuracyRange);
+            updateMapView(map, viewStateRef.current);
         });
         resizeObserver.observe(container);
-        map.invalidateSize({ animate: false, pan: false });
-        return () => resizeObserver.disconnect();
-    }, [fitAccuracyRange, latitude, longitude, map, range, showAccuracyCircle, zoom]);
+        const animationFrame = window.requestAnimationFrame(() => map.invalidateSize({ animate: false, pan: false }));
 
-    return null;
+        return () => {
+            window.cancelAnimationFrame(animationFrame);
+            resizeObserver.disconnect();
+            map.remove();
+            mapRef.current = null;
+            markerRef.current = null;
+            accuracyCircleRef.current = null;
+        };
+    }, [interactive, maxZoom, minZoom]);
+
+    useEffect(() => {
+        const map = mapRef.current;
+        const marker = markerRef.current;
+        if (!map || !marker) {
+            return;
+        }
+
+        const center: [number, number] = [latitude, longitude];
+        marker.setLatLng(center);
+        marker.setStyle({ fillColor: accuracyColor });
+        marker.bindPopup(createPopupContent(title, accuracyText, accuracy));
+
+        if (showAccuracyCircle && range !== undefined && range > 0) {
+            if (!accuracyCircleRef.current) {
+                accuracyCircleRef.current = circle(center, { radius: range }).addTo(map);
+            }
+            accuracyCircleRef.current.setLatLng(center).setRadius(range).setStyle({
+                color: accuracyColor,
+                fillColor: accuracyColor,
+                fillOpacity: 0.18,
+                opacity: 0.9,
+                weight: 2,
+            });
+        } else if (accuracyCircleRef.current) {
+            accuracyCircleRef.current.removeFrom(map);
+            accuracyCircleRef.current = null;
+        }
+
+        updateMapView(map, viewStateRef.current);
+    }, [
+        accuracy,
+        accuracyColor,
+        accuracyText,
+        fitAccuracyRange,
+        interactive,
+        latitude,
+        longitude,
+        maxZoom,
+        minZoom,
+        range,
+        showAccuracyCircle,
+        title,
+        zoom,
+    ]);
+
+    return (
+        <Box
+            ref={containerRef}
+            sx={{ width: '100%', height: '100%' }}
+        />
+    );
 }
 
 function PetMap({
@@ -108,9 +234,6 @@ function PetMap({
         );
     }
 
-    const center: [number, number] = [latitude, longitude];
-    const mapKey = `${minZoom}-${maxZoom}-${interactive}`;
-
     return (
         <Box
             role="region"
@@ -127,64 +250,21 @@ function PetMap({
                 '& .leaflet-control-attribution': { bgcolor: 'background.paper', color: 'text.secondary' },
             }}
         >
-            <MapContainer
-                key={mapKey}
-                center={center}
+            <LeafletMapView
+                latitude={latitude}
+                longitude={longitude}
+                accuracy={accuracy}
+                range={range}
                 zoom={zoom}
                 minZoom={minZoom}
                 maxZoom={maxZoom}
-                zoomControl={interactive}
-                dragging={interactive}
-                scrollWheelZoom={interactive}
-                doubleClickZoom={interactive}
-                touchZoom={interactive}
-                boxZoom={interactive}
-                keyboard={interactive}
-                style={{ width: '100%', height: '100%' }}
-            >
-                <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    minZoom={minZoom}
-                    maxZoom={maxZoom}
-                />
-                {showAccuracyCircle && range !== undefined && range > 0 ? (
-                    <Circle
-                        center={center}
-                        radius={range}
-                        pathOptions={{
-                            color: accuracyColor,
-                            fillColor: accuracyColor,
-                            fillOpacity: 0.18,
-                            opacity: 0.9,
-                            weight: 2,
-                        }}
-                    />
-                ) : null}
-                <CircleMarker
-                    center={center}
-                    radius={9}
-                    pathOptions={{ color: '#ffffff', fillColor: accuracyColor, fillOpacity: 1, weight: 3 }}
-                >
-                    <Popup>
-                        <strong>{title}</strong>
-                        {accuracy !== undefined ? (
-                            <>
-                                <br />
-                                {accuracyText}: ±{accuracy} m
-                            </>
-                        ) : null}
-                    </Popup>
-                </CircleMarker>
-                <MapController
-                    latitude={latitude}
-                    longitude={longitude}
-                    range={range}
-                    zoom={zoom}
-                    showAccuracyCircle={showAccuracyCircle}
-                    fitAccuracyRange={fitAccuracyRange}
-                />
-            </MapContainer>
+                interactive={interactive}
+                showAccuracyCircle={showAccuracyCircle}
+                fitAccuracyRange={fitAccuracyRange}
+                accuracyColor={accuracyColor}
+                accuracyText={accuracyText}
+                title={title}
+            />
         </Box>
     );
 }
