@@ -34,7 +34,7 @@
     "url": "https://github.com/iobroker-community-adapters/ioBroker.tractive-gps.git"
   },
   "engines": {
-    "node": ">=22.13.0"
+    "node": ">=22.19.0"
   },
   "workspaces": [
     "src-admin",
