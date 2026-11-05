@@ -187,6 +187,11 @@
         "admin": ">=7.8.23"
       }
     ],
+    "ifInstalledDependencies": [ 
+      {
+        "vis-2": ">=2.20.0"
+      }
+    ],
     "messages": [
       {
         "condition": {
