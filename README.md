@@ -197,8 +197,7 @@ To use the command switches, assign the corresponding `trackers.<tracker-id>.com
 Information for contributors is available in [Developer documentation](docs/DEVELOPMENT.md).
 
 ## Changelog
-
-### **WORK IN PROGRESS**
+### 4.0.1 (2026-11-05)
 - (copilot) Adapter requires node.js >= 22.19.0 now
 - (mcm1957) The native VIS 2 widget requires VIS 2 >=2.20.x due to React 19/MUI 9 usage
 
@@ -259,10 +258,6 @@ Information for contributors is available in [Developer documentation](docs/DEVE
 - (simatec) Adapter changed to meet responsive design rules.
 - (mcm1957) Corrected an error in the jsonConfig reauthorization command.
 - (mcm1957) Dependencies have been updated.
-
-### 2.0.1 (2024-08-20)
-
-- (bluefox) Fixed encryption of the access token.
 
 Earlier changes are documented in [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 

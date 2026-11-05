@@ -1,10 +1,14 @@
 # Older changes
+## 2.0.1 (2024-08-20)
+
+- (bluefox) Fixed encryption of the access token.
+
+
 ## 2.0.0 (2024-08-18)
 
 - (bluefox) BREAKING: credentials must be entered again.
 - (bluefox) Removed old code and rewrote the GUI.
 - (bluefox) Updated dependencies.
-
 
 ## 1.2.0 (2024-04-28)
 

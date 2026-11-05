@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "tractive-gps",
-    "version": "4.0.0",
+    "version": "4.0.1",
     "news": {
+      "4.0.1": {
+        "en": "Adapter requires node.js >= 22.19.0 now\nThe native VIS 2 widget requires VIS 2 >=2.20.x due to React 19/MUI 9 usage",
+        "de": "Adapter benötigt jetzt node.js >= 22.19.0\nDas native VIS 2-Widget benötigt VIS 2 >=2.20.x wegen React 19/MUI 9",
+        "ru": "Теперь для адаптера требуется файл node.js >= 22.19.0\nДля нативного виджета VIS 2 требуется VIS 2 >=2.20.x из-за использования React 19/MUI 9",
+        "pt": "O adaptador exige node.js >= 22.19.0\nO widget VIS 2 nativo exige VIS 2 >=2.20.x devido ao uso do React 19/MUI 9",
+        "nl": "Voor de adapter is nu node.js >= 22.19.0 nodig\nVoor de oorspronkelijke VIS 2-widget is VIS 2 >=2.20.x vereist vanwege het gebruik van React 19/MUI 9",
+        "fr": "Adapter nécessite node.js >= 22.19.0\nLe widget natif VIS 2 nécessite VIS 2 >=2.20.x à cause de React 19/MUI 9",
+        "it": "Adapter richiede node.js >= 22.19.0 ora\nIl widget nativo di VIS 2 richiede VIS 2 >=2.20.x per React 19/MUI 9",
+        "es": "El adaptador ahora necesita node.js >= 22.19.0\nEl widget VIS 2 nativo requiere VIS 2 >=2.20.x debido al uso de React 19/MUI 9",
+        "pl": "Adapter wymaga teraz node.js >= 22.19.0\nNatywny widget VIS 2 wymaga VIS 2 >=2.20.x ze względu na użycie React 19/MUI 9",
+        "uk": "Адаптер вимагає node.js >= 22.19.0 зараз\nВласний віджет VIS 2 вимагає VIS 2 >=2.20.x через використання React 19/MUI 9",
+        "zh-cn": "适配器现在需要 node.js >= 22.19.0\n由于使用 React 19/MUI 9，原生 VIS 2 控件需要 VIS 2 >=2.20.x"
+      },
       "4.0.0": {
         "en": "BREAKING: the native VIS 2 widget requires VIS 2 >=2.15.2 (React 19/MUI 9); backend-only and classic VIS 1 remain supported. Fixed theme compatibility and map marker/range updates. Updated dependencies, tests and documentation (#387, #355); the pinned dev-server fork is retained. Updated locked Moment to 2.31.0 (GHSA-4p3w-j4w9-5jqw).",
         "de": "BREAKING: Das native VIS-2-Widget benötigt VIS 2 >=2.15.2 (React 19/MUI 9); reine Adapter- und klassische VIS-1-Installationen bleiben unterstützt. Theme-Kompatibilität sowie Aktualisierung von Kartenmarker und Radius korrigiert. Abhängigkeiten, Tests und Dokumentation aktualisiert (#387, #355); der festgelegte Dev-Server-Fork bleibt erhalten. Moment im Lockfile auf 2.31.0 aktualisiert (GHSA-4p3w-j4w9-5jqw).",
@@ -80,19 +93,6 @@
         "pl": "ZMIANA ZBIORCZA: Musisz ponownie wpisać swoje referencje\nStary kod został usunięty i GUI został przepisany\nZaktualizowano zależności",
         "uk": "БРЕАКІНГ ЗМІН: Ви повинні ввести ваші облікові дані знову\nСтарший код був вилучений і графічний інтерфейс\nЗалежність було оновлено",
         "zh-cn": "打破变化: 您必须再次输入您的证书\n旧代码已被删除, 并重写 GUI\n依赖关系已更新"
-      },
-      "1.2.0": {
-        "en": "Adapter requires node.js >= 18 and js-controller >= 5 now\nDependencies have been updated",
-        "de": "Adapter benötigt node.js >= 18 und js-controller >= 5 jetzt\nAbhängigkeiten wurden aktualisiert",
-        "ru": "Адаптер требует node.js >= 18 и js-контроллер >= 5 сейчас\nЗависимость обновлена",
-        "pt": "Adapter requer node.js >= 18 e js-controller >= 5 agora\nAs dependências foram atualizadas",
-        "nl": "Voor adaptor zijn node.js < 18 en js-controller > Nu 5\nAfhankelijkheden zijn bijgewerkt",
-        "fr": "L'adaptateur nécessite node.js >= 18 et js-controller >= 5 maintenant\nLes dépendances ont été actualisées",
-        "it": "Adattatore richiede node.js >= 18 e js-controller >= 5 ora\nLe dipendenze sono state aggiornate",
-        "es": "Adaptador requiere node.js √≥= 18 y js-controller 5 ahora\nSe han actualizado las dependencias",
-        "pl": "Adapter wymaga node.js > = 18 i kontroler js- > = 5 teraz\nZaktualizowano zależności",
-        "uk": "Адаптер вимагає node.js >= 18 і js-controller >= 5 тепер\nЗалежність було оновлено",
-        "zh-cn": "适配器需要节点.js QQ18和js控制器 QQ 现在5号\n依赖关系已更新"
       }
     },
     "titleLang": {
