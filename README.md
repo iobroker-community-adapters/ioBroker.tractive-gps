@@ -200,7 +200,7 @@ Information for contributors is available in [Developer documentation](docs/DEVE
 
 ### **WORK IN PROGRESS**
 - (copilot) Adapter requires node.js >= 22.19.0 now
-- (xXBJXx) The native VIS 2 widget requires VIS 2 >=2.20.x due to React 19/MUI 9 usage
+- (mcm1957) The native VIS 2 widget requires VIS 2 >=2.20.x due to React 19/MUI 9 usage
 
 ### 4.0.0 (2026-10-12)
 
