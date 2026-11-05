@@ -38,7 +38,7 @@ The adapter uses an unofficial Tractive service interface. A working Tractive ac
 - Node.js 22.13 or newer
 - js-controller 7.2.2 or newer
 - Admin 7.8.23 or newer
-- VIS 1, or VIS 2 version 2.15.2 or newer, when using an included widget
+- VIS 1, or VIS 2 version 2.20.x or newer, when using an included widget
 - A Tractive account with at least one associated tracker
 
 ## Features
@@ -200,6 +200,8 @@ Information for contributors is available in [Developer documentation](docs/DEVE
 
 ### **WORK IN PROGRESS**
 - (copilot) Adapter requires node.js >= 22.19.0 now
+- (xXBJXx) The native VIS 2 widget requires VIS 2 >=2.20.x due to React 19/MUI 9 usage
+
 ### 4.0.0 (2026-10-12)
 
 - (xXBJXx) BREAKING: the native VIS 2 widget now requires VIS 2 >=2.15.2 for React 19/MUI 9 support; backend-only and classic VIS 1 installations remain supported.
