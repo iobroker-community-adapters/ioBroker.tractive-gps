@@ -70,6 +70,7 @@ export class TractiveAPI implements ITractiveApiEndpoints {
         string,
         { latitude: number; longitude: number; address: TractiveAddress }
     >();
+    private readonly invalidLocationWarned = new Set<string>();
 
     /**
      *
@@ -487,23 +488,43 @@ export class TractiveAPI implements ITractiveApiEndpoints {
         }
 
         try {
-            const response = await this.getRecord(
+            const rawResponse = await this.apiCall<unknown>(
+                'get',
                 `/device_pos_report/${encodeURIComponent(trackerID)}`,
-                'tracker location',
             );
+            if (!rawResponse.success) {
+                return rawResponse;
+            }
+            if (rawResponse.data === null || rawResponse.data === undefined || rawResponse.data === '') {
+                this.log.debug(`Tractive returned no location for tracker ${trackerID}`);
+                return { success: true, data: {} };
+            }
 
             if (
-                response.success &&
-                response.data.latlong !== undefined &&
-                (!Array.isArray(response.data.latlong) ||
-                    response.data.latlong.length !== 2 ||
-                    !response.data.latlong.every(
-                        coordinate => typeof coordinate === 'number' && Number.isFinite(coordinate),
-                    ))
+                !TractiveAPI.isRecord(rawResponse.data) ||
+                (rawResponse.data.latlong !== undefined &&
+                    rawResponse.data.latlong !== null &&
+                    (!Array.isArray(rawResponse.data.latlong) ||
+                        rawResponse.data.latlong.length !== 2 ||
+                        !rawResponse.data.latlong.every(
+                            coordinate => typeof coordinate === 'number' && Number.isFinite(coordinate),
+                        )))
             ) {
-                this.log.warn('Tractive returned an invalid tracker location response');
+                // Log only once per tracker as warning to avoid flooding the log on every poll
+                const message = `Tractive returned an invalid tracker location response for tracker ${trackerID}`;
+                if (this.invalidLocationWarned.has(trackerID)) {
+                    this.log.debug(message);
+                } else {
+                    this.log.warn(message);
+                    this.invalidLocationWarned.add(trackerID);
+                }
                 return { success: false, error: 'Invalid tracker location response' };
             }
+            this.invalidLocationWarned.delete(trackerID);
+            const response: TractiveAPIResponse<TractiveTrackerLocation> = {
+                success: true,
+                data: rawResponse.data,
+            };
 
             if (
                 this.reverseGeocoding &&

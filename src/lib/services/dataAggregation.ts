@@ -46,6 +46,7 @@ interface AggregationCache {
     trackerDetails: Map<string, TractiveTracker>;
     trackerHardware: Map<string, TractiveTrackerHardware>;
     lastHardwareSync: number;
+    noSubscriptionLogged: Set<string>;
 }
 
 const aggregationCaches = new WeakMap<ITractiveApiEndpoints, AggregationCache>();
@@ -63,6 +64,7 @@ function getAggregationCache(api: ITractiveApiEndpoints): AggregationCache {
         trackerDetails: new Map(),
         trackerHardware: new Map(),
         lastHardwareSync: 0,
+        noSubscriptionLogged: new Set(),
     };
     aggregationCaches.set(api, created);
     return created;
@@ -463,7 +465,22 @@ async function synchronize(api: ITractiveApiEndpoints, fullSync: boolean): Promi
         const details = fullSync
             ? await api.getTracker(trackerId)
             : { success: true as const, data: cache.trackerDetails.get(trackerId) ?? trackerListItem };
-        const location = await api.getTrackerLocation(trackerId);
+        // Trackers with a paused or missing subscription do not report positions.
+        const trackerState = firstString([...layers(details.data), ...listRecords], 'state');
+        let location: TractiveAPIResponse<TractiveTrackerLocation | undefined>;
+        if (trackerState?.toUpperCase() === 'NO_SUBSCRIPTION') {
+            const message = `Tracker ${trackerId} has no active subscription; skipping location requests`;
+            if (cache.noSubscriptionLogged.has(trackerId)) {
+                api.log.debug(message);
+            } else {
+                api.log.info(message);
+                cache.noSubscriptionLogged.add(trackerId);
+            }
+            location = { success: true, data: undefined };
+        } else {
+            cache.noSubscriptionLogged.delete(trackerId);
+            location = await api.getTrackerLocation(trackerId);
+        }
         const hardware = hardwareSyncDue
             ? await api.getTrackerHardware(trackerId)
             : { success: true as const, data: cache.trackerHardware.get(trackerId) ?? {} };
