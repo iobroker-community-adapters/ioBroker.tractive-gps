@@ -246,4 +246,43 @@ describe('data aggregation migration', () => {
         expect(getAllTrackers.callCount).to.equal(3);
         expect(getTrackerLocation.callCount).to.equal(3);
     });
+
+    it('skips location requests for trackers without an active subscription', async () => {
+        const states = new Map<string, ioBroker.StateValue>();
+        const log = { warn: sinon.stub(), info: sinon.stub(), debug: sinon.stub() };
+        const getTrackerLocation = sinon.stub().resolves({ success: false, error: 'not called' });
+        const api: ITractiveApiEndpoints = {
+            auth: null,
+            log: log as unknown as ioBroker.Logger,
+            extendObjectAsync: sinon.stub().resolves(undefined) as ITractiveApiEndpoints['extendObjectAsync'],
+            setState: sinon.stub().callsFake((id: string, value: ioBroker.StateValue) => {
+                states.set(id, value);
+                return Promise.resolve(undefined);
+            }) as ITractiveApiEndpoints['setState'],
+            getObjectAsync: sinon.stub().resolves(null),
+            getAccount: () => Promise.resolve({ success: true, data: {} }),
+            getSubscriptions: () => Promise.resolve({ success: true, data: [] }),
+            getSubscription: () => Promise.resolve({ success: false, error: 'not called' }),
+            getShares: () => Promise.resolve({ success: true, data: [] }),
+            getProfilePictureUrl: id => id,
+            getPets: () => Promise.resolve({ success: true, data: [] }),
+            getPet: () => Promise.resolve({ success: false, error: 'not called' }),
+            getImage: () => Promise.resolve({ success: false, error: 'not called' }),
+            getAllTrackers: () => Promise.resolve({ success: true, data: [{ _id: 'tracker-1' }] }),
+            getTracker: () =>
+                Promise.resolve({ success: true, data: { _id: 'tracker-1', state: 'NO_SUBSCRIPTION' } }),
+            getTrackerLocation,
+            getTrackerHardware: () => Promise.resolve({ success: true, data: { battery_level: 80 } }),
+        };
+
+        expect((await updateAllData(api)).success).to.equal(true);
+        expect((await updateTrackersOnly(api)).success).to.equal(true);
+
+        expect(getTrackerLocation.called).to.equal(false);
+        expect(log.warn.called).to.equal(false);
+        expect(log.info.callCount).to.equal(1);
+        expect(log.debug.callCount).to.equal(1);
+        expect(states.get('trackers.tracker-1.status.state')).to.equal('NO_SUBSCRIPTION');
+        expect(states.get('trackers.tracker-1.hardware.batteryLevel')).to.equal(80);
+    });
 });

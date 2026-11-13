@@ -241,6 +241,57 @@ describe('TractiveAPI authentication', () => {
         expect(addressRequests).to.equal(1);
     });
 
+    it('treats a missing tracker position as valid without warning', async () => {
+        const client = createClient(config => {
+            if (config.url === '/auth/token') {
+                return Promise.resolve(
+                    response(config, {
+                        access_token: 'test-token',
+                        expires_at: Math.floor(Date.now() / 1000) + 3600,
+                        user_id: 'test-user',
+                    }),
+                );
+            }
+            if (config.url === '/device_pos_report/tracker-1') {
+                return Promise.resolve(response(config, { latlong: null }));
+            }
+            if (config.url === '/device_pos_report/tracker-2') {
+                return Promise.resolve(response(config, null));
+            }
+            return Promise.reject(new Error('Unexpected test request'));
+        });
+
+        expect(await client.initialize('user@example.invalid', 'test-password')).to.equal(true);
+        expect((await client.getTrackerLocation('tracker-1')).success).to.equal(true);
+        expect(await client.getTrackerLocation('tracker-2')).to.deep.equal({ success: true, data: {} });
+        expect((client.log.warn as sinon.SinonStub).called).to.equal(false);
+    });
+
+    it('warns only once per tracker about repeatedly invalid positions', async () => {
+        const client = createClient(config => {
+            if (config.url === '/auth/token') {
+                return Promise.resolve(
+                    response(config, {
+                        access_token: 'test-token',
+                        expires_at: Math.floor(Date.now() / 1000) + 3600,
+                        user_id: 'test-user',
+                    }),
+                );
+            }
+            if (config.url === '/device_pos_report/tracker-1') {
+                return Promise.resolve(response(config, { latlong: 'invalid' }));
+            }
+            return Promise.reject(new Error('Unexpected test request'));
+        });
+
+        expect(await client.initialize('user@example.invalid', 'test-password')).to.equal(true);
+        for (let poll = 0; poll < 3; poll++) {
+            expect((await client.getTrackerLocation('tracker-1')).success).to.equal(false);
+        }
+        expect((client.log.warn as sinon.SinonStub).callCount).to.equal(1);
+        expect((client.log.debug as sinon.SinonStub).callCount).to.equal(2);
+    });
+
     it('uses the documented GET command endpoints with encoded tracker IDs', async () => {
         const requests: AxiosRequestConfig[] = [];
         const client = createClient(config => {
