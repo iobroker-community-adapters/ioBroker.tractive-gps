@@ -197,6 +197,9 @@ To use the command switches, assign the corresponding `trackers.<tracker-id>.com
 Information for contributors is available in [Developer documentation](docs/DEVELOPMENT.md).
 
 ## Changelog
+### **WORK IN PROGRESS**
+- (GermanBluefox) Trackers without active subscription (NO_SUBSCRIPTION) no longer cause a warning on every poll (#418)
+
 ### 4.0.1 (2026-11-05)
 - (copilot) Adapter requires node.js >= 22.19.0 now
 - (mcm1957) The native VIS 2 widget requires VIS 2 >=2.20.x due to React 19/MUI 9 usage
